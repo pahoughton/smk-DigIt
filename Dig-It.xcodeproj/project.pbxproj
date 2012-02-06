@@ -1,0 +1,451 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DAA530E314E09DF600519A30 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAA530E214E09DF600519A30 /* Cocoa.framework */; };
+		DAA530ED14E09DF600519A30 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DAA530EB14E09DF600519A30 /* InfoPlist.strings */; };
+		DAA530EF14E09DF600519A30 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA530EE14E09DF600519A30 /* main.m */; };
+		DAA530F314E09DF600519A30 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = DAA530F114E09DF600519A30 /* Credits.rtf */; };
+		DAA530F614E09DF600519A30 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA530F514E09DF600519A30 /* AppDelegate.m */; };
+		DAA530F914E09DF600519A30 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAA530F714E09DF600519A30 /* MainMenu.xib */; };
+		DAA5310114E09DF600519A30 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAA5310014E09DF600519A30 /* SenTestingKit.framework */; };
+		DAA5310214E09DF600519A30 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAA530E214E09DF600519A30 /* Cocoa.framework */; };
+		DAA5310A14E09DF600519A30 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DAA5310814E09DF600519A30 /* InfoPlist.strings */; };
+		DAA5310D14E09DF600519A30 /* Dig_ItTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA5310C14E09DF600519A30 /* Dig_ItTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DAA5310314E09DF600519A30 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DAA530D514E09DF500519A30 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAA530DD14E09DF600519A30;
+			remoteInfo = "Dig-It";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DAA530DE14E09DF600519A30 /* Dig-It.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dig-It.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAA530E214E09DF600519A30 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		DAA530E514E09DF600519A30 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		DAA530E614E09DF600519A30 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		DAA530E714E09DF600519A30 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		DAA530EA14E09DF600519A30 /* Dig-It-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Dig-It-Info.plist"; sourceTree = "<group>"; };
+		DAA530EC14E09DF600519A30 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DAA530EE14E09DF600519A30 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DAA530F014E09DF600519A30 /* Dig-It-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Dig-It-Prefix.pch"; sourceTree = "<group>"; };
+		DAA530F214E09DF600519A30 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		DAA530F414E09DF600519A30 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		DAA530F514E09DF600519A30 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		DAA530F814E09DF600519A30 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		DAA530FF14E09DF600519A30 /* Dig-ItTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Dig-ItTests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAA5310014E09DF600519A30 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		DAA5310714E09DF600519A30 /* Dig-ItTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Dig-ItTests-Info.plist"; sourceTree = "<group>"; };
+		DAA5310914E09DF600519A30 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DAA5310B14E09DF600519A30 /* Dig_ItTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dig_ItTests.h; sourceTree = "<group>"; };
+		DAA5310C14E09DF600519A30 /* Dig_ItTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dig_ItTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DAA530DB14E09DF600519A30 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAA530E314E09DF600519A30 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAA530FB14E09DF600519A30 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAA5310114E09DF600519A30 /* SenTestingKit.framework in Frameworks */,
+				DAA5310214E09DF600519A30 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DAA530D314E09DF500519A30 = {
+			isa = PBXGroup;
+			children = (
+				DAA530E814E09DF600519A30 /* Dig-It */,
+				DAA5310514E09DF600519A30 /* Dig-ItTests */,
+				DAA530E114E09DF600519A30 /* Frameworks */,
+				DAA530DF14E09DF600519A30 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DAA530DF14E09DF600519A30 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DAA530DE14E09DF600519A30 /* Dig-It.app */,
+				DAA530FF14E09DF600519A30 /* Dig-ItTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DAA530E114E09DF600519A30 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DAA530E214E09DF600519A30 /* Cocoa.framework */,
+				DAA5310014E09DF600519A30 /* SenTestingKit.framework */,
+				DAA530E414E09DF600519A30 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DAA530E414E09DF600519A30 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DAA530E514E09DF600519A30 /* AppKit.framework */,
+				DAA530E614E09DF600519A30 /* CoreData.framework */,
+				DAA530E714E09DF600519A30 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		DAA530E814E09DF600519A30 /* Dig-It */ = {
+			isa = PBXGroup;
+			children = (
+				DAA530F414E09DF600519A30 /* AppDelegate.h */,
+				DAA530F514E09DF600519A30 /* AppDelegate.m */,
+				DAA530F714E09DF600519A30 /* MainMenu.xib */,
+				DAA530E914E09DF600519A30 /* Supporting Files */,
+			);
+			path = "Dig-It";
+			sourceTree = "<group>";
+		};
+		DAA530E914E09DF600519A30 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DAA530EA14E09DF600519A30 /* Dig-It-Info.plist */,
+				DAA530EB14E09DF600519A30 /* InfoPlist.strings */,
+				DAA530EE14E09DF600519A30 /* main.m */,
+				DAA530F014E09DF600519A30 /* Dig-It-Prefix.pch */,
+				DAA530F114E09DF600519A30 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DAA5310514E09DF600519A30 /* Dig-ItTests */ = {
+			isa = PBXGroup;
+			children = (
+				DAA5310B14E09DF600519A30 /* Dig_ItTests.h */,
+				DAA5310C14E09DF600519A30 /* Dig_ItTests.m */,
+				DAA5310614E09DF600519A30 /* Supporting Files */,
+			);
+			path = "Dig-ItTests";
+			sourceTree = "<group>";
+		};
+		DAA5310614E09DF600519A30 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DAA5310714E09DF600519A30 /* Dig-ItTests-Info.plist */,
+				DAA5310814E09DF600519A30 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DAA530DD14E09DF600519A30 /* Dig-It */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DAA5311014E09DF600519A30 /* Build configuration list for PBXNativeTarget "Dig-It" */;
+			buildPhases = (
+				DAA530DA14E09DF600519A30 /* Sources */,
+				DAA530DB14E09DF600519A30 /* Frameworks */,
+				DAA530DC14E09DF600519A30 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Dig-It";
+			productName = "Dig-It";
+			productReference = DAA530DE14E09DF600519A30 /* Dig-It.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DAA530FE14E09DF600519A30 /* Dig-ItTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DAA5311314E09DF600519A30 /* Build configuration list for PBXNativeTarget "Dig-ItTests" */;
+			buildPhases = (
+				DAA530FA14E09DF600519A30 /* Sources */,
+				DAA530FB14E09DF600519A30 /* Frameworks */,
+				DAA530FC14E09DF600519A30 /* Resources */,
+				DAA530FD14E09DF600519A30 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DAA5310414E09DF600519A30 /* PBXTargetDependency */,
+			);
+			name = "Dig-ItTests";
+			productName = "Dig-ItTests";
+			productReference = DAA530FF14E09DF600519A30 /* Dig-ItTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DAA530D514E09DF500519A30 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "Secure Media Keepers";
+			};
+			buildConfigurationList = DAA530D814E09DF500519A30 /* Build configuration list for PBXProject "Dig-It" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = DAA530D314E09DF500519A30;
+			productRefGroup = DAA530DF14E09DF600519A30 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DAA530DD14E09DF600519A30 /* Dig-It */,
+				DAA530FE14E09DF600519A30 /* Dig-ItTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DAA530DC14E09DF600519A30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAA530ED14E09DF600519A30 /* InfoPlist.strings in Resources */,
+				DAA530F314E09DF600519A30 /* Credits.rtf in Resources */,
+				DAA530F914E09DF600519A30 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAA530FC14E09DF600519A30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAA5310A14E09DF600519A30 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DAA530FD14E09DF600519A30 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DAA530DA14E09DF600519A30 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAA530EF14E09DF600519A30 /* main.m in Sources */,
+				DAA530F614E09DF600519A30 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAA530FA14E09DF600519A30 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAA5310D14E09DF600519A30 /* Dig_ItTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DAA5310414E09DF600519A30 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DAA530DD14E09DF600519A30 /* Dig-It */;
+			targetProxy = DAA5310314E09DF600519A30 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DAA530EB14E09DF600519A30 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DAA530EC14E09DF600519A30 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DAA530F114E09DF600519A30 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DAA530F214E09DF600519A30 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		DAA530F714E09DF600519A30 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DAA530F814E09DF600519A30 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		DAA5310814E09DF600519A30 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DAA5310914E09DF600519A30 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DAA5310E14E09DF600519A30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		DAA5310F14E09DF600519A30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DAA5311114E09DF600519A30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Dig-It/Dig-It-Prefix.pch";
+				INFOPLIST_FILE = "Dig-It/Dig-It-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		DAA5311214E09DF600519A30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Dig-It/Dig-It-Prefix.pch";
+				INFOPLIST_FILE = "Dig-It/Dig-It-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		DAA5311414E09DF600519A30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Dig-It.app/Contents/MacOS/Dig-It";
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Dig-It/Dig-It-Prefix.pch";
+				INFOPLIST_FILE = "Dig-ItTests/Dig-ItTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		DAA5311514E09DF600519A30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Dig-It.app/Contents/MacOS/Dig-It";
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Dig-It/Dig-It-Prefix.pch";
+				INFOPLIST_FILE = "Dig-ItTests/Dig-ItTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DAA530D814E09DF500519A30 /* Build configuration list for PBXProject "Dig-It" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAA5310E14E09DF600519A30 /* Debug */,
+				DAA5310F14E09DF600519A30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DAA5311014E09DF600519A30 /* Build configuration list for PBXNativeTarget "Dig-It" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAA5311114E09DF600519A30 /* Debug */,
+				DAA5311214E09DF600519A30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		DAA5311314E09DF600519A30 /* Build configuration list for PBXNativeTarget "Dig-ItTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAA5311414E09DF600519A30 /* Debug */,
+				DAA5311514E09DF600519A30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DAA530D514E09DF500519A30 /* Project object */;
+}
