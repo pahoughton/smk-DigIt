@@ -13,6 +13,34 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DA5997C114DC100000BAEECE"
+               BuildableName = "libSMKCocoaCommon.a"
+               BlueprintName = "SMKCocoaCommon"
+               ReferencedContainer = "container:../../Libs/SMKCocoaCommon/SMKCocoaCommon.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DA59972414DC04C800BAEECE"
+               BuildableName = "libSMKDB.a"
+               BlueprintName = "SMKDB"
+               ReferencedContainer = "container:../../Libs/SMKDB/SMKDB.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "DAA530DD14E09DF600519A30"
                BuildableName = "Dig-It.app"
                BlueprintName = "Dig-It"
