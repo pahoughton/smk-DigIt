@@ -27,15 +27,7 @@
 
 @class SMKDBConnMgr;
 @class VidMetaSelDataSrc;
-
-@interface VidMetaArtGather : NSOperation
-@property (retain) NSArray * tmdbArtList;
-@property (assign) BOOL gatherComplete;
--(id)initWithTmdbArtList:(NSArray *)aList opQ:(NSOperationQueue *)opQ;
-
-+(NSString *)kvoGatherComplete;
-
-@end
+@class ArtBrowswerItemGatherer;
 
 @interface VidMetaSelEntity : NSObject
 @property (retain) NSImage * thumb;
@@ -48,7 +40,7 @@
 @property (retain) NSString * source;
 @property (retain) NSString * sourceId;
 @property (retain) NSString * desc;
-@property (retain) VidMetaArtGather * tmdbArtGath;
+@property (retain) ArtBrowswerItemGatherer * artGath;
 
 @end
 
@@ -65,6 +57,7 @@
 
 @interface VidMetaSelDataSrc : NSObject <NSTableViewDataSource>
 @property (retain) NSMutableArray  * dataRows;
+@property (strong) NSMutableArray  * artGatherList;
 @property (retain) SMKDBConnMgr * db;
 @property (retain) VidMetaRecGather * gather;
 

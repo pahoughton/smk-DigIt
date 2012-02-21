@@ -24,8 +24,10 @@
 
 **/
 #import <Foundation/Foundation.h>
+#import <SMKDigitDB.h>
 
-@interface DIDB : NSObject
+@interface DIDB : SMKDigitDB
+
 +(NSString *)abpCustIdPropName;
 
 +(NSNumber *)staff_id;
@@ -42,10 +44,10 @@
 +(NSString *)sel_uvf_detailsWithUpc:(NSString *)upc;
 +(NSString *)sel_upcs:(NSString *)upc;
 
-+(NSString *)vActors:(NSString *)vid_id meta:(BOOL)meta;
-+(NSString *)vDirectors:(NSString *)vid_id meta:(BOOL)meta;
-+(NSString *)vGenres:(NSString *)vid_id meta:(BOOL)meta;
-+(NSImage *)vThumb:(NSString *)vid_id artid:(NSString *)art_id meta:(BOOL)meta;
++(NSString *)vActors:(NSNumber *)vid_id meta:(BOOL)meta;
++(NSString *)vDirectors:(NSNumber *)vid_id meta:(BOOL)meta;
++(NSString *)vGenres:(NSNumber *)vid_id meta:(BOOL)meta;
++(NSImage *)vThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id meta:(BOOL)meta;
 
 +(NSString *)sel_v_info_title:(NSString *)title 
                           year:(NSString *)year
@@ -57,15 +59,15 @@
 +(NSString *)sel_vtm_info_title:(NSString *)title 
                            year:(NSString *)year;
 
-+(NSString *)vtActors:(NSString *)vid_id;
-+(NSString *)vtDirectors:(NSString *)vid_id;
-+(NSString *)vtGenres:(NSString *)vid_id;
-+(NSImage *)vtThumb:(NSString *)vid_id artid:(NSString *)art_id;
++(NSString *)vtActors:(NSNumber *)vid_id;
++(NSString *)vtDirectors:(NSNumber *)vid_id;
++(NSString *)vtGenres:(NSNumber *)vid_id;
++(NSImage *)vtThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id;
 
-+(NSString *)vtmActors:(NSString *)vid_id;
-+(NSString *)vtmDirectors:(NSString *)vid_id;
-+(NSString *)vtmGenres:(NSString *)vid_id;
-+(NSImage *)vtmThumb:(NSString *)vid_id artid:(NSString *)art_id;
++(NSString *)vtmActors:(NSNumber *)vid_id;
++(NSString *)vtmDirectors:(NSNumber *)vid_id;
++(NSString *)vtmGenres:(NSNumber *)vid_id;
++(NSImage *)vtmThumb:(NSNumber *)vid_id artid:(NSString *)art_id;
 
 +(BOOL)set_cust:(NSNumber *)cust_id
             upc:(NSString *)upc

@@ -25,17 +25,34 @@
 **/
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
+#import "ArtBrowswerItemGatherer.h"
 
-@interface VidSelArtPickerViewCntlr : NSViewController
-@property (strong) NSArray * artList;
+@interface VidSelArtDataSrc :  NSObject // IKImageBrowserDataSource
+@property (strong) NSMutableArray * artList;
+-(id)initWithArt:(NSMutableArray *)list;
+-(id) imageBrowser:(IKImageBrowserView *) aBrowser itemAtIndex:(NSUInteger)index;
+-(NSUInteger) numberOfItemsInImageBrowser:(IKImageBrowserView *) aBrowser;
+
+@end
+
+@interface VidSelArtPickerViewCntlr : NSViewController // IKImageBrowserDelegate
+@property (strong) ArtBrowswerItemGatherer * artGath;
+@property (assign) BOOL aliveAndWell;
 @property (weak) IBOutlet IKImageBrowserView *artBrowser;
 @property (weak) IBOutlet IKImageView *artImageView;
+@property (weak) IBOutlet NSButton *selectButton;
 
 
-+(VidSelArtPickerViewCntlr *)showSelfIn:(NSView *)viewToReplace artList:(NSArray *)art;
++(VidSelArtPickerViewCntlr *)showSelfIn:(NSView *)viewToReplace artGath:(ArtBrowswerItemGatherer *)artGather;
 
-@property (weak) IBOutlet NSButton *selectArtAction;
+// IKImageBrowserDelegate methods
+- (void) imageBrowser:(IKImageBrowserView *) aBrowser backgroundWasRightClickedWithEvent:(NSEvent *) event;
+- (void) imageBrowser:(IKImageBrowserView *) aBrowser cellWasDoubleClickedAtIndex:(NSUInteger) index;
+- (void) imageBrowser:(IKImageBrowserView *) aBrowser cellWasRightClickedAtIndex:(NSUInteger) index withEvent:(NSEvent *) event;
+- (void) imageBrowserSelectionDidChange:(IKImageBrowserView *) aBrowser;
+
 
 - (IBAction)cancelAction:(id)sender;
+- (IBAction)selectAction:(id)sender;
 
 @end

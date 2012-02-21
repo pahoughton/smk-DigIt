@@ -23,7 +23,7 @@
 **/
 #import "CustUpcViewCntlr.h"
 #import "CustListViewCntlr.h"
-#import "VidMetaSelWinCntlr.h"
+#import "VidMetaSelViewCntlr.h"
 #import "DIDB.h"
 #import <SMKLogger.h>
 #import <SMKAlertWin.h>
@@ -34,7 +34,7 @@ static CustUpcViewCntlr * me;
 @implementation CustUpcViewCntlr
 @synthesize db;
 @synthesize myContainerView;
-@synthesize metaSelWinCntlr;
+@synthesize metaSelViewCntlr;
 @synthesize custInfo;
 @synthesize custId;
 @synthesize custHasUPC;
@@ -95,7 +95,7 @@ static CustUpcViewCntlr * me;
         aliveAndWell = FALSE;
         custInfo = nil;
         [self setDb:[[SMKDBConnMgr alloc] init]];
-        metaSelWinCntlr = nil;
+        metaSelViewCntlr = nil;
         SMKLogDebug(@"initWithNib");
     }
     
@@ -432,10 +432,10 @@ static CustUpcViewCntlr * me;
 {
     SMKLogDebug(@"searchButton");
     if( [[upcTitleTF stringValue] length] > 1 ) {
-        [self setMetaSelWinCntlr:[VidMetaSelWinCntlr 
-                                  showSelfWithTitle:[upcTitleTF stringValue]
-                                  year:[upcYearTF stringValue]
-                                  upc:[curUpcValue stringValue]]];
+        metaSelViewCntlr = [VidMetaSelViewCntlr showSelfIn:[self view]
+                                                     title:[upcThumbTF stringValue]
+                                                      year:[upcYearTF stringValue]
+                                                       upc:[curUpcValue stringValue]];
     } else {
         [SMKAlertWin alertWithMsg:@"Need a title to search for"];
         [searchButton setEnabled:FALSE];

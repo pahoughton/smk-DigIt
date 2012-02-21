@@ -325,7 +325,6 @@ static CustomerViewCntlr * me;
         
         ABMultiValue * abMulti = [abp valueForProperty:kABAddressProperty];
         if( [cEnt addrInx] >= 0 ) {
-            BOOL change = FALSE;
             NSDictionary * oAddr = [abMulti valueAtIndex:[cEnt addrInx]];
             NSString * valStreet = [addrStreetTF stringValue];
             NSString * valCity = [addrCityTF stringValue];

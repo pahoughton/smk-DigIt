@@ -26,12 +26,14 @@
 #import "VidMetaSelCellView.h"
 #import "VidSelArtPickerViewCntlr.h"
 #import "CustUpcViewCntlr.h"
+#import "DIDB.h"
 #import <SMKLogger.h>
 
 static VidMetaSelViewCntlr * me = nil;
 
 @implementation VidMetaSelViewCntlr
 @synthesize dataSrc;
+@synthesize artPickerViewCntlr;
 @synthesize srcTitle;
 @synthesize srcYear;
 @synthesize srcUpc;
@@ -152,16 +154,20 @@ static VidMetaSelViewCntlr * me = nil;
 
 - (IBAction)selectMetaAction:(id)sender 
 {
-    NSInteger row = [[self metaTableView] rowForView:sender];
-    VidMetaSelEntity * meta = [[[self dataSource] dataRows] objectAtIndex:row];
+    NSInteger row = [[self metaTView] rowForView:sender];
+    VidMetaSelEntity * meta = [[[self dataSrc] dataRows] objectAtIndex:row];
     if( [DIDB set_upc:[self srcUpc]
-                title:[[self metaSearchTitle] stringValue]
-                 year:[[self metaSearchYear] stringValue]
+                title:[[self titleTF] stringValue]
+                 year:[[self yearTF] stringValue]
               metaSrc:[meta source]
                metaId:[meta sourceId]] ) {
         [sender setEnabled:FALSE];
     }
-    [VidSelArtPickerViewCntlr showSelfIn:[self view] WithArt:nil
+    if( [meta tmdbArtGath] != nil ) {
+        artPickerViewCntlr = [VidSelArtPickerViewCntlr showSelfIn:[self view] artGath:[meta tmdbArtGath]];
+    } else {
+        [self cancelAction:self];
+    }
     
 }
 

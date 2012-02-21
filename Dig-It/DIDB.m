@@ -32,6 +32,7 @@ static NSNumber * staff_id = nil;
 static NSDateFormatter * yearFmt = nil;
 static NSMutableArray * customersCols = nil;
 
+
 @implementation DIDB
 +(NSString *)abpCustIdPropName
 {
@@ -344,7 +345,7 @@ static NSMutableArray * customersCols = nil;
             "tv_episode, tv_network, tv_series,\n"
             "date_added, last_modified\n"
             "FROM video_%@titles\n"
-            "WHERE title like %@\n",
+            "WHERE title % %@\n",
             metaStr,
             metaStr,
             [db q:title]];
@@ -358,7 +359,7 @@ static NSMutableArray * customersCols = nil;
     return [DIDB sel_v_info_title:title year:year meta:TRUE];
 }
 
-+(NSString *)vActors:(NSString *)vid_id meta:(BOOL)meta
++(NSString *)vActors:(NSNumber *)vid_id meta:(BOOL)meta
 {
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     id <SMKDBResults> rslt;
@@ -384,17 +385,17 @@ static NSMutableArray * customersCols = nil;
     }
     return [actorList componentsJoinedByString:@", "];
 }
-+(NSString *)vtActors:(NSString *)vid_id
++(NSString *)vtActors:(NSNumber *)vid_id
 {
     return [DIDB vActors:vid_id meta:FALSE];
 }
-+(NSString *)vtmActors:(NSString *)vid_id
++(NSString *)vtmActors:(NSNumber *)vid_id
 {
     return [DIDB vActors:vid_id meta:TRUE];
 }
 
 
-+(NSString *)vDirectors:(NSString *)vid_id meta:(BOOL)meta
++(NSString *)vDirectors:(NSNumber *)vid_id meta:(BOOL)meta
 {
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     id <SMKDBResults> rslt;
@@ -420,17 +421,17 @@ static NSMutableArray * customersCols = nil;
     }
     return [actorList componentsJoinedByString:@", "];
 }
-+(NSString *)vtDirectors:(NSString *)vid_id
++(NSString *)vtDirectors:(NSNumber *)vid_id
 {
     return[ DIDB vDirectors:vid_id meta:FALSE];
 }
-+(NSString *)vtmDirectors:(NSString *)vid_id
++(NSString *)vtmDirectors:(NSNumber *)vid_id
 {
     return[ DIDB vDirectors:vid_id meta:TRUE];
 }
 
 
-+(NSString *)vGenres:(NSString *)vid_id meta:(BOOL)meta;
++(NSString *)vGenres:(NSNumber *)vid_id meta:(BOOL)meta;
 {
     
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
@@ -456,16 +457,16 @@ static NSMutableArray * customersCols = nil;
     }
     return [genreList componentsJoinedByString:@", "];
 }
-+(NSString *)vtGenres:(NSString *)vid_id
++(NSString *)vtGenres:(NSNumber *)vid_id
 {
     return [DIDB vGenres:vid_id meta:FALSE];
 }
-+(NSString *)vtmGenres:(NSString *)vid_id
++(NSString *)vtmGenres:(NSNumber *)vid_id
 {
     return [DIDB vGenres:vid_id meta:TRUE];
 }
 
-+(NSImage *)vThumb:(NSNumber *)vid_id artid:(NSString *)art_id meta:(BOOL)meta
++(NSImage *)vThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id meta:(BOOL)meta
 {
     NSString * query;
 
@@ -511,11 +512,11 @@ static NSMutableArray * customersCols = nil;
     return nil;
 }
 
-+(NSImage *)vtThumb:(NSString *)vid_id artid:(NSString *)art_id
++(NSImage *)vtThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id
 {
     return [DIDB vThumb:vid_id artid:art_id meta:FALSE];
 }
-+(NSImage *)vtmThumb:(NSString *)vid_id artid:(NSString *)art_id
++(NSImage *)vtmThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id
 {
     return [DIDB vThumb:vid_id artid:art_id meta:TRUE];
 }

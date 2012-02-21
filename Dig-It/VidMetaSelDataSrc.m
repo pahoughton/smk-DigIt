@@ -25,50 +25,13 @@
 **/
 #import "VidMetaSelDataSrc.h"
 #import "VidMetaSelCellView.h"
+#import "ArtBrowswerItemGatherer.h"
 #import "DIDB.h"
 #import <SMKLogger.h>
 #import <SMKDB.h>
 #import <TMDbQuery.h>
 #import <SMKAlertWin.h>
 
-@implementation VidMetaArtGather
-@synthesize tmdbArtList;
-@synthesize gatherComplete;
-
--(id)initWithTmdbArtList:(NSArray *)aList opQ:(NSOperationQueue *)opQ
-{
-    self = [super init];
-    if( self ) {
-        tmdbArtList = aList;
-        [self setGatherComplete:FALSE];
-        [opQ addOperation:self];
-    }
-    return self;
-}
-+(NSString *)kvoGatherComplete
-{
-    return @"gatherComplete";
-}
-
--(void)main
-{
-    TMDbQuery * tmdb = [[TMDbQuery alloc]init];
-    for( NSMutableDictionary * art in tmdbArtList ) {
-    
-        if( ( [[art objectForKey:@"size"] isEqualToString:@"mid"]
-              || [[art objectForKey:@"size"] isEqualToString:@"w154"] )
-           && [art objectForKey:@"art"] == nil ) {
-            NSImage * img = [tmdb getImage:art];
-            if( img ) {
-                [art setObject:img forKey:@"art"];
-            }
-        }
-    }
-    [self willChangeValueForKey:[VidMetaArtGather kvoGatherComplete]];
-    [self setGatherComplete:TRUE];
-    [self didChangeValueForKey:[VidMetaArtGather kvoGatherComplete]];
-}
-@end
 
 @implementation VidMetaSelEntity
 @synthesize title;
@@ -81,7 +44,7 @@
 @synthesize source;
 @synthesize desc;
 @synthesize sourceId;
-@synthesize tmdbArtGath;
+@synthesize artGath;
 
 
 -(NSString *)description
@@ -141,6 +104,8 @@
     id <SMKDBResults> metaRslts;
     NSMutableArray * rec;
     NSInteger rowCount = [[dataStore dataRows] count];
+        
+    NSMutableArray * artGatherList = [dataStore artGatherList];
     // first Titles
     metaRslts = [[[dataStore db] connect]
                  query:[DIDB sel_vt_info_title:searchTitle 
@@ -151,14 +116,22 @@
         NSNumber * vid_id_num = [rec objectAtIndex:0];
         NSString * vid_id = [vid_id_num stringValue];
         
-        [meta setThumb:[DIDB vtThumb:vid_id
-                              artid:[rec objectAtIndex:18]]];
+        // art_thumb_id 18
+        NSNumber * art_thumb_id = [rec objectAtIndex:18];
+        if( ! SMKisNULL( art_thumb_id ) ) {
+            [meta setThumb:[DIDB vtThumb:vid_id_num
+                                   artid:art_thumb_id]];
+        } else {
+            [meta setArtGath:[[ArtBrowswerItemGatherer alloc]initWithOpQ:nil]];
+            [[meta artGath]gatherDigVidTitleArt:vid_id_num];
+            [artGatherList addObject:[meta artGath]];
+        }
         [meta setTitle:[rec objectAtIndex:1]];
         [meta setYear:[DIDB dateYear:[rec objectAtIndex:4]]];
         [meta setMpaa:[rec objectAtIndex:3]];
-        [meta setGenres:[DIDB vtGenres:vid_id]];
-        [meta setActors:[DIDB vtActors:vid_id]];
-        [meta setDirectors:[DIDB vtDirectors:vid_id]];
+        [meta setGenres:[DIDB vtGenres:vid_id_num]];
+        [meta setActors:[DIDB vtActors:vid_id_num]];
+        [meta setDirectors:[DIDB vtDirectors:vid_id_num]];
         [meta setSource:@"Titles"];
         [meta setSourceId:vid_id];
         [meta setDesc:[rec objectAtIndex:6]];
@@ -180,14 +153,21 @@
         NSNumber * vid_meta_id_num = [rec objectAtIndex:0];
         NSString * vid_meta_id = [vid_meta_id_num stringValue];
         
-        [meta setThumb:[DIDB vtmThumb:vid_meta_id
-                              artid:[rec objectAtIndex:18]]];
+        NSNumber * art_thumb_id = [rec objectAtIndex:18];
+        if( ! SMKisNULL( art_thumb_id ) ) {
+            [meta setThumb:[DIDB vtThumb:vid_meta_id_num
+                                   artid:art_thumb_id]];
+        } else {
+            [meta setArtGath:[[ArtBrowswerItemGatherer alloc]initWithOpQ:nil]];
+            [[meta artGath]gatherDigVidMetaArt:vid_meta_id_num];
+            [artGatherList addObject:[meta artGath]];
+        }
         [meta setTitle:[rec objectAtIndex:1]];
         [meta setYear:[DIDB dateYear:[rec objectAtIndex:4]]];
         [meta setMpaa:[rec objectAtIndex:3]];
-        [meta setGenres:[DIDB vtmGenres:vid_meta_id]];
-        [meta setActors:[DIDB vtmActors:vid_meta_id]];
-        [meta setDirectors:[DIDB vtmDirectors:vid_meta_id]];
+        [meta setGenres:[DIDB vtmGenres:vid_meta_id_num]];
+        [meta setActors:[DIDB vtmActors:vid_meta_id_num]];
+        [meta setDirectors:[DIDB vtmDirectors:vid_meta_id_num]];
         [meta setSource:@"Meta"];
         [meta setSourceId:vid_meta_id];
         [meta setDesc:[rec objectAtIndex:6]];
@@ -204,6 +184,9 @@
         for( NSDictionary * movie in [tmdb data] ) {
             VidMetaSelEntity * meta = [[VidMetaSelEntity alloc] init];
             
+            [meta setSource:@"TMDb"];
+            [meta setSourceId:[movie valueForKey:@"tmdb_id"]];
+            
             NSArray * artlist = [movie valueForKey:@"artlist"];
             for( NSMutableDictionary * art in artlist ) {
                 if( [[art valueForKey:@"size"] isEqualToString:@"w154"] ) {
@@ -215,10 +198,10 @@
                     }
                 }
             }
-            [meta setTmdbArtGath:[[VidMetaArtGather alloc]
-                                  initWithTmdbArtList:artlist 
-                                  opQ:[[dataStore db] opQueue]]];
-            
+            [meta setArtGath:[[ArtBrowswerItemGatherer alloc]initWithOpQ:nil]];
+            [[meta artGath]gatherTMDBArtDictList:artlist];
+            [artGatherList addObject:[meta artGath]];
+
             [meta setTitle:[movie valueForKey:@"title"]];
             NSString * reldt = [movie valueForKey:@"release_date"];
             if( reldt && [reldt length] > 4 )  {
@@ -256,12 +239,12 @@
             }
             [meta setGenres:[genreList componentsJoinedByString:@", "]];
             [meta setDesc:[movie valueForKey:@"desc_long"]];
-            [meta setSource:@"TMDb"];
-            [meta setSourceId:[movie valueForKey:@"tmdb_id"]];
             
             [[dataStore dataRows] addObject:meta];
         }
-        
+        for( ArtBrowswerItemGatherer * gath in artGatherList ) {
+            [gath goWithOpQueue:[[dataStore db]opQueue]];
+        }
         if( [[dataStore dataRows] count] != rowCount ) {
             [self.dataStore willChangeValueForKey:[VidMetaSelDataSrc kvoDoneKey]];
             [self.dataStore didChangeValueForKey:[VidMetaSelDataSrc kvoDoneKey]];
@@ -273,6 +256,7 @@
 
 @implementation VidMetaSelDataSrc
 @synthesize dataRows;
+@synthesize artGatherList;
 @synthesize db;
 @synthesize gather;
 +(NSString *)kvoChangeKey
@@ -294,6 +278,7 @@
     self = [super init];
     if( self ) {
         dataRows = [[NSMutableArray alloc]init];
+        artGatherList = [[NSMutableArray alloc]init];
         db = [[SMKDBConnMgr alloc]init];
         gather = [[VidMetaRecGather alloc] init];
         [gather addObserver:self forKeyPath:[VidMetaSelDataSrc kvoChangeKey]

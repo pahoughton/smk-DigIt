@@ -88,7 +88,6 @@
 						<int key="NSvFlags">293</int>
 						<string key="NSFrame">{{362, -5}, {77, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:687</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="470294413">
@@ -292,7 +291,7 @@
 														</object>
 														<string key="NSFrameSize">{238, 598}</string>
 														<reference key="NSSuperview" ref="893731644"/>
-														<reference key="NSNextKeyView" ref="308855398"/>
+														<reference key="NSNextKeyView" ref="927317227"/>
 														<bool key="NSViewWantsBestResolutionOpenGLSurface">YES</bool>
 														<bool key="constrainsToOriginalSize">NO</bool>
 														<bool key="cellsHaveSubtitle">NO</bool>
@@ -349,7 +348,7 @@
 										</object>
 										<string key="NSFrameSize">{239, 600}</string>
 										<reference key="NSSuperview" ref="79612127"/>
-										<reference key="NSNextKeyView" ref="927317227"/>
+										<reference key="NSNextKeyView" ref="893731644"/>
 										<int key="NSsFlags">133778</int>
 										<reference key="NSVScroller" ref="308855398"/>
 										<reference key="NSHScroller" ref="927317227"/>
@@ -454,6 +453,30 @@
 						<reference key="destination" ref="741618294"/>
 					</object>
 					<int key="connectionID">27</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">selectButton</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="741618294"/>
+					</object>
+					<int key="connectionID">30</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">selectAction</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="741618294"/>
+					</object>
+					<int key="connectionID">31</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">selectAction:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="741618294"/>
+					</object>
+					<int key="connectionID">32</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -654,7 +677,7 @@
 				<reference key="dict.values" ref="1002"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">29</int>
+			<int key="maxID">32</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>

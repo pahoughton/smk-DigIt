@@ -25,12 +25,12 @@
 **/
 #import <Cocoa/Cocoa.h>
 #import <SMKDB.h>
-@class VidMetaSelWinCntlr;
+@class VidMetaSelViewCntlr;
 
 @interface CustUpcViewCntlr : NSViewController <SMKDBRecProc>
 @property (retain) SMKDBConnMgr * db;
 @property (assign) NSView * myContainerView;
-@property (retain) VidMetaSelWinCntlr * metaSelWinCntlr;
+@property (retain) VidMetaSelViewCntlr * metaSelViewCntlr;
 @property (retain) NSDictionary * custInfo;
 @property (retain) NSNumber * custId;
 

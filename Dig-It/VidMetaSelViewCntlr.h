@@ -25,9 +25,11 @@
 **/
 #import <Cocoa/Cocoa.h>
 @class VidMetaSelDataSrc;
+@class VidSelArtPickerViewCntlr;
 
 @interface VidMetaSelViewCntlr : NSViewController <NSTabViewDelegate>
 @property (strong) VidMetaSelDataSrc * dataSrc;
+@property (strong) VidSelArtPickerViewCntlr * artPickerViewCntlr;
 @property (strong) NSString * srcTitle;
 @property (strong) NSString * srcYear;
 @property (strong) NSString * srcUpc;
