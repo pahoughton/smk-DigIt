@@ -32,6 +32,8 @@
 @property (assign) NSView * myContainerView;
 @property (retain) VidMetaSelWinCntlr * metaSelWinCntlr;
 @property (retain) NSDictionary * custInfo;
+@property (retain) NSNumber * custId;
+
 @property (assign) BOOL custHasUPC;
 @property (assign) BOOL aliveAndWell;
 @property (assign) BOOL needToRip;

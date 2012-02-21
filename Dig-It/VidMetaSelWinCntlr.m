@@ -26,6 +26,8 @@
 #import "VidMetaSelCellView.h"
 #import "DIDB.h"
 #import <SMKLogger.h>
+#import <TMDbQuery.h>
+#import <SMKAlertWin.h>
 
 static VidMetaSelWinCntlr * me = nil;
 
@@ -162,20 +164,27 @@ static VidMetaSelWinCntlr * me = nil;
 
 - (IBAction)searchMetaButton:(id)sender 
 {
-    [self setDataSource:[[VidMetaSelDataSrc alloc] init]];
-    [[[self dataSource] gather] addObserver:self
-                                 forKeyPath:[VidMetaSelDataSrc kvoChangeKey] 
-                                    options:0
-                                    context:nil];
-    [[self dataSource] addObserver:self
-                         forKeyPath:[VidMetaSelDataSrc kvoDoneKey] 
-                            options:0
-                            context:nil];
-    [[self dataSource] findTitle:[[self metaSearchTitle] stringValue]
-                            year:[[self metaSearchYear] stringValue]];
-     
-    [searchProgressInd setHidden:FALSE];
-    [searchProgressInd startAnimation:self];
+    @try {
+        [TMDbQuery tmdbApiKey];
+        
+        [self setDataSource:[[VidMetaSelDataSrc alloc] init]];
+        [[[self dataSource] gather] addObserver:self
+                                     forKeyPath:[VidMetaSelDataSrc kvoChangeKey] 
+                                        options:0
+                                        context:nil];
+        [[self dataSource] addObserver:self
+                            forKeyPath:[VidMetaSelDataSrc kvoDoneKey] 
+                               options:0
+                               context:nil];
+        [[self dataSource] findTitle:[[self metaSearchTitle] stringValue]
+                                year:[[self metaSearchYear] stringValue]];
+        
+        [searchProgressInd setHidden:FALSE];
+        [searchProgressInd startAnimation:self];
+    }
+    @catch (NSException *exception) {
+        [SMKAlertWin alertWithMsg:[exception reason]];
+    }
 }
 
 - (IBAction)cancelButton:(id)sender 

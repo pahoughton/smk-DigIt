@@ -31,6 +31,44 @@
 #import <TMDbQuery.h>
 #import <SMKAlertWin.h>
 
+@implementation VidMetaArtGather
+@synthesize tmdbArtList;
+@synthesize gatherComplete;
+
+-(id)initWithTmdbArtList:(NSArray *)aList opQ:(NSOperationQueue *)opQ
+{
+    self = [super init];
+    if( self ) {
+        tmdbArtList = aList;
+        [self setGatherComplete:FALSE];
+        [opQ addOperation:self];
+    }
+    return self;
+}
++(NSString *)kvoGatherComplete
+{
+    return @"gatherComplete";
+}
+
+-(void)main
+{
+    TMDbQuery * tmdb = [[TMDbQuery alloc]init];
+    for( NSMutableDictionary * art in tmdbArtList ) {
+    
+        if( ( [[art objectForKey:@"size"] isEqualToString:@"mid"]
+              || [[art objectForKey:@"size"] isEqualToString:@"w154"] )
+           && [art objectForKey:@"art"] == nil ) {
+            NSImage * img = [tmdb getImage:art];
+            if( img ) {
+                [art setObject:img forKey:@"art"];
+            }
+        }
+    }
+    [self willChangeValueForKey:[VidMetaArtGather kvoGatherComplete]];
+    [self setGatherComplete:TRUE];
+    [self didChangeValueForKey:[VidMetaArtGather kvoGatherComplete]];
+}
+@end
 
 @implementation VidMetaSelEntity
 @synthesize title;
@@ -43,6 +81,7 @@
 @synthesize source;
 @synthesize desc;
 @synthesize sourceId;
+@synthesize tmdbArtGath;
 
 
 -(NSString *)description
@@ -164,13 +203,22 @@
     if( [tmdb search:searchTitle getDetail:TRUE] ) {
         for( NSDictionary * movie in [tmdb data] ) {
             VidMetaSelEntity * meta = [[VidMetaSelEntity alloc] init];
-
+            
             NSArray * artlist = [movie valueForKey:@"artlist"];
-            for( NSDictionary * art in artlist ) {
-                if( [art valueForKey:@"art"] != nil ) {
-                    [meta setThumb:[art valueForKey:@"art"]];
+            for( NSMutableDictionary * art in artlist ) {
+                if( [[art valueForKey:@"size"] isEqualToString:@"w154"] ) {
+                    NSImage * img = [tmdb getImage:art];
+                    if( img == nil ) {
+                        [art setObject:img forKey:@"art"];
+                        [meta setThumb:img];
+                        break;
+                    }
                 }
             }
+            [meta setTmdbArtGath:[[VidMetaArtGather alloc]
+                                  initWithTmdbArtList:artlist 
+                                  opQ:[[dataStore db] opQueue]]];
+            
             [meta setTitle:[movie valueForKey:@"title"]];
             NSString * reldt = [movie valueForKey:@"release_date"];
             if( reldt && [reldt length] > 4 )  {

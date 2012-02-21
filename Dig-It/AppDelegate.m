@@ -27,6 +27,7 @@
 #import "AppUserValues.h"
 #import "PrefsWinCntlr.h"
 #import "DigItWinCntlr.h"
+#import "ArtPickerWinCntlr.h"
 
 #import <SMKLogger.h>
 #import <SMKDB.h>
@@ -36,6 +37,7 @@
 @synthesize window = _window;
 @synthesize digItWinCntlr;
 @synthesize prefsWinCntlr;
+@synthesize artWinCntlr;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -81,6 +83,18 @@
         [prefsWinCntlr setMainWindow:[self window]];
     }
     [prefsWinCntlr showWindow:prefsWinCntlr];
+    [[prefsWinCntlr window] makeKeyAndOrderFront:self];
+}
+
+- (IBAction)artPickerMenuItem:(id)sender
+{
+    if( artWinCntlr == nil ) {
+        artWinCntlr = [[ArtPickerWinCntlr alloc] initWithWindowNibName:@"ArtPickerWin"];
+    }
+    [artWinCntlr showWindow:prefsWinCntlr];
+    if( [artWinCntlr window] ) {
+        [[artWinCntlr window] makeKeyAndOrderFront:self];
+    }
 }
 
 @end

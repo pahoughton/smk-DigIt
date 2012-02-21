@@ -26,13 +26,16 @@
 
 @class PrefsWinCntlr;
 @class DigItWinCntlr;
+@class ArtPickerWinCntlr;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
 @property (retain) DigItWinCntlr * digItWinCntlr;
 @property (retain) PrefsWinCntlr * prefsWinCntlr;
+@property (retain) ArtPickerWinCntlr * artWinCntlr;
 
 - (IBAction)prefsMenuItem:(id)sender;
+- (IBAction)artPickerMenuItem:(id)sender;
 
 @end

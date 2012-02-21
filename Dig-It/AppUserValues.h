@@ -32,7 +32,7 @@ extern NSString * AppUDKdbPort;
 extern NSString * AppUDKdbDatabase;
 extern NSString * AppUDKdbUser;
 extern NSString * AppUDKdbPassItem;
-
+extern NSString * AppUDKartBrowserImgWidth;
 @interface AppUserValues : NSObject <SMKDBConnInfo>
 @property (assign) NSUserDefaults * ud;
 
@@ -44,10 +44,16 @@ extern NSString * AppUDKdbPassItem;
 -(NSString *)dbPass;
 -(NSString *)dbDatabase;
 -(NSString *)dbApp;
-
+-(NSString *)dbPassItem; // servertype.host.database
 +(NSString *)dbUser;
 
++(NSString *)dbPassItem; // servertype.host.database
 +(void)setDbPass:(NSString *)pass;
+
++(NSString *)mediaBaseDir;
+
++(NSUInteger)artBrowserImgWidth;
++(void)setArtBrowserImgWidth:(NSUInteger) val;
 
 -(BOOL)recProcOnMainTread;
 

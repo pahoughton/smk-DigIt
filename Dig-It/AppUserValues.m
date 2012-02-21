@@ -26,6 +26,7 @@
 #import "AppUserValues.h"
 #import <SMKLogin.h>
 
+
 // these much match the values in the PrefsWin.xib
 //   (UDK = User Defaults Key)
 NSString * AppUDKdbServer   = @"digitDBserver";
@@ -34,6 +35,8 @@ NSString * AppUDKdbPort     = @"digitDBport";
 NSString * AppUDKdbDatabase = @"digitDBdatabase";
 NSString * AppUDKdbUser     = @"digitDBuser";
 NSString * AppUDKdbPassItem = @"DititzeDB";
+NSString * AppUDKartBrowserImgWidth = @"digitArtBrowserImgWidth";
+
 // Note password is either not stored or kept in keychain
 
 // we don't want to keep fetching this from the key chain
@@ -86,7 +89,7 @@ static NSString * dbPassCache = nil;
 -(NSString *)dbPass
 {
     if( dbPassCache == nil ) {
-        dbPassCache = [SMKLogin getPassForItem:AppUDKdbPassItem user:[self dbUser]];
+        dbPassCache = [SMKLogin getPassForItem:[self dbPassItem] user:[self dbUser]];
     }
     return dbPassCache;
 }
@@ -100,6 +103,22 @@ static NSString * dbPassCache = nil;
     return @"Dig-It";
 }
 
+-(NSString *)dbPassItem
+{
+    return [AppUserValues dbPassItem];
+}
+
+
++(NSString *)dbPassItem
+{
+    NSUserDefaults * sud = [NSUserDefaults standardUserDefaults];
+    return [NSString stringWithFormat:
+            @"%@.%@.%@",
+            [sud stringForKey:AppUDKdbServer],
+            [sud stringForKey:AppUDKdbHost],
+            [sud stringForKey:AppUDKdbDatabase]];
+}
+
 +(NSString *)dbUser
 {
     return [[NSUserDefaults standardUserDefaults] 
@@ -108,13 +127,18 @@ static NSString * dbPassCache = nil;
 
 +(void)setDbPass:(NSString *)pass
 {
-    if( [SMKLogin setUserPassForItem:AppUDKdbPassItem
+    if( [SMKLogin setUserPassForItem:[AppUserValues dbPassItem]
                                 user:[AppUserValues dbUser]
                                 pass:pass] ) {
         dbPassCache = pass;
     }
 }
 
++(NSString *)mediaBaseDir
+{
+    // FIXME!!!
+    return @"/Volumes/Drobo";
+}
 -(BOOL)recProcOnMainTread
 {
     return  TRUE;
@@ -140,4 +164,25 @@ static NSString * dbPassCache = nil;
     return desc;
 }
 
+// default 110, min 50 max 300
++(NSUInteger)artBrowserImgWidth
+{
+    NSInteger v = [[NSUserDefaults standardUserDefaults]  integerForKey:AppUDKartBrowserImgWidth];
+    if( v == 0 ) {
+        return 110;
+    } else if( v < 50 ) {
+        return 50;
+    } else if( v > 300 ) {
+        return 300;
+    } else {
+        return v;
+    }
+}
+
++(void)setArtBrowserImgWidth:(NSUInteger)val
+{
+    if( 49 < val && val < 300 ) {
+        [[NSUserDefaults standardUserDefaults] setInteger:val forKey:AppUDKartBrowserImgWidth];
+    }
+}
 @end
