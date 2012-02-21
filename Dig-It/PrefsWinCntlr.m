@@ -25,6 +25,7 @@
 #import "AppUserValues.h"
 #import <SMKLogger.h>
 #import <SMKDB.h>
+#import <NSWindowAdditions.h>
 #import <QuartzCore/CoreAnimation.h>
 
 @implementation PrefsWinCntlr
@@ -85,6 +86,9 @@ static float vigourOfShake = 0.05f;
 
 - (IBAction)okButton:(id)sender {
     
+    BOOL didEndEdit = [[self window] endEditing];
+    SMKLogDebug(@"ok did end edit: %d", didEndEdit);
+    
     AppUserValues * aud = [[AppUserValues alloc]init];
     SMKLogDebug(@"%@",[aud description]);
     if( passTextField.stringValue != nil 
@@ -114,7 +118,7 @@ static float vigourOfShake = 0.05f;
         SMKLogDebug(@"suscess!");
         [[self window] orderOut:self];
         if( mainWindow ) {
-            [mainWindow orderFront:self];
+            [mainWindow makeKeyAndOrderFront:self];
         }
     }
 }

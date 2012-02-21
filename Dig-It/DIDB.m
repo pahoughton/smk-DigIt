@@ -33,6 +33,10 @@ static NSDateFormatter * yearFmt = nil;
 static NSMutableArray * customersCols = nil;
 
 @implementation DIDB
++(NSString *)abpCustIdPropName
+{
+    return @"com.SecureMediaKeepers.cust_id";
+}
 
 +(NSString *)dateYear:(NSDate *)date
 {
@@ -97,7 +101,7 @@ static NSMutableArray * customersCols = nil;
 +(NSString *)sel_cust_details
 {
     (void)[DIDB getCustomersCols];
-    return @"SELECT  first_name||' '||last_name as full_name, *\n"
+    return @"SELECT  first_name||' '||last_name as full_name, * \n"
     "from customers order by last_modified desc";
 }
 
@@ -168,6 +172,20 @@ static NSMutableArray * customersCols = nil;
     return FALSE;
 }
 
++(BOOL)upd_cust:(NSString *)cust_id email:(NSString *)email
+{
+    SMKLogDebug(@"upd cust: %@ email: %@",cust_id, email);
+    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    
+    NSString * custId;
+    if( [db queryBoolFormat:
+         @"update customers set email = %@ where cust_id = %@",
+         [db q:email], custId] ) {
+        // [db commit];
+        return TRUE;
+    }
+    return FALSE;
+}
 +(NSString *)sel_cust_upc:(NSString *)cid
 {
     return [NSString stringWithFormat:
@@ -185,6 +203,100 @@ static NSMutableArray * customersCols = nil;
 {
     return [NSString stringWithFormat:
             @"select * from upcs where upc = %@",upc];
+}
+
++(NSString *)sel_v_title_yearMeta:(BOOL)meta
+{
+    const char * metaStr = "_";
+    if( meta ) {
+        metaStr = "_meta_";
+    }
+    return [NSString stringWithFormat:
+            @"select vid%sid as vid_id,\n"
+            "title||' ('||extract('year' FROM release_date)||')' as title_year,\n"
+            "art_thumb_id\n"
+            "from video%stitles",
+            metaStr,
+            metaStr];
+}
++(NSString *)sel_vm_title_year
+{
+    return [DIDB sel_v_title_yearMeta:TRUE];
+}
++(NSString *)sel_vt_title_year
+{
+    return [DIDB sel_v_title_yearMeta:FALSE];
+}
+
+
++(NSString *)sel_v_art_thumb_detailsMeta:(BOOL)meta
+{
+    const char * metaStr = "_";
+    if( meta ) {
+        metaStr = "_meta_";
+    }
+    
+    return [NSString stringWithFormat:
+            @"select vid%sid, art%sid, tmdb_id, art\n"
+            "from video%sart\n"
+            "where size_desc = 'w154'",
+            metaStr,
+            metaStr,
+            metaStr];
+}
+
++(NSString *)sel_vm_art_thumb_details
+{
+    return [DIDB sel_v_art_thumb_detailsMeta:TRUE];
+}
++(NSString *)sel_vt_art_thumb_details
+{
+    return [DIDB sel_v_art_thumb_detailsMeta:FALSE];
+}
+
++(NSString *)sel_v_art_mid_detailsMeta:(BOOL)meta
+{
+    const char * metaStr = "_";
+    if( meta ) {
+        metaStr = "_meta_";
+    }
+    
+    return [NSString stringWithFormat:
+            @"select vid%id, art%sid, tmdb_id, filepath, size_x, size_y\n"
+            "from video%sart\n"
+            "where size_desc = 'mid'",
+            metaStr,
+            metaStr,
+            metaStr];
+}
++(NSString *)sel_vm_art_mid_details
+{
+    return [DIDB sel_v_art_mid_detailsMeta:TRUE];
+}
++(NSString *)sel_vt_art_mid_details
+{
+    return [DIDB sel_v_art_mid_detailsMeta:FALSE];
+}
+
++(BOOL)setVidTitleArt:(NSNumber *)vidId 
+                thumb:(NSNumber *)thumbId
+                 main:(NSNumber *)mainId
+               isMeta:(BOOL)meta
+{
+    const char * metaStr = "_";
+    if( meta ) {
+        metaStr = "_meta_";
+    }
+    
+    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    return [db queryBoolFormat:
+            @"update video%stitles\n"
+            "set art_thumb_id = %@, art_id = %@\n"
+            "where vid_meta_id = %@",
+            metaStr,
+            thumbId,
+            mainId,
+            vidId];
 }
 
 +(NSString *)sel_v_info_title:(NSString *)title year:(NSString *)year meta:(BOOL)meta
@@ -409,7 +521,7 @@ static NSMutableArray * customersCols = nil;
 }
 
 
-+(BOOL)set_cust:(NSString *)cust_id upc:(NSString *)upc needToRip:(BOOL)needToRip
++(BOOL)set_cust:(NSNumber *)cust_id upc:(NSString *)upc needToRip:(BOOL)needToRip
 {
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     return [db queryBoolFormat:

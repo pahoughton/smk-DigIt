@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @interface DIDB : NSObject
++(NSString *)abpCustIdPropName;
 
 +(NSNumber *)staff_id;
 +(NSString *)dateYear:(NSDate *)date;
@@ -35,6 +36,7 @@
 +(NSString *)sel_cust_details;
 +(NSDictionary *)ins_cust:(NSDictionary *)custDetails;
 +(BOOL)upd_cust:(NSDictionary *)custDetails;
++(BOOL)upd_cust:(NSString *)cust_id email:(NSString *)email;
 
 +(NSString *)sel_cust_upc:(NSString *)cid;
 +(NSString *)sel_uvf_detailsWithUpc:(NSString *)upc;
@@ -65,7 +67,7 @@
 +(NSString *)vtmGenres:(NSString *)vid_id;
 +(NSImage *)vtmThumb:(NSString *)vid_id artid:(NSString *)art_id;
 
-+(BOOL)set_cust:(NSString  *)cust_id
++(BOOL)set_cust:(NSNumber *)cust_id
             upc:(NSString *)upc
       needToRip:(BOOL)needToRip;
 
@@ -74,6 +76,18 @@
           year:(NSString *)year
        metaSrc:(NSString *)metaSrc
         metaId:(NSString *)metaId;
+
++(NSString *)sel_v_title_yearMeta:(BOOL)meta;
++(NSString *)sel_v_art_thumb_detailsMeta:(BOOL)meta;
++(NSString *)sel_v_art_mid_detailsMeta:(BOOL)meta;
+
++(NSString *)sel_vm_title_year;
++(NSString *)sel_vm_art_thumb_details;
++(NSString *)sel_vm_art_mid_details;
+
++(NSString *)sel_vt_title_year;
++(NSString *)sel_vt_art_thumb_details;
++(NSString *)sel_vt_art_mid_details;
 
 
 @end

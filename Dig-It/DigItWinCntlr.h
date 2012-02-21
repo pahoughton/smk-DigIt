@@ -24,11 +24,13 @@
 
 **/
 #import <Cocoa/Cocoa.h>
+#import "MainWinGradyView.h"
 
-@class CustListViewCntlr;
+@class CustomerViewCntlr;
 
 @interface DigItWinCntlr : NSWindowController
-@property (retain) CustListViewCntlr * custListViewCntlr;
+@property (retain) CustomerViewCntlr * custViewCntlr;
+@property (weak) IBOutlet MainWinGradyView * mainWinGradyView;
 
 @property (weak) IBOutlet NSColorWell *fromColorWell;
 @property (weak) IBOutlet NSColorWell *toColorWell;

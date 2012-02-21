@@ -172,7 +172,8 @@
                 }
             }
             [meta setTitle:[movie valueForKey:@"title"]];
-            if( [movie valueForKey:@"release_date"] ) {
+            NSString * reldt = [movie valueForKey:@"release_date"];
+            if( reldt && [reldt length] > 4 )  {
                 NSString * reldt = [movie valueForKey:@"release_date"];
                 [meta setYear:[reldt substringToIndex:4]];
             }
