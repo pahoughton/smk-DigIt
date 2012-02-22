@@ -35,8 +35,8 @@
 @property (weak) IBOutlet NSTableView *contactListTV;
 @property (weak) IBOutlet NSSearchField *contactSearch;
 
-@property (weak) IBOutlet NSTextField *firstNameTF;
-@property (weak) IBOutlet NSTextField *lastNameTF;
+@property (weak) IBOutlet NSTextField *fullNameTF;
+@property (weak) IBOutlet NSTextField *orginizationTF;
 @property (weak) IBOutlet NSTextField *emailTF;
 @property (weak) IBOutlet NSTextField *mainPhoneTF;
 @property (weak) IBOutlet NSTextField *altPhoneTF;

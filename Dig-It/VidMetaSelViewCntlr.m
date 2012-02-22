@@ -43,11 +43,33 @@ static VidMetaSelViewCntlr * me = nil;
 @synthesize yearTF;
 @synthesize progressInd;
 @synthesize metaTView;
+@synthesize searchButton;
+@synthesize TMDbButton;
 
 +(VidMetaSelViewCntlr *)showSelfIn:(NSView *)viewToReplace title:(NSString *)title year:(NSString *)year upc:(NSString *)upc
 {
     if( me == nil ) {
-        me = [[VidMetaSelViewCntlr alloc] initWithNibName:@"VidMetaSelView" bundle:nil];
+        me = [[VidMetaSelViewCntlr alloc] initWithNibName:@"VidMetaSelView"
+                                                   bundle:nil 
+                                                    title:title
+                                                     year:year 
+                                                      upc:upc];
+    } else {
+        [me setSrcTitle:title];
+        [me setSrcYear:year];
+        [me setSrcUpc:upc];
+    }
+    if( [me aliveAndWell] ) {
+        [[me titleTF] setStringValue:[me srcTitle]];
+        [[me yearTF] setStringValue:[me srcYear]];
+        [[me dataSrc] removeObserver:me forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
+        [me setDataSrc:[[VidMetaSelDataSrc alloc]init]];
+        [[me metaTView] setDataSource:[me dataSrc]];
+        [[me dataSrc] addObserver:me 
+                       forKeyPath:[VidMetaSelDataSrc kvoDataRows]
+                          options:0 
+                          context:nil];
+        [me searchAction:me];
     }
     /// need to library this
     NSView * curSuper = [viewToReplace superview];
@@ -59,34 +81,46 @@ static VidMetaSelViewCntlr * me = nil;
     [me setRepresentedObject:
      [NSNumber numberWithUnsignedLong:[[ [me view ] subviews ] count ]]];
     
-    [me setSrcTitle:title];
-    [me setSrcYear:year];
-    [me setSrcUpc:upc];
-    if( [me aliveAndWell] ) {
-        [[me titleTF] setStringValue:[me srcTitle]];
-        [[me yearTF] setStringValue:[me srcYear]];
-        [me searchAction:me];
-    }
-
     return me;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString *)nibNameOrNil 
+               bundle:(NSBundle *)nibBundleOrNil 
+                title:(NSString *)title 
+                 year:(NSString *)year
+                  upc:(NSString *)upc
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Initialization code here.
         [self setAliveAndWell:FALSE];
-        [self setDataSrc:[[VidMetaSelDataSrc alloc]initWithTitle:srcTitle year:srcYear]];
-        [[self dataSrc] findTitle:srcTitle
-                             year:srcYear];
+        [self setSrcTitle:title];
+        [self setSrcYear:year];
+        [self setSrcUpc:upc];
+        [self setDataSrc:[[VidMetaSelDataSrc alloc] init]];
+        [dataSrc addObserver:self 
+                  forKeyPath:[VidMetaSelDataSrc kvoDataRows]
+                     options:0 
+                     context:nil];
+        [dataSrc findTitle:[self srcTitle] year:[self srcYear]];
     }
     return self;
 }
 
 -(void)awakeFromNib
 {
-
+    [self setAliveAndWell:TRUE];
+    if( [dataSrc numberOfRowsInTableView:metaTView] == 0 ) {
+        [[self progressInd] setHidden:FALSE];
+        [[self progressInd] startAnimation:self];
+        [[self searchButton] setEnabled:FALSE];
+        [[self TMDbButton] setEnabled:FALSE];
+    } else {
+        [[self progressInd] setHidden:TRUE];
+        [[self progressInd] stopAnimation:self];
+        [metaTView setDataSource:[self dataSrc]];
+        [metaTView reloadData];
+    }
 }
 
 #pragma mark NSTableViewDelegate
@@ -128,27 +162,34 @@ static VidMetaSelViewCntlr * me = nil;
     return cellView;
 }   
 
+-(void)textDidChange:(NSNotification *)note
+{
+    [[self searchButton]setEnabled:TRUE];
+}
+-(void)mtSetDataSrc:(id)trash
+{
+    [progressInd setHidden:TRUE];
+    [progressInd stopAnimation:self];
+    [[self searchButton]setEnabled:FALSE];
+    [[self TMDbButton]setEnabled:[dataSrc didTMDbSearch] == FALSE];
+    [metaTView setDataSource:dataSrc];
+    [metaTView reloadData];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textDidChange:)
+                                                 name:NSTextDidChangeNotification 
+                                               object:nil];
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath 
                       ofObject:(id)object 
                         change:(NSDictionary *)change 
                        context:(void *)context
 {
-    if( [keyPath isEqualToString:[VidMetaSelDataSrc kvoChangeKey]] ) {
+    if( object == dataSrc 
+       && [keyPath isEqualToString:[VidMetaSelDataSrc kvoDataRows]]
+       && [self aliveAndWell] ) {
         SMKLogDebug(@"kvo keypath %@", keyPath);
-        if( [[dataSrc dataRows] count] > 0 ) {
-            [metaTView reloadData];
-            
-            SMKLogDebug(@"reloading %u", [[[self dataSrc] dataRows] count]);
-        }
-    } else if( [keyPath isEqualToString:[VidMetaSelDataSrc kvoDoneKey]] ) {
-        [progressInd setHidden:TRUE];
-        [progressInd stopAnimation:self];
-        if( [[dataSrc dataRows] count] > 0 ) {
-            [metaTView reloadData];
-            
-            SMKLogDebug(@"DONE reloading %u", [[[self dataSrc] dataRows] count]);
-        }
+        [self performSelectorOnMainThread:@selector(mtSetDataSrc:) withObject:self waitUntilDone:FALSE];
     }
 }
 
@@ -185,10 +226,17 @@ static VidMetaSelViewCntlr * me = nil;
 
 - (IBAction)searchAction:(id)sender 
 {
+    [dataSrc findTitle:[titleTF stringValue] year:[yearTF stringValue]];
 }
 
 - (IBAction)cancelAction:(id)sender 
 {
+    [dataSrc removeObserver:self forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
     [CustUpcViewCntlr showSelfIn:[self view] custInfo:nil];
+}
+
+- (IBAction)TMDbAction:(id)sender 
+{
+    [dataSrc searchTMDb:[titleTF stringValue] year:[yearTF stringValue]];
 }
 @end

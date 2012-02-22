@@ -43,7 +43,7 @@
 {
     // First things first - init SMKLogger
     SMKLogger * myLogger = [SMKLogger appLogger];
-    [myLogger setTeeLogger:[[SMKLogger alloc]initToStderr]];
+    // [myLogger setTeeLogger:[[SMKLogger alloc]initToStderr]];
     SMKLogDebug(@"App LogFile: %@",[myLogger logFileFn] );
     
     AppUserValues * aud = [[AppUserValues alloc]init];

@@ -25,9 +25,9 @@
 **/
 #import "ArtBrowswerItemGatherer.h"
 #import "AppUserValues.h"
+#import <SMKCocoaCommon.h>
 #import <SMKDB.h>
 #import <SMKLogger.h>
-#import <TMDbQuery.h>
 
 @interface ABIGathSpec : NSObject
 enum ABIGSpec { 

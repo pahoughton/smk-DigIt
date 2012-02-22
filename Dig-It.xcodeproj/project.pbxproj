@@ -33,7 +33,6 @@
 		DA727DDF14F16E8700A89F09 /* VidMetaSelViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA727DDD14F16E8700A89F09 /* VidMetaSelViewCntlr.m */; };
 		DA727DE014F16E8700A89F09 /* VidMetaSelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA727DDE14F16E8700A89F09 /* VidMetaSelView.xib */; };
 		DA7FC07E14EAB4E5004423F5 /* VidMetaSelWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA7FC07D14EAB4E5004423F5 /* VidMetaSelWin.xib */; };
-		DA7FC08214EAB515004423F5 /* VidMetaSelWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA7FC08114EAB515004423F5 /* VidMetaSelWinCntlr.m */; };
 		DA7FC08914EAB8B8004423F5 /* VidMetaSelCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = DA7FC08814EAB8B8004423F5 /* VidMetaSelCellView.m */; };
 		DA7FC08C14EABE2B004423F5 /* VidMetaSelDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DA7FC08B14EABE2B004423F5 /* VidMetaSelDataSrc.m */; };
 		DA7FC09514EB0838004423F5 /* CustEditView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA7FC09414EB0838004423F5 /* CustEditView.xib */; };
@@ -57,6 +56,7 @@
 		DAA6789B14F01396004D9CD8 /* ArtPickerWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAA6789A14F01396004D9CD8 /* ArtPickerWin.xib */; };
 		DAA6789E14F0167A004D9CD8 /* ArtPickerWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA6789D14F0167A004D9CD8 /* ArtPickerWinCntlr.m */; };
 		DAA678A014F0188F004D9CD8 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAA6789F14F0188F004D9CD8 /* Quartz.framework */; };
+		DAB7F4D314F52A7200D7339B /* libSMKCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB7F4D214F52A7200D7339B /* libSMKCommon.a */; };
 		DAC958A414F17E7900A3DCF3 /* CustomerViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAC958A214F17E7900A3DCF3 /* CustomerViewCntlr.m */; };
 		DAC958A514F17E7900A3DCF3 /* CustomerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAC958A314F17E7900A3DCF3 /* CustomerView.xib */; };
 		DADF23D114F3EC7C00189E4C /* ArtBrowserItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DADF23D014F3EC7B00189E4C /* ArtBrowserItem.m */; };
@@ -120,8 +120,6 @@
 		DA727DDD14F16E8700A89F09 /* VidMetaSelViewCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VidMetaSelViewCntlr.m; sourceTree = "<group>"; };
 		DA727DDE14F16E8700A89F09 /* VidMetaSelView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VidMetaSelView.xib; sourceTree = "<group>"; };
 		DA7FC07D14EAB4E5004423F5 /* VidMetaSelWin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VidMetaSelWin.xib; sourceTree = "<group>"; };
-		DA7FC08014EAB515004423F5 /* VidMetaSelWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VidMetaSelWinCntlr.h; sourceTree = "<group>"; };
-		DA7FC08114EAB515004423F5 /* VidMetaSelWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VidMetaSelWinCntlr.m; sourceTree = "<group>"; };
 		DA7FC08714EAB8B8004423F5 /* VidMetaSelCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VidMetaSelCellView.h; sourceTree = "<group>"; };
 		DA7FC08814EAB8B8004423F5 /* VidMetaSelCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VidMetaSelCellView.m; sourceTree = "<group>"; };
 		DA7FC08A14EABE2B004423F5 /* VidMetaSelDataSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VidMetaSelDataSrc.h; sourceTree = "<group>"; };
@@ -159,6 +157,7 @@
 		DAA6789C14F0167A004D9CD8 /* ArtPickerWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtPickerWinCntlr.h; sourceTree = "<group>"; };
 		DAA6789D14F0167A004D9CD8 /* ArtPickerWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtPickerWinCntlr.m; sourceTree = "<group>"; };
 		DAA6789F14F0188F004D9CD8 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		DAB7F4D214F52A7200D7339B /* libSMKCommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKCommon.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug/libSMKCommon.a"; sourceTree = "<group>"; };
 		DAC958A114F17E7900A3DCF3 /* CustomerViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomerViewCntlr.h; sourceTree = "<group>"; };
 		DAC958A214F17E7900A3DCF3 /* CustomerViewCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomerViewCntlr.m; sourceTree = "<group>"; };
 		DAC958A314F17E7900A3DCF3 /* CustomerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomerView.xib; sourceTree = "<group>"; };
@@ -189,6 +188,7 @@
 				DA09A9F514F46D100053B7C6 /* libSMKDigitDatabase.a in Frameworks */,
 				DAF9485914F2308A002B6C03 /* libSMKDB.a in Frameworks */,
 				DAF9485714F23084002B6C03 /* libSMKCocoaCommon.a in Frameworks */,
+				DAB7F4D314F52A7200D7339B /* libSMKCommon.a in Frameworks */,
 				DA5D42D514E31FD500A16783 /* libssl.0.9.8.dylib in Frameworks */,
 				DA5D42D714E31FE900A16783 /* libcrypto.0.9.8.dylib in Frameworks */,
 				DAF9485214F22FE3002B6C03 /* AddressBook.framework in Frameworks */,
@@ -260,6 +260,7 @@
 				DA09A9F414F46D0F0053B7C6 /* libSMKDigitDatabase.a */,
 				DAF9485814F2308A002B6C03 /* libSMKDB.a */,
 				DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */,
+				DAB7F4D214F52A7200D7339B /* libSMKCommon.a */,
 				DA5D42D614E31FE900A16783 /* libcrypto.0.9.8.dylib */,
 				DA5D42D414E31FD500A16783 /* libssl.0.9.8.dylib */,
 				DAF9485114F22FE3002B6C03 /* AddressBook.framework */,
@@ -322,8 +323,6 @@
 				DAA6789D14F0167A004D9CD8 /* ArtPickerWinCntlr.m */,
 				DA171DFC14E32D3600EBD43D /* DIDB.h */,
 				DA171DFD14E32D3600EBD43D /* DIDB.m */,
-				DA7FC08014EAB515004423F5 /* VidMetaSelWinCntlr.h */,
-				DA7FC08114EAB515004423F5 /* VidMetaSelWinCntlr.m */,
 				DA06BEE814E2E69E0013A5E8 /* CustListViewCntlr.h */,
 				DA06BEE914E2E69E0013A5E8 /* CustListViewCntlr.m */,
 				DA7FC09614EB09D7004423F5 /* CustEditViewCntlr.h */,
@@ -519,7 +518,6 @@
 				DA171E0B14E341A100EBD43D /* CustUpcViewCntlr.m in Sources */,
 				DAEC2F3214E596F5005F7F4E /* VideoPreviewWinCntlr.m in Sources */,
 				DA364D7B14E9150C0033BB56 /* CustListDataSrc.m in Sources */,
-				DA7FC08214EAB515004423F5 /* VidMetaSelWinCntlr.m in Sources */,
 				DA7FC08914EAB8B8004423F5 /* VidMetaSelCellView.m in Sources */,
 				DA7FC08C14EABE2B004423F5 /* VidMetaSelDataSrc.m in Sources */,
 				DA7FC09914EB09D8004423F5 /* CustEditViewCntlr.m in Sources */,
@@ -652,6 +650,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug\"",
 					/Support/lib,
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -674,6 +673,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug\"",
 					/Support/lib,
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

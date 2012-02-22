@@ -25,9 +25,10 @@
 **/
 #import "CustomerDataSrc.h"
 #import "DIDB.h"
-#import <SMKLogger.h>
+#import <SMKCocoaCommon.h>
 #import <SMKDB.h>
 #import <AddressBook/ABAddressBook.h>
+
 
 @implementation CustomerEntity
 @synthesize abPersonID;
@@ -73,17 +74,23 @@
         
         // make sure the Address book has our cust id prop
         NSArray * abpProps = [ABPerson properties];
-        BOOL abpHasCustId = FALSE;
+        BOOL abpHasSMKProps = FALSE;
         for( NSString * propName in abpProps ) {
-            if( [[DIDB abpCustIdPropName] isEqualToString:propName] ) {
-                abpHasCustId = TRUE;
+            if( [[DIDB abpCustEmailIdentPropName] isEqualToString:propName] ) {
+                abpHasSMKProps = TRUE;
                 break;
             }
         }
-        if( ! abpHasCustId ) {
+        if( ! abpHasSMKProps ) {
             
-            NSDictionary * apbProp = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      [NSNumber numberWithInt: kABIntegerProperty], [DIDB abpCustIdPropName],
+            NSDictionary * apbProp = 
+            [NSDictionary dictionaryWithObjectsAndKeys:
+             [NSNumber numberWithInt: kABIntegerProperty],
+             [DIDB abpCustIdPropName],
+             [NSNumber numberWithInt: kABStringProperty],
+             [DIDB abpCustEmailPropName],
+             [NSNumber numberWithInt: kABStringProperty],
+             [DIDB abpCustEmailIdentPropName],
                                       nil];
             if( [ABPerson addPropertiesAndTypes:apbProp] < 0 ) {
                 [NSException raise:@"ABPerson" format:@"add cust id prop failed for %@",apbProp];
@@ -104,25 +111,69 @@
     return @"gatherComplete";
 }
 
+-(BOOL)setABPersonSMKProps:(ABPerson *)abp
+                       val:(NSObject *)val
+                valPropKey:(NSString *)valPropKey
+                     email:(NSString *)emAddr
+                emailIdent:(NSString *)emIdent
+{
+    NSError * err;
+    if( ! [abp setValue:val
+            forProperty:valPropKey
+                  error:&err] ) {
+        // opps
+        [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+    } else if( ! [abp setValue:emAddr
+                   forProperty:[DIDB abpCustEmailPropName]
+                         error:&err] ) {
+        // opps
+        [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+
+    } else if( emIdent != nil
+              && ! [abp setValue:emIdent
+                     forProperty:[DIDB abpCustEmailIdentPropName]
+                           error:&err] ) {
+        // opps
+        [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+    }
+    return TRUE;
+}
+
 -(void)main
 {
+    /* FYI most of this code is for FIRST run through 
+     and the addtion of smk email & email ident values
+    */
     NSMutableDictionary * emailDict = [[NSMutableDictionary alloc]init];
+    NSMutableDictionary * custIdDict = [[NSMutableDictionary alloc]init];
     
     id <SMKDBConn> db = [dbConn getNewDbConn];
     id <SMKDBResults> custRslts;
-    custRslts = [db query:[DIDB sel_cust_details]];
-    NSMutableDictionary * rec;
-    while((rec = [custRslts fetchRowDict])) {
-        NSString * custEmail = [[rec objectForKey:@"email"] lowercaseString];
-        SMKLogDebug(@"em: %@", custEmail);
-        [emailDict setObject:rec forKey:custEmail];
+    custRslts = [db query:[DIDB sel_cid_email]];
+    NSMutableArray * rec;
+    while((rec = [custRslts fetchRowArray])) {
+        NSNumber * custId = [rec objectAtIndex:0];
+        NSString * custEmail = [rec objectAtIndex:1];
+
+        [emailDict setObject:custId forKey:custEmail];
+        [custIdDict setObject:custEmail forKey:custId];
     }
+    
     ABAddressBook * myAB = [ABAddressBook addressBook];
     for( ABPerson * abp in [myAB people] ) {
+        
+        // ONLY work with iCloud records
+        NSString * iCloudUUID = [abp valueForProperty:@"com.apple.uuid"];
+        if( iCloudUUID == nil ) {
+            continue;
+        }
+        
         CustomerEntity * custEnt = [[CustomerEntity alloc] init];
         NSNumber * abCustId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+        NSString * abCustEmail = [abp valueForProperty:[DIDB abpCustEmailPropName]];
+        NSString * abCustEmailIdent = [abp valueForProperty:[DIDB abpCustEmailIdentPropName]];
         if( abCustId == nil ) {
-            // not a 'known' cust, search
+            // not a 'known' cust, do search
             ABMultiValue * ebEmailList = [abp valueForProperty:kABEmailProperty];
             if( ebEmailList == nil || [ebEmailList count] == 0 ) {
                 // no email - can't be a cust
@@ -130,28 +181,92 @@
             }
             for( NSInteger ei = 0; ei < [ebEmailList count]; ++ ei ) {
                 NSString * abEmail = [ebEmailList valueAtIndex:ei];
+                abEmail = [abEmail lowercaseString];
+
+                NSString * abEmailIdent = [ebEmailList identifierAtIndex:ei];
                 /*
                 SMKLogDebug(@"ab em: %@ %@ %@", 
                             [abp valueForProperty:kABFirstNameProperty],
                             [abp valueForProperty:kABLastNameProperty],
                             abEmail );
                  */
-                NSDictionary * custRec = [emailDict objectForKey:[abEmail lowercaseString]];
-                if( custRec ) {
+                NSNumber * custId = [emailDict objectForKey:abEmail];
+                if( custId ) {
+                    
                     SMKLogDebug(@"ab match em: %@ %@ %@", 
                                 [abp valueForProperty:kABFirstNameProperty],
                                 [abp valueForProperty:kABLastNameProperty],
                                 abEmail );
-
-                    NSError * err;
-                    if( ! [abp setValue:[custRec objectForKey:@"cust_id"]
-                           forProperty:[DIDB abpCustIdPropName]
-                                  error:&err] ) {
-                        // opps
-                        [NSException raise:@"ABPerson" format:@"set cust error %@",err];
-                        break; // done with this record
+                    
+                    if( ! [self setABPersonSMKProps:abp 
+                                                val:custId 
+                                         valPropKey:[DIDB abpCustIdPropName] 
+                                              email:abEmail 
+                                         emailIdent:abEmailIdent] ) {
+                        // wont return on fail - exception
                     } else {
                         abCustId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+                        abCustEmail = abEmail;
+                        abCustEmailIdent = abEmailIdent;
+                    }
+                }
+            }
+        } else if( abCustEmail == nil ) {
+            // email not set
+            NSString * smkEmail = [custIdDict objectForKey:abCustId];
+            SMKLogDebug(@"smk email: %@", smkEmail);
+            ABMultiValue * ebEmailList = [abp valueForProperty:kABEmailProperty];
+            if( ebEmailList == nil || [ebEmailList count] == 0 ) {
+                // add email we have on file
+                ABMutableMultiValue * nMulti = [[ABMutableMultiValue alloc]init];
+                [nMulti addValue:smkEmail withLabel:@"smk"];
+                NSString * emIdent = [nMulti identifierAtIndex:0];
+                if( ! [self setABPersonSMKProps:abp 
+                                            val:nMulti 
+                                     valPropKey:kABEmailProperty
+                                          email:smkEmail 
+                                     emailIdent:emIdent] ) {
+                    // wont actually return fail
+                }
+                if( emIdent == nil ) {
+                    // lets see if one is autogenerated;
+                    ebEmailList = [abp valueForProperty:kABEmailProperty];
+                    if( ebEmailList != nil ) {
+                        emIdent = [ebEmailList identifierAtIndex:0];
+                        NSError * err;
+                        if( emIdent != nil
+                           && ! [abp setValue:emIdent
+                                  forProperty:[DIDB abpCustEmailIdentPropName]
+                                        error:&err] ) {
+                               // opps
+                               [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+                           }
+                
+                    }
+                }
+                
+            } else { // ebEmailList != nil and count > 0
+             // search email list for match
+                for( NSInteger ei = 0; ei < [ebEmailList count]; ++ ei ) {
+                    NSString * abEmail = [ebEmailList valueAtIndex:ei];
+                    abEmail = [abEmail lowercaseString];
+                    NSString * emIdent = [ebEmailList identifierAtIndex:ei];
+                    NSError * err;
+                    if( [abEmail isEqualToString:smkEmail] ) {
+                        // yay found it
+                        if( ! [abp setValue:smkEmail
+                                forProperty:[DIDB abpCustEmailPropName]
+                                      error:&err] ) {
+                            // opps
+                            [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+                        
+                        } else if( emIdent != nil
+                                  && ! [abp setValue:emIdent
+                                         forProperty:[DIDB abpCustEmailIdentPropName]
+                                               error:&err] ) {
+                                      // opps
+                                      [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+                                  }
                     }
                 }
             }
@@ -160,16 +275,27 @@
 
         NSString * cid;
         if( abCustId != nil ) {
-            cid = [NSString stringWithFormat:@"(%d)",[abCustId integerValue]];
+            cid = [NSString stringWithFormat:@" *",[abCustId integerValue]];
         } else {
-            cid = @"   ";
+            cid = @"  ";
         }
-        NSString * listName = [[NSString alloc]initWithFormat:
-                               @"%@ %@ %@",
-                               cid,
-                               [abp valueForProperty:kABFirstNameProperty],
-                               [abp valueForProperty:kABLastNameProperty]];
         
+        NSString * listName;
+        NSNumber * abpFlagsNum = [abp valueForProperty:kABPersonFlags];
+        NSInteger abpFlags = [abpFlagsNum integerValue];
+                            
+        if( (abpFlags & kABShowAsMask) & kABShowAsCompany ) {
+            listName = [[NSString alloc]initWithFormat:
+                        @"%@ %@",
+                        cid,
+                        [abp valueForProperty:kABOrganizationProperty]];
+        } else {
+            listName = [[NSString alloc]initWithFormat:
+                        @"%@ %@ %@",
+                        cid,
+                        [abp valueForProperty:kABFirstNameProperty],
+                        [abp valueForProperty:kABLastNameProperty]];
+        }
         [custEnt setListValue:listName];
         [data addObject:custEnt];
     }
@@ -179,14 +305,14 @@
     [data sortUsingComparator:^(id objA, id objB) {
         CustomerEntity * a = objA;
         CustomerEntity * b = objB;
-        if( [[a listValue] characterAtIndex:0] == ' ' ) {
-            if( [[b listValue] characterAtIndex:0] == ' ' ) {
+        if( [[a listValue] characterAtIndex:1] == ' ' ) {
+            if( [[b listValue] characterAtIndex:1] == ' ' ) {
                 return [[a listValue] compare:[b listValue]];
             } else {
                 return (NSComparisonResult)NSOrderedDescending;
             }
         } else {
-            if( [[b listValue] characterAtIndex:0] != ' ' ) {
+            if( [[b listValue] characterAtIndex:1] != ' ' ) {
                 return [[a listValue] compare:[b listValue]];
             } else {
                 return (NSComparisonResult)NSOrderedAscending;
@@ -211,6 +337,12 @@
 -(void)addrBookDidChange:(NSNotification *)note
 {
     // just reload it
+    [gath removeObserver:self forKeyPath:[CustDataGatherer kvoGatherComplete]];
+    [self setGath:[[CustDataGatherer alloc] init]];
+    [gath addObserver:self 
+           forKeyPath:[CustDataGatherer kvoGatherComplete]
+              options:0 
+              context:nil];
     [gath gather];
 }
 -(id)init
@@ -251,6 +383,30 @@
     }
 }
 
+-(void)sortData
+{
+    NSArray * sorted = [tableData sortedArrayUsingComparator:^(id objA, id objB) {
+        CustomerEntity * a = objA;
+        CustomerEntity * b = objB;
+        if( [[a listValue] characterAtIndex:1] == ' ' ) {
+            if( [[b listValue] characterAtIndex:1] == ' ' ) {
+                return [[a listValue] compare:[b listValue]];
+            } else {
+                return (NSComparisonResult)NSOrderedDescending;
+            }
+        } else {
+            if( [[b listValue] characterAtIndex:1] != ' ' ) {
+                return [[a listValue] compare:[b listValue]];
+            } else {
+                return (NSComparisonResult)NSOrderedAscending;
+            }
+        }
+    }];
+    [self willChangeValueForKey:[CustomerDataSrc kvoTableData]];
+    [self setTableData:sorted];
+    [self didChangeValueForKey:[CustomerDataSrc kvoTableData]];
+    
+}
 -(void)setFilter:(NSString *)filter
 {
     if( filter != nil && [filter length] ) {

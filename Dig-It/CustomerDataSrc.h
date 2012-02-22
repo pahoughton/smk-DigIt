@@ -59,6 +59,7 @@
 
 +(NSString *)kvoTableData;
 -(void)setFilter:(NSString *)filter;
+-(void)sortData;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
 

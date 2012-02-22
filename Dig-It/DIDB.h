@@ -7,7 +7,7 @@
   
   Notes:
     
-  Author(s):    Paul Houghton  ___EMAIL___ <Paul.Houghton@SecureMediaKeepers.com>
+  Author(s):    Paul Houghton  <Paul.Houghton@SecureMediaKeepers.com>
   Created:      2/8/12  3:22 PM
   Copyright:    Copyright (c) 2012 Secure Media Keepers.
                 All rights reserved.
@@ -29,16 +29,20 @@
 @interface DIDB : SMKDigitDB
 
 +(NSString *)abpCustIdPropName;
++(NSString *)abpCustEmailPropName;
++(NSString *)abpCustEmailIdentPropName;
 
 +(NSNumber *)staff_id;
 +(NSString *)dateYear:(NSDate *)date;
 
++(NSString *)sel_cid_email;
 
 +(NSString *)sel_c_cid_fn_ln_ph_em;
 +(NSString *)sel_cust_details;
 +(NSDictionary *)ins_cust:(NSDictionary *)custDetails;
 +(BOOL)upd_cust:(NSDictionary *)custDetails;
-+(BOOL)upd_cust:(NSString *)cust_id email:(NSString *)email;
++(BOOL)upd_cust:(NSNumber *)cust_id email:(NSString *)email;
++(BOOL)add_cust_note:(NSNumber *)cust_id note:(NSString *)note;
 
 +(NSString *)sel_cust_upc:(NSString *)cid;
 +(NSString *)sel_uvf_detailsWithUpc:(NSString *)upc;

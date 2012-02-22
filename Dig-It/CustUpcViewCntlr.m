@@ -205,9 +205,8 @@ static CustUpcViewCntlr * me;
     SMKLogDebug(@"upc acntlr %@", upcListAcntlr);
     if( custInfo ) {
         [self.custLabel setStringValue:
-         [NSString stringWithFormat:@"%@ %@ (%@)",
-          [custInfo valueForKey:@"first_name"],
-          [custInfo valueForKey:@"last_name"],
+         [NSString stringWithFormat:@"%@ (%@)",
+          [custInfo valueForKey:@"full_name"],
           [custInfo valueForKey:@"cust_id"]]];
         [self getCustUpcs];
     }
@@ -222,9 +221,8 @@ static CustUpcViewCntlr * me;
     SMKLogDebug(@"cust %@ %@", cust,[[custInfo valueForKey:@"cust_id"] class]);
     if( aliveAndWell ) {
         [self.custLabel setStringValue:
-         [NSString stringWithFormat:@"%@ %@ (%@)",
-          [custInfo valueForKey:@"first_name"],
-          [custInfo valueForKey:@"last_name"],
+         [NSString stringWithFormat:@"%@ (%@)",
+          [custInfo valueForKey:@"full_name"],
           [custInfo valueForKey:@"cust_id"]]];
         [self getCustUpcs];
     }
@@ -430,10 +428,10 @@ static CustUpcViewCntlr * me;
 
 - (IBAction)searchButton:(id)sender 
 {
-    SMKLogDebug(@"searchButton");
+    SMKLogDebug(@"searchButton %@", [upcTitleTF stringValue]);
     if( [[upcTitleTF stringValue] length] > 1 ) {
         metaSelViewCntlr = [VidMetaSelViewCntlr showSelfIn:[self view]
-                                                     title:[upcThumbTF stringValue]
+                                                     title:[upcTitleTF stringValue]
                                                       year:[upcYearTF stringValue]
                                                        upc:[curUpcValue stringValue]];
     } else {

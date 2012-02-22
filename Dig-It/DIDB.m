@@ -39,6 +39,14 @@ static NSMutableArray * customersCols = nil;
     return @"com.SecureMediaKeepers.cust_id";
 }
 
++(NSString *)abpCustEmailPropName
+{
+    return @"com.SecureMediaKeepers.cust_email";
+}
++(NSString *)abpCustEmailIdentPropName
+{
+    return @"com.SecureMediaKeepers.cust_email_ident";
+}
 +(NSString *)dateYear:(NSDate *)date
 {
     if( yearFmt == nil ) {
@@ -60,6 +68,12 @@ static NSMutableArray * customersCols = nil;
     }
     return staff_id;
 }
+
++(NSString *)sel_cid_email
+{
+    return @"SELECT cust_id, lower(email) from customers";
+}
+
 +(NSArray * )getCustomersCols
 {
     if( customersCols == nil ) {
@@ -173,7 +187,7 @@ static NSMutableArray * customersCols = nil;
     return FALSE;
 }
 
-+(BOOL)upd_cust:(NSString *)cust_id email:(NSString *)email
++(BOOL)upd_cust:(NSNumber *)cust_id email:(NSString *)email
 {
     SMKLogDebug(@"upd cust: %@ email: %@",cust_id, email);
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
@@ -186,6 +200,20 @@ static NSMutableArray * customersCols = nil;
         return TRUE;
     }
     return FALSE;
+}
++(BOOL)add_cust_note:(NSNumber *)cust_id note:(NSString *)note
+{
+    SMKLogDebug(@"add cust note: %@ note: %@",cust_id, note);
+    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    
+    if( [db queryBoolFormat:
+         @"insert into cust_notes (cust_id, note) values (%@, %@)",
+         cust_id, [db q:note]] ) {
+        // [db commit];
+        return TRUE;
+    }
+    return FALSE;
+    
 }
 +(NSString *)sel_cust_upc:(NSString *)cid
 {
@@ -345,7 +373,7 @@ static NSMutableArray * customersCols = nil;
             "tv_episode, tv_network, tv_series,\n"
             "date_added, last_modified\n"
             "FROM video_%@titles\n"
-            "WHERE title % %@\n",
+            "WHERE title %% %@\n",
             metaStr,
             metaStr,
             [db q:title]];
@@ -504,7 +532,7 @@ static NSMutableArray * customersCols = nil;
     if( rec != nil && [rec objectAtIndex:0] != nil ) {
         NSData * imgData = [rec objectAtIndex:0];
         SMKLogDebug(@"obj class %@", [imgData className]);
-        if( [imgData length] > 0 ) {
+        if( ! SMKisNULL(imgData) && [imgData length] > 0 ) {
             return [[NSImage alloc] initWithData:imgData];
         } 
     }

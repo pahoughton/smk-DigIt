@@ -45,27 +45,33 @@
 @end
 
 @interface VidMetaRecGather : NSOperation
-@property (weak) VidMetaSelDataSrc * dataStore;
+@property (retain) NSMutableArray * data;
+@property (strong) NSMutableArray  * artGatherList;
+@property (retain) SMKDBConnMgr * db;
 @property (retain) NSString * searchTitle;
 @property (retain) NSString * searchYear;
+@property (assign) BOOL doTMDbSearch;
 
--(id)initWithDataStore:(VidMetaSelDataSrc *)dest 
-                 title:(NSString *)title 
-                  year:(NSString *)year;
+-(id)initWithTitle:(NSString *)title 
+              year:(NSString *)year
+        TMDbSearch:(BOOL)doTMDb;
+
+-(void)doSearch;
 
 @end
 
 @interface VidMetaSelDataSrc : NSObject <NSTableViewDataSource>
 @property (retain) NSMutableArray  * dataRows;
-@property (strong) NSMutableArray  * artGatherList;
-@property (retain) SMKDBConnMgr * db;
+@property (retain) NSMutableArray * artGatherList;
 @property (retain) VidMetaRecGather * gather;
+@property (assign) BOOL didTMDbSearch;
 
-+(NSString *)kvoChangeKey;
-+(NSString *)kvoDoneKey;
++(NSString *)kvoDataRows;
+-(id)init;
 
--(id)initWithTitle:(NSString *)title year:(NSString *)year;
 -(void)findTitle:(NSString *)title year:(NSString *)year;
+-(void)searchTMDb:(NSString *)title year:(NSString *)year;
+
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
 
 @end

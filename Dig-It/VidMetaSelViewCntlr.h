@@ -40,14 +40,23 @@
 @property (weak) IBOutlet NSTextField *yearTF;
 @property (weak) IBOutlet NSProgressIndicator *progressInd;
 @property (weak) IBOutlet NSTableView *metaTView;
+@property (weak) IBOutlet NSButton *searchButton;
+@property (weak) IBOutlet NSButton *TMDbButton;
 
 +(VidMetaSelViewCntlr *)showSelfIn:(NSView *)viewToReplace 
                              title:(NSString *)title 
                               year:(NSString *)year 
                                upc:(NSString *)upc;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil 
+               bundle:(NSBundle *)nibBundleOrNil 
+                title:(NSString *)title 
+                 year:(NSString *)year
+                  upc:(NSString *)upc;
+
 - (IBAction)selectMetaAction:(id)sender;
 - (IBAction)searchAction:(id)sender;
 - (IBAction)cancelAction:(id)sender;
+- (IBAction)TMDbAction:(id)sender;
 
 @end

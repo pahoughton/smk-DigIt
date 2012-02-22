@@ -27,11 +27,8 @@
 #import "VidMetaSelCellView.h"
 #import "ArtBrowswerItemGatherer.h"
 #import "DIDB.h"
-#import <SMKLogger.h>
+#import <SMKCocoaCommon.h>
 #import <SMKDB.h>
-#import <TMDbQuery.h>
-#import <SMKAlertWin.h>
-
 
 @implementation VidMetaSelEntity
 @synthesize title;
@@ -82,37 +79,42 @@
 @end
     
 @implementation VidMetaRecGather
-@synthesize dataStore;
+@synthesize data;
+@synthesize artGatherList;
+@synthesize db;
 @synthesize searchTitle;
 @synthesize searchYear;
+@synthesize doTMDbSearch;
 
--(id)initWithDataStore:(VidMetaSelDataSrc *)dest
-                 title:(NSString *)title 
-                  year:(NSString *)year
+-(id)initWithTitle:(NSString *)title 
+              year:(NSString *)year
+        TMDbSearch:(BOOL)doTMDb
 {
     self = [super init];
     if( self ) {
-        [self setDataStore:dest];
+        [self setData:[[NSMutableArray alloc] init]];
+        [self setArtGatherList:[[NSMutableArray alloc]init]];
+        [self setDb:[[SMKDBConnMgr alloc]init]];
+
         [self setSearchTitle:title];
         [self setSearchYear:year];
+        [self setDoTMDbSearch:doTMDb];
     }
     return self;
 }
 
--(void)main
+-(void)searchTitles
 {
     id <SMKDBResults> metaRslts;
     NSMutableArray * rec;
-    NSInteger rowCount = [[dataStore dataRows] count];
-        
-    NSMutableArray * artGatherList = [dataStore artGatherList];
+    
     // first Titles
-    metaRslts = [[[dataStore db] connect]
+    metaRslts = [[db connect]
                  query:[DIDB sel_vt_info_title:searchTitle 
                                           year:searchYear]];
     while((rec = [metaRslts fetchRowArray])) {
         VidMetaSelEntity * meta = [[VidMetaSelEntity alloc] init];
-
+        
         NSNumber * vid_id_num = [rec objectAtIndex:0];
         NSString * vid_id = [vid_id_num stringValue];
         
@@ -135,17 +137,17 @@
         [meta setSource:SMKDIDS_VidTitles];
         [meta setSourceId:vid_id];
         [meta setDesc:[rec objectAtIndex:6]];
-        [[dataStore dataRows] addObject:meta];
-    }
-    if( [[dataStore dataRows] count] != rowCount ) {
-        [self willChangeValueForKey:[VidMetaSelDataSrc kvoChangeKey]];
-        [self didChangeValueForKey:[VidMetaSelDataSrc kvoChangeKey]];
-        rowCount = [[dataStore dataRows] count];
-    }
+        [data addObject:meta];
+    }    
+}
+-(void)searchMeta
+{
+    id <SMKDBResults> metaRslts;
+    NSMutableArray * rec;
     // Now Meta
-    metaRslts = [[[dataStore db] connect]
+    metaRslts = [[db connect]
                  query:[DIDB sel_vtm_info_title:searchTitle 
-                                          year:searchYear]];
+                                           year:searchYear]];
     
     while((rec = [metaRslts fetchRowArray])) {
         VidMetaSelEntity * meta = [[VidMetaSelEntity alloc] init];
@@ -171,14 +173,14 @@
         [meta setSource:SMKDIDS_VidMeta];
         [meta setSourceId:vid_meta_id];
         [meta setDesc:[rec objectAtIndex:6]];
-        [[dataStore dataRows] addObject:meta];
+        [data addObject:meta];
     }
-    if( [[dataStore dataRows] count] != rowCount ) {
-        [self willChangeValueForKey:[VidMetaSelDataSrc kvoChangeKey]];
-        [self didChangeValueForKey:[VidMetaSelDataSrc kvoChangeKey]];
-        rowCount = [[dataStore dataRows] count];
-    }
-    // now TMDB
+    
+}
+-(void)searchTMDb
+{
+    [self setDoTMDbSearch:TRUE];
+    
     TMDbQuery * tmdb = [[TMDbQuery alloc] init];
     if( [tmdb search:searchTitle getDetail:TRUE] ) {
         for( NSDictionary * movie in [tmdb data] ) {
@@ -201,7 +203,7 @@
             [meta setArtGath:[[ArtBrowswerItemGatherer alloc]initWithOpQ:nil]];
             [[meta artGath]gatherTMDBArtDictList:artlist];
             [artGatherList addObject:[meta artGath]];
-
+            
             [meta setTitle:[movie valueForKey:@"title"]];
             NSString * reldt = [movie valueForKey:@"release_date"];
             if( reldt && [reldt length] > 4 )  {
@@ -226,7 +228,7 @@
             }
             [meta setActors: [actList componentsJoinedByString:@", "]];
             [meta setDirectors:[dirList componentsJoinedByString:@", "]];
-
+            
             NSMutableArray * genreList = [[NSMutableArray alloc]initWithCapacity:3];
             NSArray * genres = [movie valueForKey:@"genres"];
             if( genres != nil ) {
@@ -240,16 +242,29 @@
             [meta setGenres:[genreList componentsJoinedByString:@", "]];
             [meta setDesc:[movie valueForKey:@"desc_long"]];
             
-            [[dataStore dataRows] addObject:meta];
+            [data addObject:meta];
         }
-        for( ArtBrowswerItemGatherer * gath in artGatherList ) {
-            [gath goWithOpQueue:[[dataStore db]opQueue]];
+    }
+
+}
+
+-(void)doSearch
+{
+    [[db opQueue] addOperation:self];
+}
+-(void)main
+{
+    if(!  doTMDbSearch ) {
+        [self searchTitles];
+        [self searchMeta];
+        if( [data count] < 1 ) {
+            [self searchTMDb];
         }
-        if( [[dataStore dataRows] count] != rowCount ) {
-            [self.dataStore willChangeValueForKey:[VidMetaSelDataSrc kvoDoneKey]];
-            [self.dataStore didChangeValueForKey:[VidMetaSelDataSrc kvoDoneKey]];
-            rowCount = [[dataStore dataRows] count];
-        }
+    } else {
+        [self searchTMDb];        
+    }
+    for( ArtBrowswerItemGatherer * gath in artGatherList ) {
+        [gath goWithOpQueue:[db opQueue]];
     }
 }
 @end
@@ -257,49 +272,36 @@
 @implementation VidMetaSelDataSrc
 @synthesize dataRows;
 @synthesize artGatherList;
-@synthesize db;
 @synthesize gather;
-+(NSString *)kvoChangeKey
-{
-    return @"dataStore";
-}
+@synthesize didTMDbSearch;
 
-+(NSString *)kvoDoneKey
++(NSString *)kvoDataRows
 {
-    return @"MetaSearchComplete";
+    return @"dataRows";
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if( object == gather && [keyPath isEqualToString:@"isFinished"] ) {
+        [self setDidTMDbSearch:[gather doTMDbSearch]];
+        [self setArtGatherList:[gather artGatherList]];
+        [self willChangeValueForKey:[VidMetaSelDataSrc kvoDataRows]];
+        [self setDataRows:[gather data]];
+        [self didChangeValueForKey:[VidMetaSelDataSrc kvoDataRows]];
+        [gather removeObserver:self forKeyPath:@"isFinished"];
+        [self setGather:nil];
+    }
     SMKLogDebug(@"kvo kp:%@ %u", keyPath, [dataRows count]);
 }
 -(id)init
 {
     self = [super init];
     if( self ) {
-        dataRows = [[NSMutableArray alloc]init];
-        artGatherList = [[NSMutableArray alloc]init];
-        db = [[SMKDBConnMgr alloc]init];
-        gather = [[VidMetaRecGather alloc] init];
-        [gather addObserver:self forKeyPath:[VidMetaSelDataSrc kvoChangeKey]
-                    options:NSKeyValueObservingOptionNew
-                    context:nil];
+        dataRows = nil;
+        artGatherList = nil;
+        gather = nil;
     }
     return self;    
-}
--(id)initWithTitle:(NSString *)title year:(NSString *)year
-{
-    self = [super init];
-    if( self ) {
-        dataRows = [[NSMutableArray alloc]init];
-        db = [[SMKDBConnMgr alloc]init];
-        gather = [[VidMetaRecGather alloc] initWithDataStore:self title:title year:year];
-        [[db opQueue] addOperation:gather];
-        [gather addObserver:self forKeyPath:[VidMetaSelDataSrc kvoChangeKey]
-                    options:0
-                    context:nil];
-    }
-    return self;
 }
 
 -(void)findTitle:(NSString *)title year:(NSString *)year
@@ -309,17 +311,27 @@
          [NSString stringWithFormat:@"Title must be 2 or more chars wide '%@'",title]];
         return;
     }
-    [dataRows removeAllObjects];
-    [gather setDataStore:self];
-    [gather setSearchTitle:title];
-    [gather setSearchYear:year];
-    [[db opQueue] addOperation:gather];
+    [self setGather:[[VidMetaRecGather alloc] initWithTitle:title year:year TMDbSearch:FALSE]];
+    [gather addObserver:self forKeyPath:@"isFinished" options:0 context:nil];
+    [gather doSearch];
+}
+
+-(void)searchTMDb:(NSString *)title year:(NSString *)year
+{
+    if( [title length] < 2 ) {
+        [SMKAlertWin alertWithMsg:
+         [NSString stringWithFormat:@"Title must be 2 or more chars wide '%@'",title]];
+        return;
+    }
+    [self setGather:[[VidMetaRecGather alloc] initWithTitle:title year:year TMDbSearch:TRUE]];
+    [gather addObserver:self forKeyPath:@"isFinished" options:0 context:nil];
+    [gather doSearch];    
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    SMKLogDebug(@"mds # rows %u", [dataRows count]);
-    return [dataRows count];
+    SMKLogDebug(@"mds # rows %u", (dataRows ? [dataRows count] : 0) );
+    return (dataRows ? [dataRows count] : 0);
 }
 
 

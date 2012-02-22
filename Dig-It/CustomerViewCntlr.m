@@ -25,40 +25,18 @@
 #import "CustomerDataSrc.h"
 #import "CustUpcViewCntlr.h"
 #import "DIDB.h"
-#import <SMKLogger.h>
-#import <SMKAlertWin.h>
+#import <SMKCocoaCommon.h>
+#import <SMKCommon.h>
 
 static CustomerViewCntlr * me;
 
-@interface Incremental : NSObject
-@property NSInteger value;
--(void)incr;
-@end
-@implementation Incremental
-@synthesize value;
-- (id)init {
-    self = [super init];
-    if (self) {
-        value = 0;
-    }
-    return self;
-}
--(void)incr
-{
-    ++value;
-}
--(NSString *)description
-{
-    return [[NSString alloc]initWithFormat:@"%d",value];
-}
-@end
 @implementation CustomerViewCntlr
 @synthesize dataSrc;
 @synthesize curCustId;
 @synthesize contactListTV;
 @synthesize contactSearch;
-@synthesize firstNameTF;
-@synthesize lastNameTF;
+@synthesize fullNameTF;
+@synthesize orginizationTF;
 @synthesize emailTF;
 @synthesize mainPhoneTF;
 @synthesize altPhoneTF;
@@ -140,80 +118,109 @@ static CustomerViewCntlr * me;
     ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cEnt abPersonID]];
 
     id abVal = [abp valueForProperty:kABFirstNameProperty];
-    [firstNameTF setStringValue:abVal];
     
-    abVal = [abp valueForProperty:kABLastNameProperty];
-    [lastNameTF setStringValue:abVal];
+    id lastName = [abp valueForProperty:kABLastNameProperty];
+    [fullNameTF setStringValue:[[NSString alloc]initWithFormat:
+                                @"%@ %@",
+                                NonNilString(abVal),
+                                NonNilString(lastName)]];
+
+    abVal = [abp valueForProperty:kABOrganizationProperty];
+    [orginizationTF setStringValue:NonNilString(abVal)];
     
-    ABMultiValue * abMulti = [abp valueForProperty:kABEmailProperty];
-    if( abMulti != nil ) {
-        NSString * primId = [abMulti primaryIdentifier];
-    
-        NSString * email = [abMulti valueAtIndex:0];
-        [cEnt setEmailInx:0];
-        for( NSInteger ei = 0; ei < [abMulti count]; ++ ei ) {
-            if( [primId isEqualToString:[abMulti identifierAtIndex:ei]] ) {
-                email = [abMulti valueAtIndex:ei];
-                [cEnt setEmailInx:ei];
-                break;
+    ABMultiValue * abMulti = nil;
+    NSString * email = nil;
+    abVal = [abp valueForProperty:[DIDB abpCustIdPropName]];
+    if( abVal == nil ) {
+        abMulti = [abp valueForProperty:kABEmailProperty];
+        if( abMulti != nil ) {
+            NSInteger mi = 0;
+            NSString * primId = [abMulti primaryIdentifier];
+            if( primId ) {
+                mi = [abMulti indexForIdentifier:primId];
+                if( mi == NSNotFound ) {
+                    mi = 0;
+                }
+            }
+            email = [abMulti valueAtIndex:mi];
+            [cEnt setEmailInx:mi];
+        }
+    } else {
+        // existing cust - check email match and resolve changes
+        NSString * smkEmIdent = [abp valueForProperty:[DIDB abpCustEmailIdentPropName]];
+        if( ! smkEmIdent ) {
+            [SMKException raise:@"customer" 
+                         format:@"Opps no smk email ident for cust %@",abVal];
+        }
+        ABMultiValue * abMulti = [abp valueForProperty:kABEmailProperty];
+        if( abMulti != nil ) {
+            NSInteger mi = [abMulti indexForIdentifier:smkEmIdent];
+            if( mi != NSNotFound ) {
+                email = [abMulti valueAtIndex:mi];
+                [cEnt setEmailInx:mi];
             }
         }
-        [emailTF setStringValue:email];
-    } else {
-        [emailTF setStringValue:nil];
     }
+    [emailTF setStringValue:NonNilString(email)];
     
     abMulti = [abp valueForProperty:kABPhoneProperty];
     if( abMulti != nil ) {
+        NSInteger mi = 0;
         NSString * primId = [abMulti primaryIdentifier];
-
-        NSString * mPhn = [abMulti valueAtIndex:0];
-        [cEnt setMPhoneInx:0];
-        NSString * aPhn = nil;
-        for( NSInteger ei = 1; ei < [abMulti count]; ++ ei ) {
-            if( aPhn == nil ) {
-                aPhn = [abMulti valueAtIndex:ei];
-                [cEnt setAPhoneInx:ei];
-            }
-            if( [primId isEqualToString:[abMulti identifierAtIndex:ei]] ) {
-                aPhn = mPhn;
-                [cEnt setAPhoneInx:[cEnt mPhoneInx]];
-                mPhn = [abMulti valueAtIndex:ei];
-                [cEnt setMPhoneInx:ei];
-                break;
+        if( primId ) {
+            mi = [abMulti indexForIdentifier:primId];
+            if( mi == NSNotFound ) {
+                mi = 0;
             }
         }
-        [mainPhoneTF setStringValue:mPhn];
-        [altPhoneTF setStringValue:aPhn];
+        NSString * mPhn = [abMulti valueAtIndex:mi];
+        [cEnt setMPhoneInx:mi];
+        NSString * aPhn = nil;
+        for( NSInteger ai = 0; ai < [abMulti count]; ++ ai ) {
+            if( ai != mi && aPhn == nil ) {
+                aPhn = [abMulti valueAtIndex:ai];
+                [cEnt setAPhoneInx:ai];
+            }
+        }
+        [mainPhoneTF setStringValue:NonNilString(mPhn)];
+        [altPhoneTF setStringValue:NonNilString(aPhn)];
     } else {
-        [mainPhoneTF setStringValue:nil];
-        [altPhoneTF setStringValue:nil];
+        [mainPhoneTF setStringValue:@""];
+        [altPhoneTF setStringValue:@""];
     }
             
     abMulti = [abp valueForProperty:kABAddressProperty];
     if( abMulti != nil ) {
+        NSInteger mi = 0;
         NSString * primId = [abMulti primaryIdentifier];
-        NSInteger primInx = 0;
-        for( NSInteger ei = 1; ei < [abMulti count]; ++ ei ) {
-            if( [primId isEqualToString:[abMulti identifierAtIndex:ei]] ) {
-                primInx = ei;
+        if( primId ) {
+            mi = [abMulti indexForIdentifier:primId];
+            if( mi == NSNotFound ) {
+                mi = 0;
             }
         }
-        [cEnt setAddrInx:primInx];
-        NSDictionary * addrDict = [abMulti valueAtIndex:primInx];
-        [addrStreetTF setStringValue:[addrDict objectForKey:kABAddressStreetKey]];
-        [addrCityTF setStringValue:[addrDict objectForKey:kABAddressCityKey]];
-        [addrStateTF setStringValue:[addrDict objectForKey:kABAddressStateKey]];
-        [zipCodeTF setStringValue:[addrDict objectForKey:kABAddressZIPKey]];
+        [cEnt setAddrInx:mi];
+        NSDictionary * addrDict = [abMulti valueAtIndex:mi];
+        if( addrDict != nil ) {
+            [addrStreetTF setStringValue:NonNilString([addrDict objectForKey:kABAddressStreetKey])];
+            [addrCityTF setStringValue:NonNilString([addrDict objectForKey:kABAddressCityKey])];
+            [addrStateTF setStringValue:NonNilString([addrDict objectForKey:kABAddressStateKey])];
+            [zipCodeTF setStringValue:NonNilString([addrDict objectForKey:kABAddressZIPKey])];
+        } else {
+            [addrStreetTF setStringValue:@""];
+            [addrCityTF setStringValue:@""];
+            [addrStateTF setStringValue:@""];
+            [zipCodeTF setStringValue:@""];
+        }
     } else {
-        [addrStreetTF setStringValue:nil];
-        [addrCityTF setStringValue:nil];
-        [addrStateTF setStringValue:nil];
-        [zipCodeTF setStringValue:nil];
+        [addrStreetTF setStringValue:@""];
+        [addrCityTF setStringValue:@""];
+        [addrStateTF setStringValue:@""];
+        [zipCodeTF setStringValue:@""];
     }
 
     abVal = [abp valueForProperty:kABNoteProperty];
-    [custNotesTF setStringValue:abVal];
+    [custNotesTF setStringValue:NonNilString(abVal)];
 }
 
 -(void)addNewCust
@@ -229,25 +236,27 @@ static CustomerViewCntlr * me;
 
 - (IBAction)addCustAction:(id)sender 
 {
+    [[[self view] window] endEditing];
     NSInteger sel = [contactListTV selectedRow];
     if( 0 <= sel && sel < [[dataSrc tableData] count] ) {
-        CustomerEntity * cust = [[dataSrc tableData] objectAtIndex:sel];
-        ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cust abPersonID]];
+        CustomerEntity * cEnt = [[dataSrc tableData] objectAtIndex:sel];
+        ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
+                                      recordForUniqueId:[cEnt abPersonID]];
+        
         if( [abp valueForProperty:[DIDB abpCustIdPropName]] != nil ) {
             // this is a cust, so add a fresh one
             [self addNewCust];
         } else {
             // add current record as a cust
+        
             NSMutableDictionary * cust = [[NSMutableDictionary alloc]initWithCapacity:16];
-            if( [firstNameTF stringValue] ) {
-                [cust setObject:[firstNameTF stringValue] forKey:@"first_name"];
-            }
-            if( [lastNameTF stringValue] ) {
-                [cust setObject:[lastNameTF stringValue] forKey:@"last_name"];
-            }
             if( [emailTF stringValue] ) {
                 [cust setObject:[emailTF stringValue] forKey:@"email"];
+            } else {
+                [SMKAlertWin alertWithMsg:@"Email address required"];
+                return;
             }
+
             if( [mainPhoneTF stringValue] ) {
                 [cust setObject:[mainPhoneTF stringValue] forKey:@"phone"];
             }
@@ -264,8 +273,58 @@ static CustomerViewCntlr * me;
                 [cust setObject:[zipCodeTF stringValue] forKey:@"addr_zip"];
             }
             NSDictionary * newRec = [DIDB ins_cust:cust];
+            if( [saveCustButton isEnabled] ) {
+                [self saveCustAction:self];
+            }
             [abp setValue:[newRec objectForKey:@"cust_id"] forProperty:[DIDB abpCustIdPropName]];
+            if( [cEnt emailInx] >= 0 ) {
+                ABMultiValue * abMulti = nil;
+                abMulti = [abp valueForProperty:kABEmailProperty];
+                if( abMulti ) {
+                    NSString * email;
+                    NSString * emIdent;
+                    email = [abMulti valueAtIndex:[cEnt emailInx]];
+                    emIdent = [abMulti identifierAtIndex:[cEnt emailInx]];
+                    [abp setValue:email forProperty:[DIDB abpCustEmailPropName]];
+                    [abp setValue:emIdent forProperty:[DIDB abpCustEmailIdentPropName]];
+                } else {
+                    [SMKException raise:@"cust" format:@"UGG em inx w/o em prop"];
+                }
+            } else {
+                NSString * email = [[self emailTF] stringValue];
+                ABMultiValue * abMulti = [abp valueForProperty:kABEmailProperty];
+                NSInteger mi = 0;
+                for( ; mi < [abMulti count]; ++ mi ){
+                    if( [ email isEqualToString:[abMulti valueAtIndex:mi]] ) {
+                        break;
+                    }
+                }
+                if( mi < [abMulti count] ) {
+                    [abp setValue:[abMulti identifierAtIndex:mi] 
+                      forProperty:[DIDB abpCustEmailIdentPropName]];
+                    [abp setValue:email 
+                      forProperty:[DIDB abpCustEmailPropName]];
+                } else { 
+                    [SMKException raise:@"cust" format:@"UGG where did the email addr go!"];
+                }
+            }
             [[ABAddressBook addressBook] save];
+            NSString * listName;
+            NSNumber * abpFlagsNum = [abp valueForProperty:kABPersonFlags];
+            NSInteger abpFlags = [abpFlagsNum integerValue];
+            
+            if( (abpFlags & kABShowAsMask) & kABShowAsCompany ) {
+                listName = [[NSString alloc]initWithFormat:
+                            @" * %@",
+                            [abp valueForProperty:kABOrganizationProperty]];
+            } else {
+                listName = [[NSString alloc]initWithFormat:
+                            @" * %@ %@",
+                            [abp valueForProperty:kABFirstNameProperty],
+                            [abp valueForProperty:kABLastNameProperty]];
+            }
+            [cEnt setListValue:listName];
+            [dataSrc sortData];
             [smkCustImage setHidden:FALSE];
             [addCustButton setEnabled:FALSE];
             [upcButton setEnabled:TRUE];
@@ -281,27 +340,17 @@ static CustomerViewCntlr * me;
 {
     if( value != nil && [value length] > 0 ) {
         if( inx >= 0 ) {
-            ABMultiValue * abMulti = [abp valueForProperty:abKey];
-            if( ! [value isEqualToString:[abMulti valueAtIndex:inx]] ) {
-                // changed
-                ABMutableMultiValue * nMulti = [[ABMutableMultiValue alloc]init];
-                for( NSInteger mi = 0; mi < [abMulti count]; ++ mi ) {
-                    if( mi == inx ) {
-                        [nMulti addValue:value withLabel:[abMulti labelAtIndex:mi]];
-                    } else {
-                        [nMulti addValue:[abMulti valueAtIndex:mi]
-                               withLabel:[abMulti labelAtIndex:mi]];
-                    }
-                }
-                [abp setValue:nMulti forProperty:abKey];
-                return TRUE;
-            } else {
-                return FALSE;
+            ABMutableMultiValue * abMulti = [[abp valueForProperty:abKey] mutableCopy];
+            if( [value isEqualToString:[abMulti valueAtIndex:inx]] ) {
+                return FALSE; // no change
             }
+            [abMulti replaceValueAtIndex:inx withValue:value];
+            [abp setValue:abMulti forProperty:abKey];
+            return TRUE;
         } else {
             // need to add it - asserting there is none
             ABMutableMultiValue * nMulti = [[ABMutableMultiValue alloc]init];
-            [nMulti addValue:value withLabel:[nMulti primaryIdentifier]];
+            [nMulti addValue:value withLabel:@"home"];
             [abp setValue:nMulti forProperty:abKey];                
             return TRUE;
         }
@@ -314,99 +363,40 @@ static CustomerViewCntlr * me;
     NSInteger sel = [contactListTV selectedRow];
     if( 0 <= sel && sel < [[dataSrc tableData] count] ) {
         CustomerEntity * cEnt = [[dataSrc tableData] objectAtIndex:sel];
-        ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cEnt abPersonID]];
-        if( [self updateABMulti:[emailTF stringValue] oInx:[cEnt emailInx] person:abp key:kABEmailProperty] ) {
+        ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
+                                      recordForUniqueId:[cEnt abPersonID]];
+        
+        if( [self updateABMulti:[emailTF stringValue] 
+                           oInx:[cEnt emailInx] 
+                         person:abp 
+                            key:kABEmailProperty] ) {
             // updated email - update the db;
-            
+            NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+            if( custId != nil ) {
+                [DIDB upd_cust:custId email:[[self emailTF]stringValue]];
+            }
         }
         // don't really care about these
         [self updateABMulti:[mainPhoneTF stringValue] oInx:[cEnt mPhoneInx] person:abp key:kABPhoneProperty];
         [self updateABMulti:[altPhoneTF stringValue] oInx:[cEnt aPhoneInx] person:abp key:kABPhoneProperty];
+
+        NSString * val;
+        val = [[self custNotesTF] stringValue];
+        if( val 
+           && [val length] > 0 
+           && ! [val isEqualToString:[abp valueForProperty:kABNoteProperty ]] ) {
+            [abp setValue:val forProperty:kABNoteProperty ];
+            NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+            if( custId != nil ) {
+                [DIDB add_cust_note:custId note:[[self custNotesTF]stringValue]];
+            }
+        }
         
-        ABMultiValue * abMulti = [abp valueForProperty:kABAddressProperty];
-        if( [cEnt addrInx] >= 0 ) {
-            NSDictionary * oAddr = [abMulti valueAtIndex:[cEnt addrInx]];
-            NSString * valStreet = [addrStreetTF stringValue];
-            NSString * valCity = [addrCityTF stringValue];
-            NSString * valState = [addrStateTF stringValue];
-            NSString * valZip = [zipCodeTF stringValue];
-            if( ( valStreet
-                 && [valStreet length] > 0 
-                 && [valStreet isEqualToString:[oAddr objectForKey:kABAddressStreetKey]] ) 
-               || ( valCity
-                   && [valCity length] > 0 
-                   && [valCity isEqualToString:[oAddr objectForKey:kABAddressCityKey]] ) 
-               || ( valState
-                   && [valState length] > 0 
-                   && [valState isEqualToString:[oAddr objectForKey:kABAddressStateKey]] ) 
-               || ( valZip
-                   && [valZip length] > 0 
-                   && [valZip isEqualToString:[oAddr objectForKey:kABAddressZIPKey]] ) ) {
-                   // ok something changed;
-                   NSMutableDictionary * nAddr 
-                   = [[NSMutableDictionary alloc]initWithObjectsAndKeys:
-                      valStreet,kABAddressStreetKey,
-                      valCity,kABAddressCityKey,
-                      valState,kABAddressStateKey,
-                      valZip,kABAddressZIPKey,
-                      nil];
-                   
-                   ABMutableMultiValue * nMulti = [[ABMutableMultiValue alloc]init];
-                   for(NSInteger mi = 0; mi < [abMulti count]; ++ mi) {
-                       if( mi == [cEnt addrInx] ) {
-                           [nMulti addValue:nAddr 
-                                  withLabel:[abMulti labelAtIndex:mi]];
-                       } else {
-                           [nMulti addValue:[abMulti valueAtIndex:mi] 
-                                  withLabel:[abMulti labelAtIndex:mi]];
-                       }
-                   }
-                   [abp setValue:nMulti forProperty:kABAddressProperty];
-               }
-        } else {
-            // no index - if any set add the addr
-            NSMutableDictionary * nAddr = [[NSMutableDictionary alloc]initWithCapacity:8];
-            NSString * valStreet = [addrStreetTF stringValue];
-            NSString * valCity = [addrCityTF stringValue];
-            NSString * valState = [addrStateTF stringValue];
-            NSString * valZip = [zipCodeTF stringValue];
-            BOOL addrData = FALSE;
-            if( valStreet != nil && [valStreet length] > 0 ) {
-                [nAddr setObject:valStreet forKey:kABAddressStreetKey];
-                addrData = TRUE;
-            }
-            if( valCity != nil && [valCity length] > 0 ) {
-                [nAddr setObject:valCity forKey:kABAddressCityKey];
-                addrData = TRUE;                
-            }
-            if( valState != nil && [valState length] > 0 ) {
-                [nAddr setObject:valState forKey:kABAddressStateKey];
-                addrData = TRUE;                
-            }
-            if( valZip != nil && [valZip length] > 0 ) {
-                [nAddr setObject:valZip forKey:kABAddressZIPKey];
-                addrData = TRUE;                                
-            }
-            ABMutableMultiValue * nMulti = [[ABMutableMultiValue alloc]init];
-            [nMulti addValue:nAddr withLabel:[nMulti primaryIdentifier]];
-        }
-        NSString * val = [firstNameTF stringValue];
-        if( val 
-           && [val length] > 0 
-           && ! [val isEqualToString:[abp valueForProperty:kABFirstNameProperty]] ) {
-            [abp setValue:val forProperty:kABFirstNameProperty];
-        }
-        val = [lastNameTF stringValue];
-        if( val 
-           && [val length] > 0 
-           && ! [val isEqualToString:[abp valueForProperty:kABLastNameProperty]] ) {
-            [abp setValue:val forProperty:kABLastNameProperty];
-        }
         ABAddressBook * myAB = [ABAddressBook addressBook];
         if( [myAB hasUnsavedChanges] ) {
             [myAB save];
         }
-
+        [saveCustButton setEnabled:FALSE];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(textDidChange:)
                                                  name:NSTextDidChangeNotification 
@@ -428,8 +418,7 @@ static CustomerViewCntlr * me;
         ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cust abPersonID]];
         NSDictionary * custInfo = [[NSDictionary alloc]initWithObjectsAndKeys:
                                    [abp valueForProperty:[DIDB abpCustIdPropName]], @"cust_id",
-                                   [firstNameTF stringValue],@"first_name",
-                                   [lastNameTF stringValue],@"last_name",
+                                   [fullNameTF stringValue],@"full_name",
                                    nil];
         [CustUpcViewCntlr showSelfIn:[self view] custInfo:custInfo];
     }
