@@ -24,7 +24,7 @@
 
 **/
 #import <Foundation/Foundation.h>
-
+#import "DIDB.h"
 @class SMKDBConnMgr;
 @class VidMetaSelDataSrc;
 @class ArtBrowswerItemGatherer;
@@ -37,7 +37,7 @@
 @property (retain) NSString * genres;
 @property (retain) NSString * actors;
 @property (retain) NSString * directors;
-@property (retain) NSString * source;
+@property (assign) SMKDigitDS source;
 @property (retain) NSString * sourceId;
 @property (retain) NSString * desc;
 @property (retain) ArtBrowswerItemGatherer * artGath;

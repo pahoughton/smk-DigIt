@@ -532,23 +532,43 @@ static NSMutableArray * customersCols = nil;
             needToRip];           
 }
 
-+(BOOL)set_upc:(NSString *)upc 
-         title:(NSString *)title 
-          year:(NSString *)year 
-       metaSrc:(NSString *)metaSrc 
-        metaId:(NSString *)metaId
++(NSNumber *)set_v_sel_upc:(NSString *)upc 
+                     title:(NSString *)title 
+                      year:(NSString *)year 
+                   metaSrc:(SMKDigitDS)metaSrc 
+                    metaId:(NSString *)metaId
+{
+    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    if( [db queryBoolFormat:
+         @"insert into video_meta_selection\n"
+         "(search_upc, search_title, search_year,\n"
+         " sel_source, sel_source_id, sel_staff_id )\n"
+         "values ( %@, %@, %@, %@, %@, %@ ) ",
+         upc, 
+         [db q:title],
+         year,
+         [db q:[DIDB dsTable:metaSrc]],
+         [db q:metaId],
+         [DIDB staff_id]] ) {
+        id <SMKDBResults> rslt = [db query:@"select currval( 'video_meta_selection_vid_meta_sel_id_seq' )"];
+        NSArray * idrow = [rslt fetchRowArray];
+        NSNumber * selId = [idrow objectAtIndex:0];
+        return selId;
+    } else {
+        return nil;
+    }
+}
++(BOOL)set_meta_sel_art:(NSNumber *)selId artSource:(SMKDigitDS)artSrc artId:(NSString *)artId
 {
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     return [db queryBoolFormat:
-            @"insert into video_meta_selection\n"
-            "(search_upc, search_title, search_year,\n"
-            " sel_source, sel_source_id, sel_staff_id )\n"
-            "values ( %@, %@, %@, %@, %@, %@ ) ",
-            upc, 
-            [db q:title],
-            year,
-            [db q:metaSrc],
-            [db q:metaId],
-            [DIDB staff_id]];
+            @"update video_meta_selection set\n"
+            "sel_art_source = %@,\n"
+            "sel_art_source_id = %@\n"
+            "where vid_meta_sel_id = %@\n",
+            [db q:selId],
+            [db q:[DIDB dsTable:artSrc]],
+            [db q:artId]];
+            
 }
 @end

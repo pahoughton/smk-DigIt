@@ -37,13 +37,16 @@
 
 @interface VidSelArtPickerViewCntlr : NSViewController // IKImageBrowserDelegate
 @property (strong) ArtBrowswerItemGatherer * artGath;
+@property (strong) NSNumber * metaSelId;
 @property (assign) BOOL aliveAndWell;
 @property (weak) IBOutlet IKImageBrowserView *artBrowser;
 @property (weak) IBOutlet IKImageView *artImageView;
 @property (weak) IBOutlet NSButton *selectButton;
 
 
-+(VidSelArtPickerViewCntlr *)showSelfIn:(NSView *)viewToReplace artGath:(ArtBrowswerItemGatherer *)artGather;
++(VidSelArtPickerViewCntlr *)showSelfIn:(NSView *)viewToReplace 
+                              metaSelId:(NSNumber *)selId
+                                artGath:(ArtBrowswerItemGatherer *)artGather;
 
 // IKImageBrowserDelegate methods
 - (void) imageBrowser:(IKImageBrowserView *) aBrowser backgroundWasRightClickedWithEvent:(NSEvent *) event;

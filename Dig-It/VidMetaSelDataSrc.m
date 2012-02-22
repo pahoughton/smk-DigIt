@@ -132,7 +132,7 @@
         [meta setGenres:[DIDB vtGenres:vid_id_num]];
         [meta setActors:[DIDB vtActors:vid_id_num]];
         [meta setDirectors:[DIDB vtDirectors:vid_id_num]];
-        [meta setSource:@"Titles"];
+        [meta setSource:SMKDIDS_VidTitles];
         [meta setSourceId:vid_id];
         [meta setDesc:[rec objectAtIndex:6]];
         [[dataStore dataRows] addObject:meta];
@@ -168,7 +168,7 @@
         [meta setGenres:[DIDB vtmGenres:vid_meta_id_num]];
         [meta setActors:[DIDB vtmActors:vid_meta_id_num]];
         [meta setDirectors:[DIDB vtmDirectors:vid_meta_id_num]];
-        [meta setSource:@"Meta"];
+        [meta setSource:SMKDIDS_VidMeta];
         [meta setSourceId:vid_meta_id];
         [meta setDesc:[rec objectAtIndex:6]];
         [[dataStore dataRows] addObject:meta];
@@ -184,7 +184,7 @@
         for( NSDictionary * movie in [tmdb data] ) {
             VidMetaSelEntity * meta = [[VidMetaSelEntity alloc] init];
             
-            [meta setSource:@"TMDb"];
+            [meta setSource:SMKDIDS_TMDb];
             [meta setSourceId:[movie valueForKey:@"tmdb_id"]];
             
             NSArray * artlist = [movie valueForKey:@"artlist"];

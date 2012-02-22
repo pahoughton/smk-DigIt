@@ -15,6 +15,7 @@
 		DA06BEF414E2F5530013A5E8 /* stop_button.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF314E2F5530013A5E8 /* stop_button.png */; };
 		DA06BEF614E2F55C0013A5E8 /* go_button.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF514E2F55C0013A5E8 /* go_button.png */; };
 		DA06BEF814E2F5710013A5E8 /* sMk.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF714E2F5710013A5E8 /* sMk.png */; };
+		DA09A9F514F46D100053B7C6 /* libSMKDigitDatabase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA09A9F414F46D0F0053B7C6 /* libSMKDigitDatabase.a */; };
 		DA171DFE14E32D3700EBD43D /* DIDB.m in Sources */ = {isa = PBXBuildFile; fileRef = DA171DFD14E32D3600EBD43D /* DIDB.m */; };
 		DA171E0B14E341A100EBD43D /* CustUpcViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA171E0914E341A100EBD43D /* CustUpcViewCntlr.m */; };
 		DA171E0C14E341A100EBD43D /* CustUpcView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA171E0A14E341A100EBD43D /* CustUpcView.xib */; };
@@ -94,6 +95,7 @@
 		DA06BEF314E2F5530013A5E8 /* stop_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_button.png; path = ../../../../Images/stop_button.png; sourceTree = "<group>"; };
 		DA06BEF514E2F55C0013A5E8 /* go_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = go_button.png; path = ../../../../Images/go_button.png; sourceTree = "<group>"; };
 		DA06BEF714E2F5710013A5E8 /* sMk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sMk.png; path = ../../../../Images/sMk.png; sourceTree = "<group>"; };
+		DA09A9F414F46D0F0053B7C6 /* libSMKDigitDatabase.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKDigitDatabase.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug/libSMKDigitDatabase.a"; sourceTree = "<group>"; };
 		DA171DFC14E32D3600EBD43D /* DIDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIDB.h; sourceTree = "<group>"; };
 		DA171DFD14E32D3600EBD43D /* DIDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIDB.m; sourceTree = "<group>"; };
 		DA171E0814E341A100EBD43D /* CustUpcViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustUpcViewCntlr.h; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA09A9F514F46D100053B7C6 /* libSMKDigitDatabase.a in Frameworks */,
 				DAF9485914F2308A002B6C03 /* libSMKDB.a in Frameworks */,
 				DAF9485714F23084002B6C03 /* libSMKCocoaCommon.a in Frameworks */,
 				DA5D42D514E31FD500A16783 /* libssl.0.9.8.dylib in Frameworks */,
@@ -254,6 +257,7 @@
 		DAA530E114E09DF600519A30 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DA09A9F414F46D0F0053B7C6 /* libSMKDigitDatabase.a */,
 				DAF9485814F2308A002B6C03 /* libSMKDB.a */,
 				DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */,
 				DA5D42D614E31FE900A16783 /* libcrypto.0.9.8.dylib */,

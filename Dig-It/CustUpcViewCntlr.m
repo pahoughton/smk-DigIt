@@ -300,7 +300,7 @@ static CustUpcViewCntlr * me;
     } else {
         [upcDescTF setStringValue:@""];
     }
-    NSString * vid_id = [uvfDetails valueForKey:@"vid_id"];
+    NSNumber * vid_id = [uvfDetails valueForKey:@"vid_id"];
     [upcGenresTF setStringValue:[DIDB vtGenres:vid_id]];
     [upcActorsTF setStringValue:[DIDB vtActors:vid_id]];
     NSImage * thumb = [DIDB vtThumb:vid_id artid:[uvfDetails valueForKey:@"art_thumb_id"]];

@@ -130,7 +130,7 @@ static VidMetaSelWinCntlr * me = nil;
     ENT2CELL( genres );
     ENT2CELL( actors );
     ENT2CELL( directors );
-    ENT2CELL( source );
+    cellView.source.stringValue = [DIDB dsForUser:ent.source];
     ENT2CELL( desc );
 #undef ENT2CELL    
     
@@ -193,7 +193,7 @@ static VidMetaSelWinCntlr * me = nil;
 }
 
 - (IBAction)selectMetaButton:(id)sender 
-{
+{/*
     NSInteger row = [[self metaTableView] rowForView:sender];
     VidMetaSelEntity * meta = [[[self dataSource] dataRows] objectAtIndex:row];
     if( [DIDB set_upc:[self srcUpc]
@@ -204,6 +204,7 @@ static VidMetaSelWinCntlr * me = nil;
         [sender setEnabled:FALSE];
     }
     [self cancelButton:self];
+  */
 }
 
 @end

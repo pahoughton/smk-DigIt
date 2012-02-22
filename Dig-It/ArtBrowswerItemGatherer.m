@@ -41,6 +41,7 @@ enum ABIGSpec {
 +(ABIGathSpec *) opSpec:(enum ABIGSpec)s data:(id)d;
 
 @end
+
 @implementation ABIGathSpec
 @synthesize spec;
 @synthesize data;
@@ -52,6 +53,7 @@ enum ABIGSpec {
     return me;
 }
 @end
+
 
 @implementation ArtBrowswerItemGatherer
 @synthesize artList;
@@ -134,7 +136,9 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
     
     NSArray * tmdbArtDictList = [spec data];
     for( NSDictionary * tmdbArtDict in tmdbArtDictList ) {
-
+        if( [self isCancelled] ) {
+            return;
+        }
         NSString * tmdb_id = [tmdbArtDict objectForKey:@"id"];
 
         ArtBrowserItem * abi = [tmdbIdLink objectForKey:tmdb_id];
@@ -190,6 +194,9 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
     id <SMKDBResults> rslt = [db query:qStr];
     NSMutableArray * aRec;
     while( (aRec = [rslt fetchRowArray]) ){
+        if( [self isCancelled] ) {
+            return;
+        }
         NSString * tmdb_id = [aRec objectAtIndex:7];
         ArtBrowserItem * abi = [tmdbIdLink objectForKey:tmdb_id];
         

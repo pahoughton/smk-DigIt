@@ -73,11 +73,15 @@
             upc:(NSString *)upc
       needToRip:(BOOL)needToRip;
 
-+(BOOL)set_upc:(NSString *)upc
-         title:(NSString *)title
-          year:(NSString *)year
-       metaSrc:(NSString *)metaSrc
-        metaId:(NSString *)metaId;
++(NSNumber *)set_v_sel_upc:(NSString *)upc
+                     title:(NSString *)title
+                      year:(NSString *)year
+                   metaSrc:(SMKDigitDS)metaSrc
+                    metaId:(NSString *)metaId;
+
++(BOOL)set_meta_sel_art:(NSNumber *)selId
+              artSource:(SMKDigitDS)artSrc
+                  artId:(NSString *)artId;
 
 +(NSString *)sel_v_title_yearMeta:(BOOL)meta;
 +(NSString *)sel_v_art_thumb_detailsMeta:(BOOL)meta;

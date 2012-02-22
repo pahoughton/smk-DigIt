@@ -121,7 +121,7 @@ static VidMetaSelViewCntlr * me = nil;
     ENT2CELL( genres );
     ENT2CELL( actors );
     ENT2CELL( directors );
-    ENT2CELL( source );
+    cellView.source.stringValue = [DIDB dsForUser:ent.source];
     ENT2CELL( desc );
 #undef ENT2CELL    
     
@@ -156,19 +156,31 @@ static VidMetaSelViewCntlr * me = nil;
 {
     NSInteger row = [[self metaTView] rowForView:sender];
     VidMetaSelEntity * meta = [[[self dataSrc] dataRows] objectAtIndex:row];
-    if( [DIDB set_upc:[self srcUpc]
-                title:[[self titleTF] stringValue]
-                 year:[[self yearTF] stringValue]
-              metaSrc:[meta source]
-               metaId:[meta sourceId]] ) {
+    NSNumber * selId;
+    selId = [DIDB set_v_sel_upc:[self srcUpc]
+                          title:[[self titleTF] stringValue]
+                           year:[[self yearTF] stringValue]
+                        metaSrc:[meta source]
+                         metaId:[meta sourceId]];
+    if( selId != nil ) {
         [sender setEnabled:FALSE];
     }
-    if( [meta tmdbArtGath] != nil ) {
-        artPickerViewCntlr = [VidSelArtPickerViewCntlr showSelfIn:[self view] artGath:[meta tmdbArtGath]];
+    /* 
+      on to art, but first cancel any 'OTHER' art gatherers
+     */
+    for( ArtBrowswerItemGatherer * gath in [[self dataSrc]artGatherList] ) {
+        // This SHOULD work
+        if( gath != [meta artGath] ) {
+            [gath cancel];
+        }
+    }
+    if( [meta artGath] ) {
+        artPickerViewCntlr = [VidSelArtPickerViewCntlr showSelfIn:[self view] 
+                                                        metaSelId:selId 
+                                                          artGath:[meta artGath]];
     } else {
         [self cancelAction:self];
     }
-    
 }
 
 - (IBAction)searchAction:(id)sender 
