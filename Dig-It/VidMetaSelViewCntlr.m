@@ -67,7 +67,7 @@ static VidMetaSelViewCntlr * me = nil;
         [[me metaTView] setDataSource:[me dataSrc]];
         [[me dataSrc] addObserver:me 
                        forKeyPath:[VidMetaSelDataSrc kvoDataRows]
-                          options:0 
+                          options:NSKeyValueObservingOptionNew
                           context:nil];
         [me searchAction:me];
     }
@@ -100,7 +100,7 @@ static VidMetaSelViewCntlr * me = nil;
         [self setDataSrc:[[VidMetaSelDataSrc alloc] init]];
         [dataSrc addObserver:self 
                   forKeyPath:[VidMetaSelDataSrc kvoDataRows]
-                     options:0 
+                     options:NSKeyValueObservingOptionNew
                      context:nil];
         [dataSrc findTitle:[self srcTitle] year:[self srcYear]];
     }
@@ -109,6 +109,10 @@ static VidMetaSelViewCntlr * me = nil;
 
 -(void)awakeFromNib
 {
+    SMKLogDebug(@"awake alive %d", aliveAndWell);
+    if( aliveAndWell ) {
+        return; // NO idea how hit got here TWICE
+    }
     [self setAliveAndWell:TRUE];
     if( [dataSrc numberOfRowsInTableView:metaTView] == 0 ) {
         [[self progressInd] setHidden:FALSE];
@@ -189,6 +193,7 @@ static VidMetaSelViewCntlr * me = nil;
        && [keyPath isEqualToString:[VidMetaSelDataSrc kvoDataRows]]
        && [self aliveAndWell] ) {
         SMKLogDebug(@"kvo keypath %@", keyPath);
+        [dataSrc removeObserver:self forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
         [self performSelectorOnMainThread:@selector(mtSetDataSrc:) withObject:self waitUntilDone:FALSE];
     }
 }

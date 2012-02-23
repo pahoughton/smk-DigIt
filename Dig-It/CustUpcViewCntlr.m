@@ -22,9 +22,10 @@
 
 **/
 #import "CustUpcViewCntlr.h"
-#import "CustListViewCntlr.h"
+#import "CustomerViewCntlr.h"
 #import "VidMetaSelViewCntlr.h"
 #import "DIDB.h"
+#import <SMKCocoaCommon.h>
 #import <SMKLogger.h>
 #import <SMKAlertWin.h>
 #import <SMKDB.h>
@@ -71,6 +72,8 @@ static CustUpcViewCntlr * me;
     if( me == nil ){
         me = [CustUpcViewCntlr alloc];
         me = [me initWithNibName:@"CustUpcView" bundle:nil];
+    } else {
+        [[me curUpcValue] setEnabled:TRUE];
     }
     /// need to library this
     NSView * curSuper = [viewToReplace superview];
@@ -201,7 +204,7 @@ static CustUpcViewCntlr * me;
     */
     [upcListAcntlr setSelectsInsertedObjects:FALSE];
     [[self.view window] makeFirstResponder:curUpcValue];
-    
+    [curUpcValue setEnabled:TRUE];
     SMKLogDebug(@"upc acntlr %@", upcListAcntlr);
     if( custInfo ) {
         [self.custLabel setStringValue:
@@ -422,13 +425,16 @@ static CustUpcViewCntlr * me;
 {
     SMKLogDebug(@"cancelButton");
     [[self curUpcValue] setEnabled:FALSE];
-    [CustListViewCntlr showSelfIn:[self view]];
+    [CustomerViewCntlr showSelfIn:[self view]];
 
 }
 
 - (IBAction)searchButton:(id)sender 
 {
     SMKLogDebug(@"searchButton %@", [upcTitleTF stringValue]);
+    [curUpcValue setEnabled:FALSE];
+    [[[self view]window] endEditing];
+    
     if( [[upcTitleTF stringValue] length] > 1 ) {
         metaSelViewCntlr = [VidMetaSelViewCntlr showSelfIn:[self view]
                                                      title:[upcTitleTF stringValue]

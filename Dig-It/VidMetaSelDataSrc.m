@@ -72,9 +72,9 @@
      genres,
      actors,
      directors,
-     source,
+     [DIDB dsForUser:source],
      sourceId,
-     desc];
+     desc]; 
 }
 @end
     

@@ -22,7 +22,6 @@
 
 **/
 #import "DigItWinCntlr.h"
-#import "CustListViewCntlr.h"
 #import "CustomerViewCntlr.h"
 #import <SMKLogger.h>
 

@@ -123,7 +123,8 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
 
 -(void)goWithOpQueue:(NSOperationQueue *)opQueue
 {
-    [NSException raise:@"ArtBrowerItemGatherer" format:@"Opps, not implemented"];
+    [self setOpQ:opQueue];
+    [self doGather];
 }
 
 -(void)doGatherTMDbArtList:(ABIGathSpec *)spec

@@ -45,7 +45,7 @@
 			</object>
 			<object class="NSCustomView" id="1005">
 				<reference key="NSNextResponder"/>
-				<int key="NSvFlags">268</int>
+				<int key="NSvFlags">274</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="NSScrollView" id="322535454">
 						<reference key="NSNextResponder" ref="1005"/>
@@ -60,6 +60,7 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrameSize">{722, 629}</string>
 										<reference key="NSSuperview" ref="806060186"/>
+										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="197426478"/>
 										<string key="NSReuseIdentifierKey">_NS:1828</string>
 										<bool key="NSEnabled">YES</bool>
@@ -158,6 +159,7 @@
 								</array>
 								<string key="NSFrame">{{1, 1}, {722, 629}}</string>
 								<reference key="NSSuperview" ref="322535454"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="512955402"/>
 								<string key="NSReuseIdentifierKey">_NS:1826</string>
 								<reference key="NSDocView" ref="512955402"/>
@@ -169,6 +171,7 @@
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{224, 17}, {15, 102}}</string>
 								<reference key="NSSuperview" ref="322535454"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="437180701"/>
 								<string key="NSReuseIdentifierKey">_NS:1845</string>
 								<reference key="NSTarget" ref="322535454"/>
@@ -180,6 +183,7 @@
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{1, 119}, {223, 15}}</string>
 								<reference key="NSSuperview" ref="322535454"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="676733322"/>
 								<string key="NSReuseIdentifierKey">_NS:1847</string>
 								<int key="NSsFlags">1</int>
@@ -190,6 +194,7 @@
 						</array>
 						<string key="NSFrame">{{20, 52}, {724, 631}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="806060186"/>
 						<string key="NSReuseIdentifierKey">_NS:1824</string>
 						<int key="NSsFlags">133682</int>
@@ -203,6 +208,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{202, 708}, {236, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="488815274"/>
 						<string key="NSReuseIdentifierKey">_NS:903</string>
 						<bool key="NSEnabled">YES</bool>
@@ -233,6 +239,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{446, 708}, {53, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="909130497"/>
 						<string key="NSReuseIdentifierKey">_NS:903</string>
 						<bool key="NSEnabled">YES</bool>
@@ -253,6 +260,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{120, 688}, {78, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="674460261"/>
 						<string key="NSReuseIdentifierKey">_NS:687</string>
 						<bool key="NSEnabled">YES</bool>
@@ -276,6 +284,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{118, 715}, {82, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="832823937"/>
 						<string key="NSReuseIdentifierKey">_NS:687</string>
 						<bool key="NSEnabled">YES</bool>
@@ -300,6 +309,7 @@
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
 						<string key="NSFrame">{{608, 703}, {32, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="322535454"/>
 						<string key="NSReuseIdentifierKey">_NS:3891</string>
 						<int key="NSpiFlags">20490</int>
@@ -310,6 +320,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{501, 702}, {82, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="767979069"/>
 						<string key="NSReuseIdentifierKey">_NS:687</string>
 						<bool key="NSEnabled">YES</bool>
@@ -333,6 +344,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{341, 12}, {82, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:687</string>
 						<bool key="NSEnabled">YES</bool>
@@ -354,6 +366,7 @@
 				</array>
 				<string key="NSFrameSize">{764, 755}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="687575398"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -673,7 +686,7 @@
 								<reference ref="1006156124"/>
 								<object class="NSTextField" id="506966411">
 									<reference key="NSNextResponder" ref="197426478"/>
-									<int key="NSvFlags">268</int>
+									<int key="NSvFlags">267</int>
 									<string key="NSFrame">{{406, 11}, {303, 129}}</string>
 									<reference key="NSSuperview" ref="197426478"/>
 									<reference key="NSNextKeyView" ref="596362126"/>
@@ -1190,7 +1203,133 @@
 			<nil key="sourceID"/>
 			<int key="maxID">69</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">VidMetaSelCellView</string>
+					<string key="superclassName">NSTableCellView</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="actors">NSTextField</string>
+						<string key="desc">NSTextField</string>
+						<string key="directors">NSTextField</string>
+						<string key="genres">NSTextField</string>
+						<string key="mpaa">NSTextField</string>
+						<string key="selectButton">NSButton</string>
+						<string key="selected">NSTextField</string>
+						<string key="source">NSTextField</string>
+						<string key="year">NSTextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="actors">
+							<string key="name">actors</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="desc">
+							<string key="name">desc</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="directors">
+							<string key="name">directors</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="genres">
+							<string key="name">genres</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mpaa">
+							<string key="name">mpaa</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="selectButton">
+							<string key="name">selectButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="selected">
+							<string key="name">selected</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="source">
+							<string key="name">source</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="year">
+							<string key="name">year</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/VidMetaSelCellView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">VidMetaSelViewCntlr</string>
+					<string key="superclassName">NSViewController</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="TMDbAction:">id</string>
+						<string key="cancelAction:">id</string>
+						<string key="searchAction:">id</string>
+						<string key="selectMetaAction:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="TMDbAction:">
+							<string key="name">TMDbAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="cancelAction:">
+							<string key="name">cancelAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="searchAction:">
+							<string key="name">searchAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="selectMetaAction:">
+							<string key="name">selectMetaAction:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="TMDbButton">NSButton</string>
+						<string key="metaTView">NSTableView</string>
+						<string key="progressInd">NSProgressIndicator</string>
+						<string key="searchButton">NSButton</string>
+						<string key="titleTF">NSTextField</string>
+						<string key="yearTF">NSTextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="TMDbButton">
+							<string key="name">TMDbButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="metaTView">
+							<string key="name">metaTView</string>
+							<string key="candidateClassName">NSTableView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="progressInd">
+							<string key="name">progressInd</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="searchButton">
+							<string key="name">searchButton</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="titleTF">
+							<string key="name">titleTF</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="yearTF">
+							<string key="name">yearTF</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/VidMetaSelViewCntlr.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
