@@ -26,6 +26,7 @@
 #import "VidMetaSelCellView.h"
 #import "VidSelArtPickerViewCntlr.h"
 #import "CustUpcViewCntlr.h"
+#import "ArtBrowswerItemGatherer.h"
 #import "DIDB.h"
 #import <SMKLogger.h>
 
@@ -62,13 +63,6 @@ static VidMetaSelViewCntlr * me = nil;
     if( [me aliveAndWell] ) {
         [[me titleTF] setStringValue:[me srcTitle]];
         [[me yearTF] setStringValue:[me srcYear]];
-        [[me dataSrc] removeObserver:me forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
-        [me setDataSrc:[[VidMetaSelDataSrc alloc]init]];
-        [[me metaTView] setDataSource:[me dataSrc]];
-        [[me dataSrc] addObserver:me 
-                       forKeyPath:[VidMetaSelDataSrc kvoDataRows]
-                          options:NSKeyValueObservingOptionNew
-                          context:nil];
         [me searchAction:me];
     }
     /// need to library this
@@ -106,24 +100,38 @@ static VidMetaSelViewCntlr * me = nil;
     }
     return self;
 }
+-(void)mtSetDataSrc:(id)trash
+{
+    [progressInd setHidden:TRUE];
+    [progressInd stopAnimation:self];
+    [[self searchButton]setEnabled:FALSE];
+    [[self TMDbButton]setEnabled:[dataSrc didTMDbSearch] == FALSE];
+    [metaTView setDataSource:dataSrc];
+    [metaTView reloadData];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textDidChange:)
+                                                 name:NSTextDidChangeNotification 
+                                               object:nil];
+}
+
 
 -(void)awakeFromNib
 {
-    SMKLogDebug(@"awake alive %d", aliveAndWell);
+    SMKLogDebug(@"awake alive %d data: %p", aliveAndWell, [dataSrc dataRows]);
     if( aliveAndWell ) {
         return; // NO idea how hit got here TWICE
     }
     [self setAliveAndWell:TRUE];
-    if( [dataSrc numberOfRowsInTableView:metaTView] == 0 ) {
+    [[self titleTF] setStringValue:[me srcTitle]];
+    [[self yearTF] setStringValue:[me srcYear]];
+    
+    if( [dataSrc dataRows] == nil ) {
         [[self progressInd] setHidden:FALSE];
         [[self progressInd] startAnimation:self];
         [[self searchButton] setEnabled:FALSE];
         [[self TMDbButton] setEnabled:FALSE];
     } else {
-        [[self progressInd] setHidden:TRUE];
-        [[self progressInd] stopAnimation:self];
-        [metaTView setDataSource:[self dataSrc]];
-        [metaTView reloadData];
+        [self mtSetDataSrc:nil];
     }
 }
 
@@ -169,30 +177,18 @@ static VidMetaSelViewCntlr * me = nil;
 -(void)textDidChange:(NSNotification *)note
 {
     [[self searchButton]setEnabled:TRUE];
+    [[NSNotificationCenter defaultCenter] removeObserver:self 
+                                              forKeyPath:NSTextDidChangeNotification];
 }
--(void)mtSetDataSrc:(id)trash
-{
-    [progressInd setHidden:TRUE];
-    [progressInd stopAnimation:self];
-    [[self searchButton]setEnabled:FALSE];
-    [[self TMDbButton]setEnabled:[dataSrc didTMDbSearch] == FALSE];
-    [metaTView setDataSource:dataSrc];
-    [metaTView reloadData];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(textDidChange:)
-                                                 name:NSTextDidChangeNotification 
-                                               object:nil];
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath 
                       ofObject:(id)object 
                         change:(NSDictionary *)change 
                        context:(void *)context
 {
+    SMKLogDebug(@"kvo keypath %@", keyPath);
     if( object == dataSrc 
        && [keyPath isEqualToString:[VidMetaSelDataSrc kvoDataRows]]
        && [self aliveAndWell] ) {
-        SMKLogDebug(@"kvo keypath %@", keyPath);
         [dataSrc removeObserver:self forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
         [self performSelectorOnMainThread:@selector(mtSetDataSrc:) withObject:self waitUntilDone:FALSE];
     }
@@ -211,6 +207,8 @@ static VidMetaSelViewCntlr * me = nil;
     if( selId != nil ) {
         [sender setEnabled:FALSE];
     }
+
+    SMKLogDebug(@"sel src %@ id %@ selid %@", [DIDB dsDesc:[meta source]],[meta sourceId], selId);
     /* 
       on to art, but first cancel any 'OTHER' art gatherers
      */
@@ -221,6 +219,9 @@ static VidMetaSelViewCntlr * me = nil;
         }
     }
     if( [meta artGath] ) {
+        ArtBrowswerItemGatherer * gath = [meta artGath];
+        SMKLogDebug(@"ag %@",gath);
+        
         artPickerViewCntlr = [VidSelArtPickerViewCntlr showSelfIn:[self view] 
                                                         metaSelId:selId 
                                                           artGath:[meta artGath]];
@@ -231,17 +232,32 @@ static VidMetaSelViewCntlr * me = nil;
 
 - (IBAction)searchAction:(id)sender 
 {
-    [dataSrc findTitle:[titleTF stringValue] year:[yearTF stringValue]];
-}
-
-- (IBAction)cancelAction:(id)sender 
-{
-    [dataSrc removeObserver:self forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
-    [CustUpcViewCntlr showSelfIn:[self view] custInfo:nil];
+    [self setDataSrc:[[VidMetaSelDataSrc alloc]init]];
+    [[self dataSrc] addObserver:me 
+                     forKeyPath:[VidMetaSelDataSrc kvoDataRows]
+                        options:NSKeyValueObservingOptionNew
+                        context:nil];
+    [[self progressInd] setHidden:FALSE];
+    [[self progressInd] startAnimation:self];
+    [[self dataSrc] findTitle:[titleTF stringValue] year:[yearTF stringValue]];
 }
 
 - (IBAction)TMDbAction:(id)sender 
 {
+    [[self dataSrc] addObserver:me 
+                     forKeyPath:[VidMetaSelDataSrc kvoDataRows]
+                        options:NSKeyValueObservingOptionNew
+                        context:nil];
+    [[self progressInd] setHidden:FALSE];
+    [[self progressInd] startAnimation:self];
     [dataSrc searchTMDb:[titleTF stringValue] year:[yearTF stringValue]];
 }
+- (IBAction)cancelAction:(id)sender 
+{
+    if( ! [[self progressInd] isHidden] ) {
+        [dataSrc removeObserver:self forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
+    }
+    [CustUpcViewCntlr showSelfIn:[self view] custInfo:nil upcData:nil];
+}
+
 @end

@@ -44,7 +44,7 @@
 +(BOOL)upd_cust:(NSNumber *)cust_id email:(NSString *)email;
 +(BOOL)add_cust_note:(NSNumber *)cust_id note:(NSString *)note;
 
-+(NSString *)sel_cust_upc:(NSString *)cid;
++(NSString *)sel_cust_upc:(NSNumber *)cid;
 +(NSString *)sel_uvf_detailsWithUpc:(NSString *)upc;
 +(NSString *)sel_upcs:(NSString *)upc;
 

@@ -43,4 +43,6 @@
 -(void)gatherDigVidMetaArt:(NSNumber *)vid_meta_id;
 
 -(void)goWithOpQueue:(NSOperationQueue *)opQueue;
+-(NSString *)description;
+
 @end

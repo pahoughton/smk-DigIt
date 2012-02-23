@@ -24,7 +24,9 @@
 #import "CustomerViewCntlr.h"
 #import "CustomerDataSrc.h"
 #import "CustUpcViewCntlr.h"
+#import "CustUpcDataSrc.h"
 #import "DIDB.h"
+
 #import <SMKCocoaCommon.h>
 #import <SMKCommon.h>
 
@@ -33,6 +35,7 @@ static CustomerViewCntlr * me;
 @implementation CustomerViewCntlr
 @synthesize dataSrc;
 @synthesize curCustId;
+@synthesize upcDataSrc;
 @synthesize contactListTV;
 @synthesize contactSearch;
 @synthesize fullNameTF;
@@ -77,6 +80,7 @@ static CustomerViewCntlr * me;
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         [self setDataSrc:[[CustomerDataSrc alloc]init]];
+        [self setUpcDataSrc:nil];
         // Initialization code here.
     }
     
@@ -256,12 +260,20 @@ static CustomerViewCntlr * me;
                 [SMKAlertWin alertWithMsg:@"Email address required"];
                 return;
             }
-
+            id abVal;
+            abVal = [abp valueForProperty:kABFirstNameProperty];
+            if( abVal != nil ) {
+                [cust setObject:abVal forKey:@"first_name"];
+            }
+            abVal = [abp valueForProperty:kABLastNameProperty];
+            if( abVal != nil ) {
+                [cust setObject:abVal forKey:@"last_name"];
+            }
             if( [mainPhoneTF stringValue] ) {
                 [cust setObject:[mainPhoneTF stringValue] forKey:@"phone"];
             }
             if( [addrStreetTF stringValue] ) {
-                [cust setObject:[addrStreetTF stringValue] forKey:@"addr_streat"];
+                [cust setObject:[addrStreetTF stringValue] forKey:@"addr_street"];
             }
             if( [addrCityTF stringValue] ) {
                 [cust setObject:[addrCityTF stringValue] forKey:@"addr_city"];
@@ -272,11 +284,19 @@ static CustomerViewCntlr * me;
             if( [zipCodeTF stringValue] ) {
                 [cust setObject:[zipCodeTF stringValue] forKey:@"addr_zip"];
             }
-            NSDictionary * newRec = [DIDB ins_cust:cust];
+            NSDictionary * newRec;
+            @try {
+                newRec = [DIDB ins_cust:cust];
+            }
+            @catch (NSException *exception) {
+                [SMKAlertWin alertWithMsg:[exception reason]];
+                return;
+            }
             if( [saveCustButton isEnabled] ) {
                 [self saveCustAction:self];
             }
             [abp setValue:[newRec objectForKey:@"cust_id"] forProperty:[DIDB abpCustIdPropName]];
+            SMKLogDebug(@"new cust id: %@", [newRec objectForKey:@"cust_id"] );
             if( [cEnt emailInx] >= 0 ) {
                 ABMultiValue * abMulti = nil;
                 abMulti = [abp valueForProperty:kABEmailProperty];
@@ -420,7 +440,7 @@ static CustomerViewCntlr * me;
                                    [abp valueForProperty:[DIDB abpCustIdPropName]], @"cust_id",
                                    [fullNameTF stringValue],@"full_name",
                                    nil];
-        [CustUpcViewCntlr showSelfIn:[self view] custInfo:custInfo];
+        [CustUpcViewCntlr showSelfIn:[self view] custInfo:custInfo upcData:upcDataSrc];
     }
 }
 
@@ -434,13 +454,18 @@ static CustomerViewCntlr * me;
         CustomerEntity * cust = [[dataSrc tableData] objectAtIndex:sel];
         ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cust abPersonID]];
 
-        if( [abp valueForProperty:[DIDB abpCustIdPropName]] != nil ) {
+        NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]] ;
+        if( custId != nil ) {
             [smkCustImage setHidden:FALSE];
             [addCustButton setEnabled:FALSE];
             [upcButton setEnabled:TRUE];
             [ordersButton setEnabled:TRUE];
             [mediaButton setEnabled:TRUE];
-            
+            if( [self upcDataSrc] != nil ) {
+                [[upcDataSrc opQueue] cancelAllOperations];
+            }
+            [self setUpcDataSrc:[[CustUpcDataSrc alloc] init]];
+            [[self upcDataSrc] getCustUpcs:custId];
             [self setContactDetail:cust];
         } else {
             [smkCustImage setHidden:TRUE];

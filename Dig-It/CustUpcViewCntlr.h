@@ -26,11 +26,12 @@
 #import <Cocoa/Cocoa.h>
 #import <SMKDB.h>
 @class VidMetaSelViewCntlr;
+@class CustUpcDataSrc;
 
 @interface CustUpcViewCntlr : NSViewController <SMKDBRecProc>
-@property (retain) SMKDBConnMgr * db;
-@property (assign) NSView * myContainerView;
+@property (strong) CustUpcDataSrc * upcDataSrc;
 @property (retain) VidMetaSelViewCntlr * metaSelViewCntlr;
+@property (strong) SMKDBConnMgr * db;
 @property (retain) NSDictionary * custInfo;
 @property (retain) NSNumber * custId;
 
@@ -44,8 +45,7 @@
 @property (retain) NSImage * goImage;
 @property (retain) NSImage * stopImage;
 
-@property (strong) IBOutlet NSArrayController *upcListAcntlr;
-@property (weak) IBOutlet NSScrollView *upcListTableView;
+@property (weak) IBOutlet NSTableView *upcListTableView;
 @property (weak) IBOutlet NSButton *saveButton;
 @property (weak) IBOutlet NSButton *searchButton;
 @property (weak) IBOutlet NSImageView *stopOrGoImage;
@@ -63,17 +63,25 @@
 @property (weak) IBOutlet NSTextField *upcDescTF;
 @property (weak) IBOutlet NSImageView *upcThumbTF;
 
-+(CustUpcViewCntlr *)showSelfIn:(NSView *)viewToReplace custInfo:(NSDictionary *)cust;
++(CustUpcViewCntlr *)showSelfIn:(NSView *)viewToReplace 
+                       custInfo:(NSDictionary *)cust
+                        upcData:(CustUpcDataSrc *)upcData;
 
 -(void) setCust:(NSDictionary *)cust;
+-(void) mtUpcDataAvailable;
+
+- (IBAction)upcListSelectAction:(NSTableView *)sender;
+
 
 - (IBAction)stopOrGoImageAct:(id)sender;
+- (IBAction)thumbButton:(id)sender;
+
 - (IBAction)saveButton:(id)sender;
 - (IBAction)cancelButton:(id)sender;
 - (IBAction)searchButton:(id)sender;
 - (IBAction)upcEntered:(id)sender;
-- (IBAction)thumbButton:(id)sender;
 - (IBAction)playMedia:(id)sender;
 - (IBAction)titleAction:(id)sender;
+
 
 @end

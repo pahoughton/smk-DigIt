@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		DA06BEE614E2E2140013A5E8 /* DigItWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA06BEE514E2E2130013A5E8 /* DigItWinCntlr.m */; };
-		DA06BEEB14E2E69E0013A5E8 /* CustListViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA06BEE914E2E69E0013A5E8 /* CustListViewCntlr.m */; };
-		DA06BEEC14E2E69E0013A5E8 /* CustListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEEA14E2E69E0013A5E8 /* CustListView.xib */; };
 		DA06BEF014E2F5220013A5E8 /* Dig-It BIG.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEEF14E2F5220013A5E8 /* Dig-It BIG.png */; };
 		DA06BEF214E2F5430013A5E8 /* DigIt.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF114E2F5430013A5E8 /* DigIt.png */; };
 		DA06BEF414E2F5530013A5E8 /* stop_button.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF314E2F5530013A5E8 /* stop_button.png */; };
@@ -21,7 +19,6 @@
 		DA171E0C14E341A100EBD43D /* CustUpcView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA171E0A14E341A100EBD43D /* CustUpcView.xib */; };
 		DA1C5AE914F27889004AD774 /* sMk.114x80.png in Resources */ = {isa = PBXBuildFile; fileRef = DA1C5AE814F27889004AD774 /* sMk.114x80.png */; };
 		DA1C5AEC14F2799C004AD774 /* sMk.68x48.png in Resources */ = {isa = PBXBuildFile; fileRef = DA1C5AEB14F2799C004AD774 /* sMk.68x48.png */; };
-		DA364D7B14E9150C0033BB56 /* CustListDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DA364D7A14E9150C0033BB56 /* CustListDataSrc.m */; };
 		DA53D63C14ED1A1900A8BE98 /* MainWinGradyView.m in Sources */ = {isa = PBXBuildFile; fileRef = DA53D63B14ED1A1900A8BE98 /* MainWinGradyView.m */; };
 		DA5D42C414E30F5D00A16783 /* AppUserValues.m in Sources */ = {isa = PBXBuildFile; fileRef = DA5D42C314E30F5D00A16783 /* AppUserValues.m */; };
 		DA5D42CF14E31F1800A16783 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA5D42CE14E31F1800A16783 /* Security.framework */; };
@@ -35,8 +32,6 @@
 		DA7FC07E14EAB4E5004423F5 /* VidMetaSelWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA7FC07D14EAB4E5004423F5 /* VidMetaSelWin.xib */; };
 		DA7FC08914EAB8B8004423F5 /* VidMetaSelCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = DA7FC08814EAB8B8004423F5 /* VidMetaSelCellView.m */; };
 		DA7FC08C14EABE2B004423F5 /* VidMetaSelDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DA7FC08B14EABE2B004423F5 /* VidMetaSelDataSrc.m */; };
-		DA7FC09514EB0838004423F5 /* CustEditView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA7FC09414EB0838004423F5 /* CustEditView.xib */; };
-		DA7FC09914EB09D8004423F5 /* CustEditViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA7FC09714EB09D7004423F5 /* CustEditViewCntlr.m */; };
 		DA819E8114E2D941008EE066 /* PrefsWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA819E8014E2D941008EE066 /* PrefsWinCntlr.m */; };
 		DA819E8C14E2D9D5008EE066 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA819E8B14E2D9D5008EE066 /* QuartzCore.framework */; };
 		DA819E8F14E2DB40008EE066 /* PrefsWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA819E8E14E2DB40008EE066 /* PrefsWin.xib */; };
@@ -68,6 +63,7 @@
 		DAEC2F2814E56984005F7F4E /* VideoPreviewWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAEC2F2714E56984005F7F4E /* VideoPreviewWin.xib */; };
 		DAEC2F2A14E569AD005F7F4E /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEC2F2914E569AD005F7F4E /* QTKit.framework */; };
 		DAEC2F3214E596F5005F7F4E /* VideoPreviewWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAEC2F3114E596F5005F7F4E /* VideoPreviewWinCntlr.m */; };
+		DAF3A31E14F653500084DF9C /* CustUpcDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DAF3A31D14F653500084DF9C /* CustUpcDataSrc.m */; };
 		DAF9485214F22FE3002B6C03 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAF9485114F22FE3002B6C03 /* AddressBook.framework */; };
 		DAF9485714F23084002B6C03 /* libSMKCocoaCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */; };
 		DAF9485914F2308A002B6C03 /* libSMKDB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAF9485814F2308A002B6C03 /* libSMKDB.a */; };
@@ -87,9 +83,6 @@
 /* Begin PBXFileReference section */
 		DA06BEE414E2E2130013A5E8 /* DigItWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DigItWinCntlr.h; sourceTree = "<group>"; };
 		DA06BEE514E2E2130013A5E8 /* DigItWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DigItWinCntlr.m; sourceTree = "<group>"; };
-		DA06BEE814E2E69E0013A5E8 /* CustListViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustListViewCntlr.h; sourceTree = "<group>"; };
-		DA06BEE914E2E69E0013A5E8 /* CustListViewCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustListViewCntlr.m; sourceTree = "<group>"; };
-		DA06BEEA14E2E69E0013A5E8 /* CustListView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustListView.xib; sourceTree = "<group>"; };
 		DA06BEEF14E2F5220013A5E8 /* Dig-It BIG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Dig-It BIG.png"; path = "../../../../Images/Dig-It BIG.png"; sourceTree = "<group>"; };
 		DA06BEF114E2F5430013A5E8 /* DigIt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = DigIt.png; path = ../../../../Images/DigIt.png; sourceTree = "<group>"; };
 		DA06BEF314E2F5530013A5E8 /* stop_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_button.png; path = ../../../../Images/stop_button.png; sourceTree = "<group>"; };
@@ -103,8 +96,6 @@
 		DA171E0A14E341A100EBD43D /* CustUpcView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustUpcView.xib; sourceTree = "<group>"; };
 		DA1C5AE814F27889004AD774 /* sMk.114x80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sMk.114x80.png; path = Resources/sMk.114x80.png; sourceTree = SOURCE_ROOT; };
 		DA1C5AEB14F2799C004AD774 /* sMk.68x48.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sMk.68x48.png; path = Resources/sMk.68x48.png; sourceTree = SOURCE_ROOT; };
-		DA364D7914E9150C0033BB56 /* CustListDataSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustListDataSrc.h; sourceTree = "<group>"; };
-		DA364D7A14E9150C0033BB56 /* CustListDataSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustListDataSrc.m; sourceTree = "<group>"; };
 		DA53D63A14ED1A1900A8BE98 /* MainWinGradyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWinGradyView.h; sourceTree = "<group>"; };
 		DA53D63B14ED1A1900A8BE98 /* MainWinGradyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWinGradyView.m; sourceTree = "<group>"; };
 		DA5D42C214E30F5D00A16783 /* AppUserValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppUserValues.h; sourceTree = "<group>"; };
@@ -124,9 +115,6 @@
 		DA7FC08814EAB8B8004423F5 /* VidMetaSelCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VidMetaSelCellView.m; sourceTree = "<group>"; };
 		DA7FC08A14EABE2B004423F5 /* VidMetaSelDataSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VidMetaSelDataSrc.h; sourceTree = "<group>"; };
 		DA7FC08B14EABE2B004423F5 /* VidMetaSelDataSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VidMetaSelDataSrc.m; sourceTree = "<group>"; };
-		DA7FC09414EB0838004423F5 /* CustEditView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustEditView.xib; sourceTree = "<group>"; };
-		DA7FC09614EB09D7004423F5 /* CustEditViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustEditViewCntlr.h; sourceTree = "<group>"; };
-		DA7FC09714EB09D7004423F5 /* CustEditViewCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustEditViewCntlr.m; sourceTree = "<group>"; };
 		DA819E7F14E2D941008EE066 /* PrefsWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsWinCntlr.h; sourceTree = "<group>"; };
 		DA819E8014E2D941008EE066 /* PrefsWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefsWinCntlr.m; sourceTree = "<group>"; };
 		DA819E8B14E2D9D5008EE066 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -173,6 +161,8 @@
 		DAEC2F2914E569AD005F7F4E /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
 		DAEC2F3014E596F5005F7F4E /* VideoPreviewWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPreviewWinCntlr.h; sourceTree = "<group>"; };
 		DAEC2F3114E596F5005F7F4E /* VideoPreviewWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPreviewWinCntlr.m; sourceTree = "<group>"; };
+		DAF3A31C14F653500084DF9C /* CustUpcDataSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustUpcDataSrc.h; sourceTree = "<group>"; };
+		DAF3A31D14F653500084DF9C /* CustUpcDataSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustUpcDataSrc.m; sourceTree = "<group>"; };
 		DAF9485114F22FE3002B6C03 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKCocoaCommon.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug/libSMKCocoaCommon.a"; sourceTree = "<group>"; };
 		DAF9485814F2308A002B6C03 /* libSMKDB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKDB.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug/libSMKDB.a"; sourceTree = "<group>"; };
@@ -222,8 +212,6 @@
 				DAA530F714E09DF600519A30 /* MainMenu.xib */,
 				DA819E8E14E2DB40008EE066 /* PrefsWin.xib */,
 				DAC958A314F17E7900A3DCF3 /* CustomerView.xib */,
-				DA06BEEA14E2E69E0013A5E8 /* CustListView.xib */,
-				DA7FC09414EB0838004423F5 /* CustEditView.xib */,
 				DA171E0A14E341A100EBD43D /* CustUpcView.xib */,
 				DA7FC07D14EAB4E5004423F5 /* VidMetaSelWin.xib */,
 				DA727DDE14F16E8700A89F09 /* VidMetaSelView.xib */,
@@ -305,10 +293,10 @@
 				DAC958A214F17E7900A3DCF3 /* CustomerViewCntlr.m */,
 				DAF9485A14F23386002B6C03 /* CustomerDataSrc.h */,
 				DAF9485B14F23386002B6C03 /* CustomerDataSrc.m */,
-				DA364D7914E9150C0033BB56 /* CustListDataSrc.h */,
-				DA364D7A14E9150C0033BB56 /* CustListDataSrc.m */,
 				DA171E0814E341A100EBD43D /* CustUpcViewCntlr.h */,
 				DA171E0914E341A100EBD43D /* CustUpcViewCntlr.m */,
+				DAF3A31C14F653500084DF9C /* CustUpcDataSrc.h */,
+				DAF3A31D14F653500084DF9C /* CustUpcDataSrc.m */,
 				DA727DDC14F16E8700A89F09 /* VidMetaSelViewCntlr.h */,
 				DA727DDD14F16E8700A89F09 /* VidMetaSelViewCntlr.m */,
 				DA7FC08A14EABE2B004423F5 /* VidMetaSelDataSrc.h */,
@@ -323,10 +311,6 @@
 				DAA6789D14F0167A004D9CD8 /* ArtPickerWinCntlr.m */,
 				DA171DFC14E32D3600EBD43D /* DIDB.h */,
 				DA171DFD14E32D3600EBD43D /* DIDB.m */,
-				DA06BEE814E2E69E0013A5E8 /* CustListViewCntlr.h */,
-				DA06BEE914E2E69E0013A5E8 /* CustListViewCntlr.m */,
-				DA7FC09614EB09D7004423F5 /* CustEditViewCntlr.h */,
-				DA7FC09714EB09D7004423F5 /* CustEditViewCntlr.m */,
 				DADF23CF14F3EC7B00189E4C /* ArtBrowserItem.h */,
 				DADF23D014F3EC7B00189E4C /* ArtBrowserItem.m */,
 				DADF23D214F407F400189E4C /* ArtBrowswerItemGatherer.h */,
@@ -453,7 +437,6 @@
 				DAA530F314E09DF600519A30 /* Credits.rtf in Resources */,
 				DAA530F914E09DF600519A30 /* MainMenu.xib in Resources */,
 				DA819E8F14E2DB40008EE066 /* PrefsWin.xib in Resources */,
-				DA06BEEC14E2E69E0013A5E8 /* CustListView.xib in Resources */,
 				DA06BEF014E2F5220013A5E8 /* Dig-It BIG.png in Resources */,
 				DA06BEF214E2F5430013A5E8 /* DigIt.png in Resources */,
 				DA06BEF414E2F5530013A5E8 /* stop_button.png in Resources */,
@@ -464,7 +447,6 @@
 				DAEC2F1514E54F98005F7F4E /* TrashView.xib in Resources */,
 				DAEC2F2814E56984005F7F4E /* VideoPreviewWin.xib in Resources */,
 				DA7FC07E14EAB4E5004423F5 /* VidMetaSelWin.xib in Resources */,
-				DA7FC09514EB0838004423F5 /* CustEditView.xib in Resources */,
 				DAE594C314EDC6DE005EC086 /* glass.wav in Resources */,
 				DAA6789214EFB868004D9CD8 /* Dig-It Disc3.icns in Resources */,
 				DAA6789514EFB951004D9CD8 /* NO ART.tif in Resources */,
@@ -512,15 +494,12 @@
 				DAA530F614E09DF600519A30 /* AppDelegate.m in Sources */,
 				DA819E8114E2D941008EE066 /* PrefsWinCntlr.m in Sources */,
 				DA06BEE614E2E2140013A5E8 /* DigItWinCntlr.m in Sources */,
-				DA06BEEB14E2E69E0013A5E8 /* CustListViewCntlr.m in Sources */,
 				DA5D42C414E30F5D00A16783 /* AppUserValues.m in Sources */,
 				DA171DFE14E32D3700EBD43D /* DIDB.m in Sources */,
 				DA171E0B14E341A100EBD43D /* CustUpcViewCntlr.m in Sources */,
 				DAEC2F3214E596F5005F7F4E /* VideoPreviewWinCntlr.m in Sources */,
-				DA364D7B14E9150C0033BB56 /* CustListDataSrc.m in Sources */,
 				DA7FC08914EAB8B8004423F5 /* VidMetaSelCellView.m in Sources */,
 				DA7FC08C14EABE2B004423F5 /* VidMetaSelDataSrc.m in Sources */,
-				DA7FC09914EB09D8004423F5 /* CustEditViewCntlr.m in Sources */,
 				DA53D63C14ED1A1900A8BE98 /* MainWinGradyView.m in Sources */,
 				DAA6789E14F0167A004D9CD8 /* ArtPickerWinCntlr.m in Sources */,
 				DA727DD914F16E2400A89F09 /* VidSelArtPickerViewCntlr.m in Sources */,
@@ -529,6 +508,7 @@
 				DAF9485C14F23386002B6C03 /* CustomerDataSrc.m in Sources */,
 				DADF23D114F3EC7C00189E4C /* ArtBrowserItem.m in Sources */,
 				DADF23D414F407F400189E4C /* ArtBrowswerItemGatherer.m in Sources */,
+				DAF3A31E14F653500084DF9C /* CustUpcDataSrc.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -647,7 +627,7 @@
 				);
 				INFOPLIST_FILE = "Dig-It/Dig-It-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
+					"$(TARGET_BUILD_DIR)",
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug\"",
 					/Support/lib,
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug\"",
@@ -670,7 +650,7 @@
 				);
 				INFOPLIST_FILE = "Dig-It/Dig-It-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
+					"$(TARGET_BUILD_DIR)",
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug\"",
 					/Support/lib,
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug\"",

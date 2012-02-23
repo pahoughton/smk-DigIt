@@ -27,10 +27,12 @@
 #import <AddressBook/AddressBook.h>
 #import <AddressBook/ABPersonView.h>
 @class CustomerDataSrc;
+@class CustUpcDataSrc;
 
 @interface CustomerViewCntlr : NSViewController
 @property (strong) CustomerDataSrc * dataSrc;
 @property (strong) NSNumber * curCustId;
+@property (strong) CustUpcDataSrc * upcDataSrc;
 
 @property (weak) IBOutlet NSTableView *contactListTV;
 @property (weak) IBOutlet NSSearchField *contactSearch;

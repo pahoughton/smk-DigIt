@@ -28,8 +28,8 @@
 #import "ArtBrowswerItemGatherer.h"
 
 @interface VidSelArtDataSrc :  NSObject // IKImageBrowserDataSource
-@property (strong) NSMutableArray * artList;
--(id)initWithArt:(NSMutableArray *)list;
+@property (strong) NSArray * artList;
+-(id)initWithArt:(NSArray *)list;
 -(id) imageBrowser:(IKImageBrowserView *) aBrowser itemAtIndex:(NSUInteger)index;
 -(NSUInteger) numberOfItemsInImageBrowser:(IKImageBrowserView *) aBrowser;
 
@@ -42,7 +42,7 @@
 @property (weak) IBOutlet IKImageBrowserView *artBrowser;
 @property (weak) IBOutlet IKImageView *artImageView;
 @property (weak) IBOutlet NSButton *selectButton;
-
+@property (weak) IBOutlet NSSlider *thumbSizeSlider;
 
 +(VidSelArtPickerViewCntlr *)showSelfIn:(NSView *)viewToReplace 
                               metaSelId:(NSNumber *)selId
@@ -57,5 +57,7 @@
 
 - (IBAction)cancelAction:(id)sender;
 - (IBAction)selectAction:(id)sender;
+- (IBAction)thumbSizeSlider:(NSSlider *)sender;
+
 
 @end

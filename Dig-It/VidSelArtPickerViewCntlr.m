@@ -22,9 +22,8 @@
 
 **/
 #import "VidSelArtPickerViewCntlr.h"
-#import "VidMetaSelDataSrc.h"
-#import "ArtBrowserItem.h"
 #import "CustUpcViewCntlr.h"
+#import "AppUserValues.h"
 #import <SMKLogger.h>
 
 static VidSelArtPickerViewCntlr * me = nil;
@@ -36,17 +35,23 @@ static VidSelArtPickerViewCntlr * me = nil;
     self = [super init];
     if( self ) {
         [self setArtList:list];
+        if( [[self artList] count] > 0 ) {
+            SMKLogDebug(@"abi 0: %@", [[self artList]objectAtIndex:0]);
+        }
+        SMKLogDebug(@"init %p %u", [self artList], ([self artList] != nil ? [[self artList]count] : 0));
     }
     return  self;
 }
 - (id) imageBrowser:(IKImageBrowserView *) aBrowser itemAtIndex:(NSUInteger)index
 {
-    ArtBrowserItem * rec = [artList objectAtIndex:index];
+    ArtBrowserItem * rec = [[self artList] objectAtIndex:index];
     return rec;
 }
 - (NSUInteger) numberOfItemsInImageBrowser:(IKImageBrowserView *) aBrowser
 {
-    return [artList count];
+    
+    SMKLogDebug(@"ds num %p %u", artList, [artList count]);
+    return ([self artList] != nil ? [[self artList]count] : 0 );
 }
 @end
 
@@ -57,15 +62,19 @@ static VidSelArtPickerViewCntlr * me = nil;
 @synthesize artBrowser;
 @synthesize artImageView;
 @synthesize selectButton;
+@synthesize thumbSizeSlider;
 
 #pragma mark SetDataSource
 -(void)setBrowserDataSource:(id)trash
 {
-    [[self artBrowser]setDataSource:[[VidSelArtDataSrc alloc] initWithArt:[artGath artList]]];
+    SMKLogDebug(@"setDS cnt: %@ %d", [[[self artGath]artList] class], [[artGath artList] count]);
+    VidSelArtDataSrc * ds = [[VidSelArtDataSrc alloc]initWithArt:[artGath artList]];
+    [[self artBrowser] setDataSource:ds];
     [[self artBrowser] reloadData];        
 }
 
 #pragma mark Initialization
+
 +(VidSelArtPickerViewCntlr *)showSelfIn:(NSView *)viewToReplace 
                               metaSelId:(NSNumber *)selId 
                                 artGath:(ArtBrowswerItemGatherer *)artGather
@@ -73,11 +82,13 @@ static VidSelArtPickerViewCntlr * me = nil;
     if( me == nil ){
         me = [VidSelArtPickerViewCntlr alloc];
         me = [me initWithNibName:@"VidSelArtPickerView" bundle:nil];
+        SMKLogDebug(@"agath %@", artGather);
         [me setArtGath:artGather];
     } else {
-        [artGather addObserver:me forKeyPath:@"isFinished" options:0 context:0];
-        if( [artGather isFinished] ) {
-            [artGather removeObserver:me forKeyPath:@"isFinished"];
+        [me setArtGath:artGather];
+        [[me artGath] addObserver:me forKeyPath:@"isFinished" options:0 context:0];
+        if( [[me artGath] isFinished] ) {
+            [[me artGath ] removeObserver:me forKeyPath:@"isFinished"];
             [me performSelectorOnMainThread:@selector(setBrowserDataSource:) withObject:nil waitUntilDone:FALSE];
         }
     }
@@ -109,7 +120,18 @@ static VidSelArtPickerViewCntlr * me = nil;
 
 -(void)awakeFromNib
 {
-    [self setAliveAndWell:TRUE];  // FIXME there is probably something else available
+    SMKLogDebug(@"awake finish: %d", [artGath isFinished]);
+    [self setAliveAndWell:TRUE];
+    NSSize cellSize;
+    cellSize.width = [AppUserValues artBrowserImgWidth];
+    cellSize.height = cellSize.width * 1.5;
+    [[self artBrowser] setCellSize:cellSize];
+    [[self thumbSizeSlider] setIntegerValue:[AppUserValues artBrowserImgWidth]];
+    [[self artGath] addObserver:me forKeyPath:@"isFinished" options:0 context:0];
+    if( [[self artGath] isFinished] ) {
+        [[self artGath ] removeObserver:me forKeyPath:@"isFinished"];
+        [self performSelectorOnMainThread:@selector(setBrowserDataSource:) withObject:nil waitUntilDone:FALSE];
+    }
 }
 
 
@@ -118,9 +140,12 @@ static VidSelArtPickerViewCntlr * me = nil;
                        change:(NSDictionary *)change 
                       context:(void *)context
 {
-    if( object == artGath && [keyPath isEqualToString:@"isFinished"] ) {
+    if( object == artGath 
+       && [keyPath isEqualToString:@"isFinished"] ) {
         [artGath removeObserver:me forKeyPath:@"isFinished"];
-        [me performSelectorOnMainThread:@selector(setBrowserDataSource:) withObject:nil waitUntilDone:FALSE];
+        if( [self aliveAndWell] ) {
+            [me performSelectorOnMainThread:@selector(setBrowserDataSource:) withObject:nil waitUntilDone:FALSE];
+        }
     }
 }
 
@@ -147,11 +172,11 @@ static VidSelArtPickerViewCntlr * me = nil;
 {
     NSIndexSet * selSet = [aBrowser selectionIndexes];
     NSUInteger selCell = [selSet firstIndex];
-    VidSelArtDataSrc * dsrc = [aBrowser dataSource];
-    SMKLogDebug(@"cel sel chg %d",selCell,[[dsrc artList] count ]);
+    NSArray * aList = [[self artGath]artList];
+    
     // [selectedImageView setImage:nil imageProperties:nil];
-    if( selCell < [[dsrc artList]count] ) {
-        ArtBrowserItem * artRec = [[dsrc artList]objectAtIndex:selCell];
+    if( selCell < [aList count] ) {
+        ArtBrowserItem * artRec = [aList objectAtIndex:selCell];
         SMKLogDebug(@"img url: %@", [artRec imageURL]);
         if( [artRec image] ) {
             NSRect viewRect = [[self artImageView]bounds];
@@ -167,20 +192,30 @@ static VidSelArtPickerViewCntlr * me = nil;
 
 
 #pragma mark Actions
+- (IBAction)thumbSizeSlider:(NSSlider *)sender 
+{
+    NSSize cellSize;
+    cellSize.width = [sender intValue];
+    cellSize.height = cellSize.width * 1.5;
+    [artBrowser setCellSize:cellSize];
+    [AppUserValues setArtBrowserImgWidth:[sender intValue]];
+
+}
+
 - (IBAction)cancelAction:(id)sender 
 {
-    [CustUpcViewCntlr showSelfIn:[self view] custInfo:nil];
+    [CustUpcViewCntlr showSelfIn:[self view] custInfo:nil upcData:nil];
 }
 
 - (IBAction)selectAction:(id)sender 
 {
     NSIndexSet * selSet = [artBrowser selectionIndexes];
     NSUInteger selCell = [selSet firstIndex];
-    VidSelArtDataSrc * dsrc = [artBrowser dataSource];
-    SMKLogDebug(@"cel sel chg %d",selCell,[[dsrc artList] count ]);
+    NSArray * aList = [[self artGath]artList];
+
     // [selectedImageView setImage:nil imageProperties:nil];
-    if( selCell < [[dsrc artList]count] ) {
-        ArtBrowserItem * artRec = [[dsrc artList]objectAtIndex:selCell];
+    if( selCell < [aList count] ) {
+        ArtBrowserItem * artRec = [aList objectAtIndex:selCell];
         if( [DIDB set_meta_sel_art:metaSelId 
                          artSource:[artRec brwsImgSrc] 
                              artId:[artRec brwsImgSrcId]] ) {

@@ -22,6 +22,7 @@
 
 **/
 #import "CustUpcViewCntlr.h"
+#import "CustUpcDataSrc.h"
 #import "CustomerViewCntlr.h"
 #import "VidMetaSelViewCntlr.h"
 #import "DIDB.h"
@@ -33,9 +34,9 @@
 static CustUpcViewCntlr * me;
 
 @implementation CustUpcViewCntlr
-@synthesize db;
-@synthesize myContainerView;
+@synthesize upcDataSrc;
 @synthesize metaSelViewCntlr;
+@synthesize db;
 @synthesize custInfo;
 @synthesize custId;
 @synthesize custHasUPC;
@@ -48,7 +49,6 @@ static CustUpcViewCntlr * me;
 @synthesize goImage;
 @synthesize stopImage;
 
-@synthesize upcListAcntlr;
 @synthesize upcListTableView;
 @synthesize saveButton;
 @synthesize searchButton;
@@ -67,13 +67,27 @@ static CustUpcViewCntlr * me;
 @synthesize upcThumbTF;
 
 #pragma mark Initialization
-+(CustUpcViewCntlr *)showSelfIn:(NSView *)viewToReplace custInfo:(NSDictionary *)cust
++(CustUpcViewCntlr *)showSelfIn:(NSView *)viewToReplace custInfo:(NSDictionary *)cust upcData:(CustUpcDataSrc *)upcData
 {
+    SMKLogDebug(@"showSelfIn");
     if( me == nil ){
         me = [CustUpcViewCntlr alloc];
         me = [me initWithNibName:@"CustUpcView" bundle:nil];
+        [me setCust:cust];
+        [me setUpcDataSrc:upcData];
     } else {
-        [[me curUpcValue] setEnabled:TRUE];
+        if( cust != nil ) {
+            [me setCust:cust];
+            [me setUpcDataSrc:upcData];
+            [upcData addObserver:me forKeyPath:[CustUpcDataSrc kvoData] options:NSKeyValueObservingOptionNew context:nil];
+            if( [upcData data] != nil ) {
+                [upcData removeObserver:me forKeyPath:[CustUpcDataSrc kvoData]];
+                [me mtUpcDataAvailable];
+            } else {
+                [[me progressInd] setHidden:FALSE];
+                [[me progressInd] startAnimation:self];
+            }
+        }
     }
     /// need to library this
     NSView * curSuper = [viewToReplace superview];
@@ -85,57 +99,27 @@ static CustUpcViewCntlr * me;
     [me setRepresentedObject:
      [NSNumber numberWithUnsignedLong:[[ [me view ] subviews ] count ]]];
     
-    if( cust != nil ) {
-        [me setCust:cust];
-    }
     return me;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil 
 {
+    SMKLogDebug(@"initWithNib");
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         aliveAndWell = FALSE;
         custInfo = nil;
-        [self setDb:[[SMKDBConnMgr alloc] init]];
         metaSelViewCntlr = nil;
-        SMKLogDebug(@"initWithNib");
+        db = [[SMKDBConnMgr alloc]init];
     }
     
     return self;
 }
-
--(void) textDidChange:(NSNotification *)note
+-(void) mtUpcDataAvailable
 {
-    NSLog(@"text change %@",note);
-    [saveButton setEnabled:TRUE];
-    [searchButton setEnabled:TRUE];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSTextDidChangeNotification 
-                                                  object:nil];
-}
-
-#pragma mark UpcList
--(void)upcRecProc:(NSDictionary *)rec
-{
-    // SMKLogDebug(@"upc rec: %@", rec);
+    [progressInd stopAnimation:self];
+    [progressInd setHidden:TRUE];
     
-    if( rec != nil ) {
-        [upcListAcntlr addObject:rec];
-    } else {
-        // all done;
-        [[self curUpcValue] setEnabled:TRUE];
-        [self.curUpcValue becomeFirstResponder];
-        [self.upcListAcntlr addObserver: self
-                             forKeyPath: @"selectionIndex"
-                                options: NSKeyValueObservingOptionNew
-                                context: nil];
-
-    }
-}
--(void)getCustUpcs
-{
-    SMKLogDebug(@"getCustUpcs");
     [curUpcValue setStringValue:@""];
     [upcTitleTF setStringValue:@""];
     [upcYearTF setStringValue:@""];
@@ -148,30 +132,14 @@ static CustUpcViewCntlr * me;
     [haveOrRipLabel setStringValue:@""];
     [searchButton setEnabled:FALSE];
     [saveButton setEnabled:FALSE];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(textDidChange:)
-                                                 name:NSTextDidChangeNotification 
-                                               object:nil];
-
-    [[self.view window] makeFirstResponder:self.curUpcValue];
-    [self.curUpcValue becomeFirstResponder];
-
+    
     // reset cache on cust change (don't want the whole db in here)
     uvfDetailsCache = [[NSMutableDictionary alloc] init];
-    if( [[upcListAcntlr arrangedObjects] count] ) {
-        // ugg no remove all objects :(
-        NSRange rng;
-        rng.location = 0;
-        rng.length = [[upcListAcntlr arrangedObjects] count];
-        [upcListAcntlr removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:rng]];
-    }
     
-    
-    [db fetchAllRowsDictMtObj:self 
-                         proc:@selector(upcRecProc:) 
-                          sql:[DIDB sel_cust_upc:
-                               [custInfo valueForKey:@"cust_id"]]];
-    
+    [upcListTableView setDataSource:upcDataSrc];
+    [upcListTableView reloadData];
+    [[self curUpcValue] setEnabled:TRUE];
+    [self.curUpcValue becomeFirstResponder];
 }
 
 #pragma mark Initialization
@@ -185,6 +153,7 @@ static CustUpcViewCntlr * me;
     goodSound = [NSSound soundNamed:@"Ping.aiff"];
     [goodSound setVolume:0.5];
     badSound = [NSSound soundNamed:@"glass.wav"];
+    [badSound setVolume:0.5];
     noArtImage = [NSImage imageNamed:@"NO ART.tif"];
     goImage = [NSImage imageNamed:@"go_button.png"];
     stopImage = [NSImage imageNamed:@"stop_button.png"];
@@ -202,16 +171,20 @@ static CustUpcViewCntlr * me;
                 goImage,
                 stopImage );
     */
-    [upcListAcntlr setSelectsInsertedObjects:FALSE];
-    [[self.view window] makeFirstResponder:curUpcValue];
-    [curUpcValue setEnabled:TRUE];
-    SMKLogDebug(@"upc acntlr %@", upcListAcntlr);
+    // SMKLogDebug(@"upc acntlr %@", upcListAcntlr);
     if( custInfo ) {
         [self.custLabel setStringValue:
          [NSString stringWithFormat:@"%@ (%@)",
           [custInfo valueForKey:@"full_name"],
           [custInfo valueForKey:@"cust_id"]]];
-        [self getCustUpcs];
+        
+        [[self upcDataSrc] addObserver:me forKeyPath:[CustUpcDataSrc kvoData] options:NSKeyValueObservingOptionNew context:nil];
+        if( [[self upcDataSrc] data] != nil ) {
+            [self mtUpcDataAvailable];
+        } else {
+            [[self progressInd] setHidden:FALSE];
+            [[self progressInd] startAnimation:self];
+        }
     }
 }
 -(void) setCust:(NSDictionary *)cust
@@ -221,17 +194,27 @@ static CustUpcViewCntlr * me;
     custId = [[NSNumber alloc]initWithInteger:
               [[custInfo valueForKey:@"cust_id"] integerValue]];
     
-    SMKLogDebug(@"cust %@ %@", cust,[[custInfo valueForKey:@"cust_id"] class]);
+    SMKLogDebug(@"alive %d cust %@ %@", aliveAndWell, cust,[[custInfo valueForKey:@"cust_id"] class]);
     if( aliveAndWell ) {
         [self.custLabel setStringValue:
          [NSString stringWithFormat:@"%@ (%@)",
           [custInfo valueForKey:@"full_name"],
           [custInfo valueForKey:@"cust_id"]]];
-        [self getCustUpcs];
     }
 }
 
 #pragma mark UpcDetails
+-(void) textDidChange:(NSNotification *)note
+{
+    NSLog(@"text change %@",note);
+    // [saveButton setEnabled:TRUE];
+    [searchButton setEnabled:TRUE];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSTextDidChangeNotification 
+                                                  object:nil];
+}
+
+
 -(void)showUpcDetails:(NSDictionary *)upcDetails
 {
     NSString * uTitle = [upcDetails valueForKey:@"upc_title"];
@@ -252,13 +235,18 @@ static CustUpcViewCntlr * me;
     }
     if( [[upcTitleTF stringValue]length] < 1 ) {
         [upcTitleTF setStringValue:@"UNKNOWN - Enter Title"];
+    } else {
+        [searchButton setEnabled:TRUE];
     }
-    [searchButton setEnabled:TRUE];
     [stopOrGoImage setImage:stopImage];
     [haveOrRipLabel setStringValue:@"😥 RIP 😥"];
     [badSound play];
     [progressInd setHidden:TRUE];
     [progressInd stopAnimation:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textDidChange:)
+                                                 name:NSTextDidChangeNotification 
+                                               object:nil];
 
     // NEED to RIP
 }
@@ -276,14 +264,19 @@ static CustUpcViewCntlr * me;
             }
             if( [[upcTitleTF stringValue]length] < 1 ) {
                 [upcTitleTF setStringValue:@"UNKNOWN - Enter Title"];
+            } else {
+                [searchButton setEnabled:TRUE];
             }
             [[self curUpcValue] setEnabled:TRUE];
-            [searchButton setEnabled:TRUE];
             [stopOrGoImage setImage:stopImage];
             [haveOrRipLabel setStringValue:@"😥 RIP 😥"];
             [badSound play];
             [progressInd setHidden:TRUE];
             [progressInd stopAnimation:self];
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(textDidChange:)
+                                                         name:NSTextDidChangeNotification 
+                                                       object:nil];
         }
         // all done
     }
@@ -327,6 +320,10 @@ static CustUpcViewCntlr * me;
     [progressInd setHidden:TRUE];
     [progressInd stopAnimation:self];
     [self setNeedToRip:FALSE];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textDidChange:)
+                                                 name:NSTextDidChangeNotification 
+                                               object:nil];
     // ALREADY have media
 }
 -(void)uvfDetailRecProc:(NSDictionary *)rec
@@ -349,6 +346,7 @@ static CustUpcViewCntlr * me;
 {
     SMKLogDebug(@"get&show upc: %@", curUpcValue.stringValue );
     if( [curUpcValue.stringValue length] > 0 ) {
+        [[self upcTitleTF] setStringValue:@""];
         NSDictionary * uvfDetails = [uvfDetailsCache valueForKey:
                                      curUpcValue.stringValue];
         [saveButton setEnabled:FALSE];
@@ -357,7 +355,8 @@ static CustUpcViewCntlr * me;
         if( uvfDetails ) {
             [self showUvfDetails:uvfDetails];
         } else {
-            
+            [progressInd setHidden:FALSE];
+            [progressInd startAnimation:self];
             [db fetchAllRowsDictMtObj:self 
                                  proc:@selector(uvfDetailRecProc:) 
                                   sql:[DIDB sel_uvf_detailsWithUpc:
@@ -369,19 +368,27 @@ static CustUpcViewCntlr * me;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     SMKLogDebug(@"KVO %@", keyPath);
-    // if( [keyPath isEqualToString:@"selectionIndex"] ) {
-    if( [upcListAcntlr selectionIndex] != NSNotFound ) {
-        NSDictionary * selectedUpc = [upcListAcntlr selection];
-        [curUpcValue setStringValue:[selectedUpc valueForKey:@"upc"]];
+    if( object == [self upcDataSrc] && [keyPath isEqualToString:[CustUpcDataSrc kvoData]] ) {
+        [[self upcDataSrc] removeObserver:me forKeyPath:[CustUpcDataSrc kvoData]];
+        [self performSelectorOnMainThread:@selector(mtUpcDataAvailable) withObject:nil waitUntilDone:FALSE];
+    }
+}
+
+#pragma mark Actions
+- (IBAction)upcListSelectAction:(NSTableView *)sender {
+
+    NSInteger sel = [sender selectedRow];
+    if( 0 <= sel && sel < [[self upcDataSrc] numberOfRowsInTableView:sender] ) {
+        NSNumber * selUpc = [[[[self upcDataSrc] data] objectAtIndex:sel] objectAtIndex:0];
+        [curUpcValue setStringValue:[selUpc stringValue]];
         [self setCustHasUPC:TRUE];
-        [progressInd setHidden:FALSE];
-        [progressInd startAnimation:self];
+        [[self saveButton]setEnabled:FALSE];
         [self getAndShowUpcDetails];
     }
     [self.curUpcValue becomeFirstResponder];
 }
 
-#pragma mark Actions
+
 - (IBAction)stopOrGoImageAct:(id)sender 
 {
     SMKLogDebug(@"stopOrGoButton");
@@ -407,18 +414,10 @@ static CustUpcViewCntlr * me;
         if( saved ) {
             [saveButton setEnabled:FALSE];
             NSNumber * upcNum = [[NSNumber alloc] initWithInteger:[[curUpcValue stringValue]integerValue]];
-            
-            NSDictionary * newRec = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     upcNum, @"upc",
-                                     [NSDate date], @"date_added",
-                                     nil];
-            [[self upcListAcntlr] addObject:newRec];
+            [[self upcDataSrc]addCustUpc:upcNum];
+            [upcListTableView reloadData];
         }
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(textDidChange:)
-                                                 name:NSTextDidChangeNotification 
-                                               object:nil];
 }
 
 - (IBAction)cancelButton:(id)sender 
@@ -455,24 +454,9 @@ static CustUpcViewCntlr * me;
     SMKLogDebug(@"upcEntered: %@", curUpcValue.stringValue );
     // does cust have this UPC
     NSString * upc = curUpcValue.stringValue;
-    [self setCustHasUPC:FALSE];
     NSNumber * upcNum = [NSNumber numberWithInteger:[upc integerValue]];
-    for( NSDictionary * upcRec in [upcListAcntlr arrangedObjects] ) {
-        NSDecimalNumber * upcVal = [upcRec valueForKey:@"upc"];
-        BOOL same = [upcNum isEqualToNumber:upcVal];
-        /*
-        SMKLogDebug(@"upc: %@ %s %@", 
-                    upcNum,
-                    same ? "==" : "<>",
-                    upcVal );
-         */          
-        if( same ) {
-            [self setCustHasUPC:TRUE];
-            break;
-        }
-    }
-    [progressInd setHidden:FALSE];
-    [progressInd startAnimation:self];
+    
+    [self setCustHasUPC:[[[self upcDataSrc] upcDict] objectForKey:upcNum] != nil];
     [self getAndShowUpcDetails];
 }
 
@@ -492,4 +476,6 @@ static CustUpcViewCntlr * me;
         [searchButton setEnabled:FALSE];
     }
 }
+
+
 @end

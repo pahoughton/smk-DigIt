@@ -129,12 +129,12 @@ static NSMutableArray * customersCols = nil;
     NSMutableArray * cols = [[NSMutableArray alloc]initWithCapacity:[customersCols count]];
     NSMutableArray * vals = [[NSMutableArray alloc]initWithCapacity:[customersCols count]];
     
-    for( NSString * key in customersCols ) {
+    for( NSString * key in [DIDB getCustomersCols] ) {
         if( [key isEqualToString:@"cust_id"] ) {
             continue;
         } else { 
             id val = [custDetails valueForKey:key];
-            if( val != nil && ! [val isKindOfClass:[NSNull class]] ) {
+            if( ! SMKisNULL(val) ) {
                 [cols addObject:key];
                 [vals addObject:[db q:val]];
             }
@@ -215,11 +215,13 @@ static NSMutableArray * customersCols = nil;
     return FALSE;
     
 }
-+(NSString *)sel_cust_upc:(NSString *)cid
++(NSString *)sel_cust_upc:(NSNumber *)cid
 {
     return [NSString stringWithFormat:
-            @"SELECT upc, date_added "
-            "from cust_upcs where cust_id = %@",cid];
+            @"SELECT upc, date_added\n"
+            "from cust_upcs where cust_id = %@\n"
+            "order by date_added desc",
+            cid];
 }
 
 +(NSString *)sel_uvf_detailsWithUpc:(NSString *)upc

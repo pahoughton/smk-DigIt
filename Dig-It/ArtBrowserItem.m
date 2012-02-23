@@ -107,7 +107,7 @@
             "    srcId: %@\n"
             "    title: %@\n"
             "     subt: %@\n"
-            "      ver: %@\n"
+            "      ver: %ul\n"
             "      res: %@\n"
             "   imgsrc: %@\n"
             " imgsrcid: %@\n"
@@ -116,6 +116,7 @@
             "     msrc: %@\n"
             "   msrcid: %@\n"
             "     info: %@\n",
+            [self class],self,
             [self brwsImgUID],
             [DIDB dsDesc:[self brwsImgSrc]],
             [self brwsImgSrcId],

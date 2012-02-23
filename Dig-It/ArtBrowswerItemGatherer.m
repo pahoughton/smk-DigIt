@@ -64,7 +64,7 @@ enum ABIGSpec {
 {
     [self setOpQ:opQueue];
     [self setGatherSpecsList:[[NSMutableArray alloc]init]];
-    [self setArtList:nil];
+    [self setArtList:[[NSMutableArray alloc]init]];
 }
 -(id)init
 {
@@ -112,7 +112,6 @@ enum ABIGSpec {
      [ABIGathSpec opSpec:VidTitleIdSpec data:vid_id]];
     [self doGather];
 }
-static NSString * MetaIdSpec = @"VidMetaIdSpec";
 
 -(void)gatherDigVidMetaArt:(NSNumber *)vid_meta_id
 {
@@ -130,7 +129,7 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
 -(void)doGatherTMDbArtList:(ABIGathSpec *)spec
 {
 
-    NSMutableArray * myArtList = [[NSMutableArray alloc] init];
+    NSMutableArray * myArtList = [self artList];
     NSMutableDictionary * tmdbIdLink = [[NSMutableDictionary alloc]init];
     
     TMDbQuery * tmdbq = [[TMDbQuery alloc]init];
@@ -146,8 +145,8 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
         
         if( abi == nil ) {
             abi = [[ArtBrowserItem alloc]initWithSource:SMKDIDS_TMDb srcId:tmdb_id img:nil];
-            [tmdbIdLink setObject:abi forKey:tmdb_id];
             [myArtList addObject:abi];
+            [tmdbIdLink setObject:abi forKey:tmdb_id];
         }
         
         NSString * size = [tmdbArtDict objectForKey:@"size"];
@@ -169,12 +168,12 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
             [abi setImageURL:[tmdbArtDict objectForKey:@"url"]];
         }
     }
-    [self setArtList:myArtList];
+    // [self setArtList:myArtList];
 }
 
 -(void)doGatherVidWithId:(ABIGathSpec *)spec
 {
-    NSMutableArray * myArtList = [[NSMutableArray alloc] init];
+    NSMutableArray * myArtList = [self artList];
     
     NSMutableDictionary * tmdbIdLink = [[NSMutableDictionary alloc]init];
     NSString * mbdir = [AppUserValues mediaBaseDir];
@@ -203,8 +202,8 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
         
         if( abi == nil ) {
             abi = [[ArtBrowserItem alloc]initWithSource:ds srcId:nil img:nil];
-            [tmdbIdLink setObject:abi forKey:tmdb_id];
             [myArtList addObject:abi];
+            [tmdbIdLink setObject:abi forKey:tmdb_id];
         }
         NSNumber * srcId = [aRec objectAtIndex:0];
         NSString * sizeDesc = [aRec objectAtIndex:8];
@@ -212,29 +211,39 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
             [abi setBrwsImgSrcId:[srcId stringValue]];
             [abi setBrwsImgUID:[[NSString alloc]initWithFormat:
                                 @"%@.%@",[DIDB dsDesc:[abi brwsImgSrc]],srcId]];
-            [abi setBrwsImage:[aRec objectAtIndex:3]];
+            NSData * imgData = [aRec objectAtIndex:3];
+            if( ! SMKisNULL(imgData) ) {
+                [abi setBrwsImage:[[NSImage alloc]initWithData:imgData]];
+            }
             [abi setMediaSrc:ds];
             [abi setMediaSrcId:[aRec objectAtIndex:1]];
         } else {
-            NSURL * url;
+            NSURL * url = nil;
             NSString * filepath = [aRec objectAtIndex:5];
+            NSString * imgUrl = [aRec objectAtIndex:6];
             if( ! SMKisNULL(filepath) ) {
                 url = [[NSURL alloc] initFileURLWithPath:
-                       [mbdir stringByAppendingPathComponent:filepath]];
-            } else {
-                url = [aRec objectAtIndex:6];
-            }
+                       [[mbdir stringByAppendingPathComponent:filepath]
+                        stringByAddingPercentEscapesUsingEncoding:
+                        NSUTF8StringEncoding]
+                        ];
+            } else if( ! SMKisNULL(imgUrl) ) {
+                url = [[NSURL alloc]initWithString:[imgUrl
+                                                     stringByAddingPercentEscapesUsingEncoding:
+                                                     NSUTF8StringEncoding]];
+            } 
+            [abi setImageURL:url];
             [abi setImageSrc:ds];
-            [abi setImageSrcId:[aRec objectAtIndex:0]];
-            NSImage * img = [aRec objectAtIndex:3];
-            if( SMKisNULL(img) ) {
+            [abi setImageSrcId:[srcId stringValue]];
+            NSData * imgData = [aRec objectAtIndex:3];
+            if( SMKisNULL(imgData) ) {
                 [abi setImage:nil];
             } else {
-                [abi setImage:[aRec objectAtIndex:3]];
+                [abi setImage:[[NSImage alloc] initWithData:imgData]];
             }
         }
     }
-    [self setArtList:myArtList];
+    // [self setArtList:myArtList];
 }
 -(void)main
 {
@@ -256,5 +265,13 @@ static NSString * MetaIdSpec = @"VidMetaIdSpec";
         }
     }
     
+}
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"art: %@ %u",[[self artList]class],[[self artList]count]];
+}
+-(void)dealloc
+{
+    SMKLogDebug(@"abg dealloc");
 }
 @end
