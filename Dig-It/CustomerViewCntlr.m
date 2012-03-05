@@ -100,7 +100,7 @@ static CustomerViewCntlr * me;
 
 -(void) textDidChange:(NSNotification *)note
 {
-    NSLog(@"text change %@",note);
+    // NSLog(@"text change %@",note);
     [saveCustButton setEnabled:TRUE];
     [isSavedLabel setStringValue:@"NOT Saved"];
     [[NSNotificationCenter defaultCenter] removeObserver:self

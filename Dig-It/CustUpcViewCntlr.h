@@ -32,18 +32,23 @@
 @property (strong) CustUpcDataSrc * upcDataSrc;
 @property (retain) VidMetaSelViewCntlr * metaSelViewCntlr;
 @property (strong) SMKDBConnMgr * db;
+@property (strong) NSWindow * myWindow;
 @property (retain) NSDictionary * custInfo;
 @property (retain) NSNumber * custId;
 
 @property (assign) BOOL custHasUPC;
 @property (assign) BOOL aliveAndWell;
 @property (assign) BOOL needToRip;
-@property (retain) NSMutableDictionary * uvfDetailsCache;
+@property (assign) BOOL upcIsNew;
+@property (strong) NSString * showingUPC;
+
+@property (retain) NSMutableDictionary * upcDetailsCache;
 @property (retain) NSSound * goodSound;
 @property (retain) NSSound * badSound;
 @property (retain) NSImage * noArtImage;
 @property (retain) NSImage * goImage;
 @property (retain) NSImage * stopImage;
+@property (weak) IBOutlet NSComboBox *mediaTypeCB;
 
 @property (weak) IBOutlet NSTableView *upcListTableView;
 @property (weak) IBOutlet NSButton *saveButton;
@@ -82,6 +87,6 @@
 - (IBAction)upcEntered:(id)sender;
 - (IBAction)playMedia:(id)sender;
 - (IBAction)titleAction:(id)sender;
-
+- (IBAction)mediaTypeAction:(id)sender;
 
 @end

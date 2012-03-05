@@ -45,6 +45,7 @@ static VidSelArtPickerViewCntlr * me = nil;
 - (id) imageBrowser:(IKImageBrowserView *) aBrowser itemAtIndex:(NSUInteger)index
 {
     ArtBrowserItem * rec = [[self artList] objectAtIndex:index];
+    SMKLogDebug(@"abi: %@", rec );
     return rec;
 }
 - (NSUInteger) numberOfItemsInImageBrowser:(IKImageBrowserView *) aBrowser

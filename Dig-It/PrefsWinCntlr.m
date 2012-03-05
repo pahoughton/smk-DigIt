@@ -23,17 +23,18 @@
 **/
 #import "PrefsWinCntlr.h"
 #import "AppUserValues.h"
+#import "DigItWinCntlr.h"
 #import <SMKLogger.h>
 #import <SMKDB.h>
 #import <NSWindowAdditions.h>
 #import <QuartzCore/CoreAnimation.h>
 
 @implementation PrefsWinCntlr
+@synthesize mainWinCntlr;
 @synthesize serverTypeSelector;
 @synthesize errorMessageTextField;
 @synthesize passTextField;
 @synthesize useKeyChain;
-@synthesize mainWindow;
 
 - (id)initWithWindow:(NSWindow *)window
 {
@@ -117,8 +118,9 @@ static float vigourOfShake = 0.05f;
     } else {
         SMKLogDebug(@"suscess!");
         [[self window] orderOut:self];
-        if( mainWindow ) {
-            [mainWindow makeKeyAndOrderFront:self];
+        if( mainWinCntlr ) {
+            [mainWinCntlr goodToGo];
+            [[mainWinCntlr window] makeKeyAndOrderFront:self];
         }
     }
 }

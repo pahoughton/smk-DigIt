@@ -30,6 +30,7 @@
 #import "ArtPickerWinCntlr.h"
 
 #import <SMKLogger.h>
+#import <SMKAlertWin.h>
 #import <SMKDB.h>
 
 @implementation AppDelegate
@@ -48,8 +49,18 @@
     
     AppUserValues * aud = [[AppUserValues alloc]init];
     SMKLogDebug(@"%@",[aud description]);
-    
     [SMKDBConnMgr setDefaultInfoProvider:aud];
+    
+    
+    NSObject * winDelegate = [[self window]delegate];
+    SMKLogDebug(@"ad my win delegate %p %@", winDelegate, [winDelegate className]);
+    if( [winDelegate isKindOfClass:[DigItWinCntlr class]] ) {
+        digItWinCntlr = (DigItWinCntlr *)winDelegate;
+    } else {
+        [SMKAlertWin alertWithMsg:@"Bug - deligate is not DigiTWinCntlr"];
+        sleep(10);
+        exit(1);
+    }
     
     SMKDBConnMgr * db = nil;
     @try {
@@ -66,13 +77,7 @@
         [[self window] orderOut:self];
     } else {
         SMKLogDebug(@"Woot Connected :)");
-        //hmmm ...
-        NSObject * hmm = [[self window]delegate];
-        SMKLogDebug(@"ad my win delegate %p %@", hmm, [hmm className]);
-        if( [hmm isKindOfClass:[DigItWinCntlr class]] ) {
-            digItWinCntlr = (DigItWinCntlr *)hmm;
-            [digItWinCntlr goodToGo];
-        }
+        [digItWinCntlr goodToGo];
     }
 }
 
@@ -80,7 +85,7 @@
 {
     if( prefsWinCntlr == nil ) {
         prefsWinCntlr = [[PrefsWinCntlr alloc] initWithWindowNibName:@"PrefsWin"];
-        [prefsWinCntlr setMainWindow:[self window]];
+        [prefsWinCntlr setMainWinCntlr:digItWinCntlr];
     }
     [prefsWinCntlr showWindow:prefsWinCntlr];
     [[prefsWinCntlr window] makeKeyAndOrderFront:self];

@@ -29,16 +29,21 @@
 #import "ArtBrowswerItemGatherer.h"
 #import "DIDB.h"
 #import <SMKLogger.h>
+#import <SMKCocoaCommon.h>
 
 static VidMetaSelViewCntlr * me = nil;
 
 @implementation VidMetaSelViewCntlr
 @synthesize dataSrc;
 @synthesize artPickerViewCntlr;
+@synthesize srcMediaType;
 @synthesize srcTitle;
 @synthesize srcYear;
 @synthesize srcUpc;
 @synthesize aliveAndWell;
+@synthesize mediaTypeRB;
+@synthesize audioRB;
+@synthesize videoRB;
 
 @synthesize titleTF;
 @synthesize yearTF;
@@ -47,15 +52,21 @@ static VidMetaSelViewCntlr * me = nil;
 @synthesize searchButton;
 @synthesize TMDbButton;
 
-+(VidMetaSelViewCntlr *)showSelfIn:(NSView *)viewToReplace title:(NSString *)title year:(NSString *)year upc:(NSString *)upc
++(VidMetaSelViewCntlr *)showSelfIn:(NSView *)viewToReplace 
+                         mediaType:(NSString *)mediaType 
+                             title:(NSString *)title 
+                              year:(NSString *)year 
+                               upc:(NSString *)upc
 {
     if( me == nil ) {
         me = [[VidMetaSelViewCntlr alloc] initWithNibName:@"VidMetaSelView"
                                                    bundle:nil 
+                                                mediaType:mediaType
                                                     title:title
                                                      year:year 
                                                       upc:upc];
     } else {
+        [me setSrcMediaType:mediaType];
         [me setSrcTitle:title];
         [me setSrcYear:year];
         [me setSrcUpc:upc];
@@ -63,6 +74,11 @@ static VidMetaSelViewCntlr * me = nil;
     if( [me aliveAndWell] ) {
         [[me titleTF] setStringValue:[me srcTitle]];
         [[me yearTF] setStringValue:[me srcYear]];
+        if( [mediaType isEqualToString:@"audio"] ) {
+            [[me mediaTypeRB]selectCell:[me audioRB]];
+        } else {
+            [[me mediaTypeRB]selectCell:[me videoRB]];
+        }
         [me searchAction:me];
     }
     /// need to library this
@@ -80,6 +96,7 @@ static VidMetaSelViewCntlr * me = nil;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil 
                bundle:(NSBundle *)nibBundleOrNil 
+            mediaType:(NSString *)mediaType
                 title:(NSString *)title 
                  year:(NSString *)year
                   upc:(NSString *)upc
@@ -88,6 +105,7 @@ static VidMetaSelViewCntlr * me = nil;
     if (self) {
         // Initialization code here.
         [self setAliveAndWell:FALSE];
+        [self setSrcMediaType:mediaType];
         [self setSrcTitle:title];
         [self setSrcYear:year];
         [self setSrcUpc:upc];
@@ -96,21 +114,43 @@ static VidMetaSelViewCntlr * me = nil;
                   forKeyPath:[VidMetaSelDataSrc kvoDataRows]
                      options:NSKeyValueObservingOptionNew
                      context:nil];
-        [dataSrc findTitle:[self srcTitle] year:[self srcYear]];
+        [dataSrc findMeta:[self srcMediaType] 
+                      upc:[self srcUpc]
+                    title:[self srcTitle] 
+                     year:[self srcYear]
+                  getMore:FALSE];
     }
     return self;
 }
+
+-(void)myTextDidChange:(NSNotification *)note
+{
+    SMKLogDebug(@"my text did change %@", note);
+    [[self searchButton] setTitle:@"Search"];
+    [self setSrcUpc:@""];
+    [[self searchButton] setEnabled:TRUE];
+    /*
+    [[NSNotificationCenter defaultCenter] removeObserver:self 
+                                              forKeyPath:NSTextDidChangeNotification];
+     */
+}
+
 -(void)mtSetDataSrc:(id)trash
 {
     [progressInd setHidden:TRUE];
     [progressInd stopAnimation:self];
-    [[self searchButton]setEnabled:FALSE];
-    [[self TMDbButton]setEnabled:[dataSrc didTMDbSearch] == FALSE];
+    if( [dataSrc didMoreSearch] ) {
+        [[self searchButton] setTitle:@"Search"];
+        [[self searchButton]setEnabled:FALSE];
+    } else {
+        [[self searchButton] setTitle:@"More"];
+        [[self searchButton]setEnabled:TRUE];
+    }
     [metaTView setDataSource:dataSrc];
     [metaTView reloadData];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(textDidChange:)
-                                                 name:NSTextDidChangeNotification 
+                                             selector:@selector(myTextDidChange:)
+                                                 name:NSTextDidBeginEditingNotification
                                                object:nil];
 }
 
@@ -124,6 +164,11 @@ static VidMetaSelViewCntlr * me = nil;
     [self setAliveAndWell:TRUE];
     [[self titleTF] setStringValue:[me srcTitle]];
     [[self yearTF] setStringValue:[me srcYear]];
+    if( [srcMediaType isEqualToString:@"audio"] ) {
+        [[self mediaTypeRB]selectCell:[self audioRB]];
+    } else {
+        [[self mediaTypeRB]selectCell:[self videoRB]];
+    }
     
     if( [dataSrc dataRows] == nil ) {
         [[self progressInd] setHidden:FALSE];
@@ -132,6 +177,7 @@ static VidMetaSelViewCntlr * me = nil;
         [[self TMDbButton] setEnabled:FALSE];
     } else {
         [self mtSetDataSrc:nil];
+        [dataSrc removeObserver:self forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
     }
 }
 
@@ -158,7 +204,13 @@ static VidMetaSelViewCntlr * me = nil;
     // base class fields
     // FIXME - noArt?
     [cellView.imageView setImage:       ent.thumb];
+    if( [mediaTypeRB selectedCell] == videoRB ) {
+        [cellView.imageView setImageScaling:NSScaleToFit];
+    } else {
+        [cellView.imageView setImageScaling:NSScaleProportionally];        
+    }
     [cellView.textField setStringValue: ent.title];
+    [cellView.selectButton setEnabled:TRUE];
     
     // DIVidMetaSelCellView fields
 #define ENT2CELL( fld_ ) if( ent.fld_ != nil ) cellView.fld_.stringValue = ent.fld_
@@ -174,12 +226,6 @@ static VidMetaSelViewCntlr * me = nil;
     return cellView;
 }   
 
--(void)textDidChange:(NSNotification *)note
-{
-    [[self searchButton]setEnabled:TRUE];
-    [[NSNotificationCenter defaultCenter] removeObserver:self 
-                                              forKeyPath:NSTextDidChangeNotification];
-}
 - (void)observeValueForKeyPath:(NSString *)keyPath 
                       ofObject:(id)object 
                         change:(NSDictionary *)change 
@@ -199,16 +245,21 @@ static VidMetaSelViewCntlr * me = nil;
     NSInteger row = [[self metaTView] rowForView:sender];
     VidMetaSelEntity * meta = [[[self dataSrc] dataRows] objectAtIndex:row];
     NSNumber * selId;
-    selId = [DIDB set_v_sel_upc:[self srcUpc]
-                          title:[[self titleTF] stringValue]
-                           year:[[self yearTF] stringValue]
-                        metaSrc:[meta source]
-                         metaId:[meta sourceId]];
+    selId = [DIDB set_media_meta:[self srcUpc]
+                           title:[[self titleTF] stringValue]
+                            year:[[self yearTF] stringValue]
+                         metaSrc:[meta source]
+                          metaId:[meta sourceId]];
     if( selId != nil ) {
         [sender setEnabled:FALSE];
     }
 
-    SMKLogDebug(@"sel src %@ id %@ selid %@", [DIDB dsDesc:[meta source]],[meta sourceId], selId);
+    SMKLogDebug(@"sel row: %d t: %@ src %@ id %@ selid %@", 
+                row,
+                [meta title],
+                [DIDB dsDesc:[meta source]],
+                [meta sourceId], 
+                selId);
     /* 
       on to art, but first cancel any 'OTHER' art gatherers
      */
@@ -218,7 +269,9 @@ static VidMetaSelViewCntlr * me = nil;
             [gath cancel];
         }
     }
-    if( [meta artGath] ) {
+    if( [meta artGath] 
+       && ( ([[meta artGath] isFinished] && [[[meta artGath] artList] count] > 0 )
+           || ( ! [[meta artGath] isFinished]) )) {
         ArtBrowswerItemGatherer * gath = [meta artGath];
         SMKLogDebug(@"ag %@",gath);
         
@@ -232,26 +285,49 @@ static VidMetaSelViewCntlr * me = nil;
 
 - (IBAction)searchAction:(id)sender 
 {
-    [self setDataSrc:[[VidMetaSelDataSrc alloc]init]];
-    [[self dataSrc] addObserver:me 
-                     forKeyPath:[VidMetaSelDataSrc kvoDataRows]
-                        options:NSKeyValueObservingOptionNew
-                        context:nil];
-    [[self progressInd] setHidden:FALSE];
-    [[self progressInd] startAnimation:self];
-    [[self dataSrc] findTitle:[titleTF stringValue] year:[yearTF stringValue]];
+    SMKLogDebug(@"search win: %@", [[self view]window]);
+    [[[self view]window] endEditing];
+    
+    if( [[[self searchButton] title] isEqualToString:@"Search"] ) {
+        [self setDataSrc:[[VidMetaSelDataSrc alloc]init]];
+        [[self dataSrc] addObserver:me 
+                         forKeyPath:[VidMetaSelDataSrc kvoDataRows]
+                            options:NSKeyValueObservingOptionNew
+                            context:nil];
+        [[self progressInd] setHidden:FALSE];
+        [[self progressInd] startAnimation:self];
+        NSString * mediaType;
+        if( [mediaTypeRB selectedCell] == videoRB ) {
+            mediaType = @"video";
+        } else {
+            mediaType = @"audio";
+        }
+        [[self dataSrc] findMeta:mediaType 
+                             upc:srcUpc
+                           title:[titleTF stringValue] 
+                            year:[yearTF stringValue]
+                         getMore:FALSE];
+    } else {
+        [[self dataSrc] addObserver:me 
+                         forKeyPath:[VidMetaSelDataSrc kvoDataRows]
+                            options:NSKeyValueObservingOptionNew
+                            context:nil];
+        [[self progressInd] setHidden:FALSE];
+        [[self progressInd] startAnimation:self];
+        NSString * mediaType;
+        if( [mediaTypeRB selectedCell] == videoRB ) {
+            mediaType = @"video";
+        } else {
+            mediaType = @"audio";
+        }
+        [[self dataSrc] findMeta:mediaType
+                             upc:srcUpc
+                           title:[titleTF stringValue] 
+                            year:[yearTF stringValue]
+                         getMore:TRUE];
+    }
 }
-
-- (IBAction)TMDbAction:(id)sender 
-{
-    [[self dataSrc] addObserver:me 
-                     forKeyPath:[VidMetaSelDataSrc kvoDataRows]
-                        options:NSKeyValueObservingOptionNew
-                        context:nil];
-    [[self progressInd] setHidden:FALSE];
-    [[self progressInd] startAnimation:self];
-    [dataSrc searchTMDb:[titleTF stringValue] year:[yearTF stringValue]];
-}
+    
 - (IBAction)cancelAction:(id)sender 
 {
     if( ! [[self progressInd] isHidden] ) {

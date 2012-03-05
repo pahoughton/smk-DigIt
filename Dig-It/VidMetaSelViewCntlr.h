@@ -30,11 +30,15 @@
 @interface VidMetaSelViewCntlr : NSViewController <NSTabViewDelegate>
 @property (strong) VidMetaSelDataSrc * dataSrc;
 @property (strong) VidSelArtPickerViewCntlr * artPickerViewCntlr;
+@property (strong) NSString * srcMediaType;
 @property (strong) NSString * srcTitle;
 @property (strong) NSString * srcYear;
 @property (strong) NSString * srcUpc;
 @property (assign) BOOL aliveAndWell;
 
+@property (weak) IBOutlet NSMatrix *mediaTypeRB;
+@property (weak) IBOutlet NSButtonCell *audioRB;
+@property (weak) IBOutlet NSButtonCell *videoRB;
 
 @property (weak) IBOutlet NSTextField *titleTF;
 @property (weak) IBOutlet NSTextField *yearTF;
@@ -44,12 +48,14 @@
 @property (weak) IBOutlet NSButton *TMDbButton;
 
 +(VidMetaSelViewCntlr *)showSelfIn:(NSView *)viewToReplace 
+                         mediaType:(NSString *)mediaType
                              title:(NSString *)title 
                               year:(NSString *)year 
                                upc:(NSString *)upc;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil 
                bundle:(NSBundle *)nibBundleOrNil 
+            mediaType:(NSString *)mediaType
                 title:(NSString *)title 
                  year:(NSString *)year
                   upc:(NSString *)upc;
@@ -57,6 +63,5 @@
 - (IBAction)selectMetaAction:(id)sender;
 - (IBAction)searchAction:(id)sender;
 - (IBAction)cancelAction:(id)sender;
-- (IBAction)TMDbAction:(id)sender;
 
 @end

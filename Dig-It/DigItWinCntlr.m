@@ -58,7 +58,6 @@ static NSString * udGradyAngleKey = @"digit-winGradyAngle";
 
 - (void)goodToGo
 {
-
     SMKLogDebug(@"good to Go?? win %@ view %@ grady %@", 
                 [self window],
                 [[contentView superview] class],
@@ -91,7 +90,7 @@ static NSString * udGradyAngleKey = @"digit-winGradyAngle";
     [toColorWell setColor:toColor];
     [mainWinGradyView setAngle:gradyAngle];
     [directionSlider setFloatValue:gradyAngle];
-    
+        
     custViewCntlr = [CustomerViewCntlr showSelfIn:contentView];
 }
 

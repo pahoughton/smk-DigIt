@@ -175,73 +175,82 @@ enum ABIGSpec {
 {
     NSMutableArray * myArtList = [self artList];
     
-    NSMutableDictionary * tmdbIdLink = [[NSMutableDictionary alloc]init];
     NSString * mbdir = [AppUserValues mediaBaseDir];
 
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     
-    NSString * qStr;
+    NSString * iqStr;
     SMKDigitDS ds;
     
     if( [spec spec] == VidTitleIdSpec ) {
-        qStr = [DIDB sel_vt_art_details:[spec data]];
+        iqStr = [DIDB sel_images_art_v_id:[spec data] meta:FALSE];
         ds = SMKDIDS_VidTitles;
     } else {
-        qStr = [DIDB sel_vm_art_details:[spec data]];
+        iqStr = [DIDB sel_images_art_v_id:[spec data] meta:TRUE];
         ds = SMKDIDS_VidMeta;
     }
     
-    id <SMKDBResults> rslt = [db query:qStr];
-    NSMutableArray * aRec;
-    while( (aRec = [rslt fetchRowArray]) ){
+    id <SMKDBResults> iRslt = [db query:iqStr];
+    NSMutableArray * iRec;
+    while( (iRec = [iRslt fetchRowArray]) ){
         if( [self isCancelled] ) {
             return;
         }
-        NSString * tmdb_id = [aRec objectAtIndex:7];
-        ArtBrowserItem * abi = [tmdbIdLink objectForKey:tmdb_id];
         
-        if( abi == nil ) {
-            abi = [[ArtBrowserItem alloc]initWithSource:ds srcId:nil img:nil];
-            [myArtList addObject:abi];
-            [tmdbIdLink setObject:abi forKey:tmdb_id];
-        }
-        NSNumber * srcId = [aRec objectAtIndex:0];
-        NSString * sizeDesc = [aRec objectAtIndex:8];
-        if( [sizeDesc isEqualToString:@"w154"] ) {
-            [abi setBrwsImgSrcId:[srcId stringValue]];
-            [abi setBrwsImgUID:[[NSString alloc]initWithFormat:
-                                @"%@.%@",[DIDB dsDesc:[abi brwsImgSrc]],srcId]];
-            NSData * imgData = [aRec objectAtIndex:3];
-            if( ! SMKisNULL(imgData) ) {
-                [abi setBrwsImage:[[NSImage alloc]initWithData:imgData]];
-            }
-            [abi setMediaSrc:ds];
-            [abi setMediaSrcId:[aRec objectAtIndex:1]];
+        NSNumber * imgIdNum = [iRec objectAtIndex:1];
+        NSData * thumbData = [iRec objectAtIndex:3];
+        NSString * thumbFilePath = [iRec objectAtIndex:4];
+        NSString * thumbUrl = [iRec objectAtIndex:5];
+        NSData * midData = [iRec objectAtIndex:8];
+        NSString * midFilePath = [iRec objectAtIndex:9];
+        NSString * midUrl = [iRec objectAtIndex:10];
+        
+        NSImage * thumbImage;
+        if( ! SMKisNULL(thumbData) ) {
+            thumbImage = [[NSImage alloc] initWithData:thumbData];
+        } else if( ! SMKisNULL(thumbFilePath) ) {
+            thumbImage = [[NSImage alloc] initWithContentsOfFile:
+             [mbdir stringByAppendingPathComponent:
+              thumbFilePath]];
+        } else if( ! SMKisNULL(thumbUrl) ) {
+            thumbImage = [[NSImage alloc] initWithContentsOfURL:
+             [[NSURL alloc] initWithString:
+              [thumbUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
         } else {
-            NSURL * url = nil;
-            NSString * filepath = [aRec objectAtIndex:5];
-            NSString * imgUrl = [aRec objectAtIndex:6];
-            if( ! SMKisNULL(filepath) ) {
-                url = [[NSURL alloc] initFileURLWithPath:
-                       [[mbdir stringByAppendingPathComponent:filepath]
-                        stringByAddingPercentEscapesUsingEncoding:
-                        NSUTF8StringEncoding]
-                        ];
-            } else if( ! SMKisNULL(imgUrl) ) {
-                url = [[NSURL alloc]initWithString:[imgUrl
-                                                     stringByAddingPercentEscapesUsingEncoding:
-                                                     NSUTF8StringEncoding]];
-            } 
-            [abi setImageURL:url];
-            [abi setImageSrc:ds];
-            [abi setImageSrcId:[srcId stringValue]];
-            NSData * imgData = [aRec objectAtIndex:3];
-            if( SMKisNULL(imgData) ) {
-                [abi setImage:nil];
-            } else {
-                [abi setImage:[[NSImage alloc] initWithData:imgData]];
-            }
+            thumbImage = nil;
         }
+
+        // SMKLogDebug(@"thumb: %@ %d", thumbImage, [thumbImage isValid]);
+        ArtBrowserItem * abi;
+        abi = [[ArtBrowserItem alloc]initWithSource:ds 
+                                              srcId:[imgIdNum stringValue] 
+                                                img:thumbImage];
+        [abi setMediaSrc:ds];
+        [abi setMediaSrcId:[iRec objectAtIndex:0]];
+        [abi setBrwsImgTitle:[iRec objectAtIndex:2]];
+        [abi setImageSrc:ds];
+        [abi setImageSrcId:[imgIdNum stringValue]];
+
+        NSImage * midImage;
+        if( ! SMKisNULL(midData) ) {
+            midImage = [[NSImage alloc] initWithData:midData];
+        } else if( ! SMKisNULL(midFilePath) ) {
+            midImage = [[NSImage alloc] initWithContentsOfFile:
+                          [mbdir stringByAppendingPathComponent:
+                           midFilePath]];
+        } else if( ! SMKisNULL(midUrl) ) {
+            midImage = [[NSImage alloc] initWithContentsOfURL:
+                          [[NSURL alloc] initWithString:
+                           [midUrl stringByAddingPercentEscapesUsingEncoding:
+                            NSUTF8StringEncoding]]];
+        } else {
+            midImage = nil;
+        }
+        [abi setImage:midImage];
+        [abi setImageURL:[[NSURL alloc] initWithString:
+                          [midUrl stringByAddingPercentEscapesUsingEncoding:
+                           NSUTF8StringEncoding]]];
+        [myArtList addObject:abi];
     }
     // [self setArtList:myArtList];
 }

@@ -25,6 +25,7 @@
 **/
 #import "ArtBrowserItem.h"
 #import <Quartz/Quartz.h>
+#import <SMKLogger.h>
 
 @implementation ArtBrowserItem
 @synthesize brwsImgUID;
@@ -50,7 +51,7 @@
     if( self ) {
         [self setBrwsImgSrc:src];
         [self setBrwsImgSrcId:srcId];
-        [self setBrwsImage:brwsImage];
+        [self setBrwsImage:browserImage];
         [self setBrwsImgUID:[[NSString alloc]initWithFormat:
                              @"%@.%@",
                              [DIDB dsDesc:[self brwsImgSrc]],
@@ -58,6 +59,7 @@
         [self setBrwsImgTitle:@""];
         [self setBrwsImgSubTitle:@""];
         [self setBrwsImgVer:1];
+        //SMKLogDebug(@"img: %@",brwsImage);
     }
     return self;
 }
@@ -107,7 +109,7 @@
             "    srcId: %@\n"
             "    title: %@\n"
             "     subt: %@\n"
-            "      ver: %ul\n"
+            "      ver: %u\n"
             "      res: %@\n"
             "   imgsrc: %@\n"
             " imgsrcid: %@\n"

@@ -76,7 +76,7 @@ static NSString * dbPassCache = nil;
 
 -(unsigned int)dbPort
 {
-    NSString * val = [ud stringForKey:AppUDKdbHost];
+    NSString * val = [ud stringForKey:AppUDKdbPort];
     return (unsigned int)[val integerValue];
 }
 

@@ -37,17 +37,22 @@ static CustUpcViewCntlr * me;
 @synthesize upcDataSrc;
 @synthesize metaSelViewCntlr;
 @synthesize db;
+@synthesize myWindow;
 @synthesize custInfo;
 @synthesize custId;
 @synthesize custHasUPC;
 @synthesize aliveAndWell;
 @synthesize needToRip;
-@synthesize uvfDetailsCache;
+@synthesize upcIsNew;
+@synthesize showingUPC;
+
+@synthesize upcDetailsCache;
 @synthesize goodSound;
 @synthesize badSound;
 @synthesize noArtImage;
 @synthesize goImage;
 @synthesize stopImage;
+@synthesize mediaTypeCB;
 
 @synthesize upcListTableView;
 @synthesize saveButton;
@@ -92,12 +97,14 @@ static CustUpcViewCntlr * me;
     /// need to library this
     NSView * curSuper = [viewToReplace superview];
     NSRect viewFrame = [viewToReplace frame];
-    
+    [me setMyWindow:[curSuper window]];
     [viewToReplace removeFromSuperview];
     [curSuper addSubview:[me view]];
     [[me view] setFrame:viewFrame];
     [me setRepresentedObject:
      [NSNumber numberWithUnsignedLong:[[ [me view ] subviews ] count ]]];
+
+    [[me myWindow] makeFirstResponder:[me curUpcValue]];
     
     return me;
 }
@@ -115,8 +122,14 @@ static CustUpcViewCntlr * me;
     
     return self;
 }
+
 -(void) mtUpcDataAvailable
 {
+    
+    SMKLogDebug( @"mtUpcDataAvailable win %@ resp %@",
+                myWindow,
+                [myWindow firstResponder] );
+                 
     [progressInd stopAnimation:self];
     [progressInd setHidden:TRUE];
     
@@ -134,12 +147,13 @@ static CustUpcViewCntlr * me;
     [saveButton setEnabled:FALSE];
     
     // reset cache on cust change (don't want the whole db in here)
-    uvfDetailsCache = [[NSMutableDictionary alloc] init];
+    upcDetailsCache = [[NSMutableDictionary alloc] init];
     
     [upcListTableView setDataSource:upcDataSrc];
     [upcListTableView reloadData];
     [[self curUpcValue] setEnabled:TRUE];
-    [self.curUpcValue becomeFirstResponder];
+
+    [myWindow makeFirstResponder:curUpcValue];
 }
 
 #pragma mark Initialization
@@ -157,6 +171,8 @@ static CustUpcViewCntlr * me;
     noArtImage = [NSImage imageNamed:@"NO ART.tif"];
     goImage = [NSImage imageNamed:@"go_button.png"];
     stopImage = [NSImage imageNamed:@"stop_button.png"];
+    [mediaTypeCB addItemWithObjectValue:@"video"];
+    [mediaTypeCB addItemWithObjectValue:@"audio"];
     
     /*
     SMKLogDebug(@"resources:\n"
@@ -180,12 +196,14 @@ static CustUpcViewCntlr * me;
         
         [[self upcDataSrc] addObserver:me forKeyPath:[CustUpcDataSrc kvoData] options:NSKeyValueObservingOptionNew context:nil];
         if( [[self upcDataSrc] data] != nil ) {
+            [[self upcDataSrc] removeObserver:me forKeyPath:[CustUpcDataSrc kvoData]];
             [self mtUpcDataAvailable];
         } else {
             [[self progressInd] setHidden:FALSE];
             [[self progressInd] startAnimation:self];
         }
     }
+    [myWindow makeFirstResponder:curUpcValue];
 }
 -(void) setCust:(NSDictionary *)cust
 {
@@ -206,163 +224,152 @@ static CustUpcViewCntlr * me;
 #pragma mark UpcDetails
 -(void) textDidChange:(NSNotification *)note
 {
-    NSLog(@"text change %@",note);
+    // NSLog(@"text change %@",note);
     // [saveButton setEnabled:TRUE];
-    [searchButton setEnabled:TRUE];
+    NSString * mType = [[self mediaTypeCB] stringValue];
+    NSString * upcVal = [[self curUpcValue] stringValue];
+    NSString * title = [upcTitleTF stringValue];
+    
+    if( [upcVal length] > 1 
+       && [title length] > 1 
+       && ( [mType isEqualToString:@"audio"] 
+           || [mType isEqualToString:@"video"] ) ) {           
+           [saveButton setEnabled:custHasUPC == FALSE];
+           [searchButton setEnabled:TRUE];
+       } else {
+           [saveButton setEnabled:FALSE];        
+           [searchButton setEnabled:FALSE];
+       }
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:NSTextDidChangeNotification 
                                                   object:nil];
 }
 
-
 -(void)showUpcDetails:(NSDictionary *)upcDetails
 {
-    NSString * uTitle = [upcDetails valueForKey:@"upc_title"];
-    NSString * uDesc = [upcDetails valueForKey:@"upc_desc"];
-    [upcTitleTF setStringValue:
-     uTitle != nil ? uTitle : uDesc != nil ? uDesc : @""];
-    [upcYearTF setStringValue:[upcDetails valueForKey:@"upc_year"]];
-    [upcMpaaTF setStringValue:[upcDetails valueForKey:@"upc_rating"]];
-    [upcGenresTF setStringValue:[upcDetails valueForKey:@"upc_genres"]];
-    [upcActorsTF setStringValue:@""];
-    [upcDescTF setStringValue:uDesc];
-    [upcThumbTF setImage:noArtImage];
-    
-    if( ! [self custHasUPC] ) {
-        [saveButton setEnabled:TRUE];
-    } else {
-        [saveButton setEnabled:FALSE];        
-    }
-    if( [[upcTitleTF stringValue]length] < 1 ) {
-        [upcTitleTF setStringValue:@"UNKNOWN - Enter Title"];
-    } else {
-        [searchButton setEnabled:TRUE];
-    }
-    [stopOrGoImage setImage:stopImage];
-    [haveOrRipLabel setStringValue:@"😥 RIP 😥"];
-    [badSound play];
+    // SMKLogDebug(@"uvfDetailts %@", uvfDetails); pcd
     [progressInd setHidden:TRUE];
     [progressInd stopAnimation:self];
+    
+    
+    BOOL haveMedia = FALSE;
+    if( [[upcDetails valueForKey:@"have_media"] isEqualToString:@"true"] ) {
+        haveMedia = TRUE;
+    }
+    
+    if( haveMedia ) {
+        [goodSound play];
+        [haveOrRipLabel setStringValue:@"😄 have 😄"];
+        [stopOrGoImage setImage:goImage];        
+    } else {
+        [badSound play];
+        [haveOrRipLabel setStringValue:@"😥 RIP 😥"];
+        [stopOrGoImage setImage:stopImage];        
+    }
+    [self setUpcIsNew:FALSE];
+    
+    NSString * mediaType = [upcDetails objectForKey:@"media_type"];
+    if( ! SMKisNULL(mediaType) ) {
+        if( [mediaType isEqualToString:@"audio"] ) {
+            [mediaTypeCB selectItemWithObjectValue:@"audio"];
+        } else if( [mediaType isEqualToString:@"video"] ) {
+            [mediaTypeCB selectItemWithObjectValue:@"video"];
+        } else if( [mediaType isEqualToString:@"NO UPC"] ) {
+            [self setUpcIsNew:TRUE];
+        }
+    }
+    
+    [upcTitleTF setStringValue:[upcDetails valueForKey:@"title"]];
+
+    NSObject * valObj;
+    NSString * valStr;
+    
+#define SET_UPC_FLD( _srcFld_, _dstFld_ ) \
+    valObj = [upcDetails valueForKey:_srcFld_]; \
+    if( [valObj isKindOfClass:[NSNumber class]] ) { \
+        NSNumber * valNum = (NSNumber *)valObj; \
+        valStr = [valNum stringValue]; \
+    } else if( SMKisNULL(valObj) ) { \
+        valStr = @""; \
+    } else { \
+        valStr = (NSString *)valObj;\
+    } \
+    [_dstFld_ setStringValue:valStr];
+    
+    SET_UPC_FLD(@"rel_year", upcYearTF);
+    SET_UPC_FLD(@"rating", upcMpaaTF);
+    SET_UPC_FLD(@"description", upcDescTF);
+    SET_UPC_FLD(@"genres", upcGenresTF);
+    SET_UPC_FLD(@"artists", upcActorsTF);
+    
+    NSString * mType = [[self mediaTypeCB] stringValue];
+
+    NSData * thumbData = [upcDetails valueForKey:@"thumb"];
+    if( ! SMKisNULL(thumbData) ) {
+        if( [mType isEqualToString:@"audio"] ) {
+            [upcThumbTF setImageScaling:NSScaleProportionally];        
+        } else {
+            [upcThumbTF setImageScaling:NSScaleToFit];
+        }
+        [upcThumbTF setImage:[[NSImage alloc]initWithData:thumbData]];
+    } else {
+        [upcThumbTF setImageScaling:NSScaleToFit];
+        [upcThumbTF setImage:noArtImage];
+    }
+    
+    NSString * upcVal = [[self curUpcValue] stringValue];
+    NSString * title = [upcTitleTF stringValue];
+    
+    if( [upcVal length] > 1 
+       && [title length] > 1 
+       && ( [mType isEqualToString:@"audio"] 
+           || [mType isEqualToString:@"video"] ) ) {   
+        [saveButton setEnabled:custHasUPC == FALSE];
+        [searchButton setEnabled:TRUE];
+    } else {
+        [saveButton setEnabled:FALSE];        
+        [searchButton setEnabled:FALSE];
+    }
+    
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(textDidChange:)
                                                  name:NSTextDidChangeNotification 
                                                object:nil];
-
-    // NEED to RIP
 }
 
 -(void)upcDetailRecProc:(NSDictionary *)rec
 {
     if( rec != nil ) {
+        [upcDetailsCache setValue:rec forKey:curUpcValue.stringValue];
         [self showUpcDetails:rec];
-    } else {
-        if( [[upcTitleTF stringValue] length] < 1 ) {
-            if( ! [self custHasUPC] ) {
-                [saveButton setEnabled:TRUE];
-            } else {
-                [saveButton setEnabled:FALSE];        
-            }
-            if( [[upcTitleTF stringValue]length] < 1 ) {
-                [upcTitleTF setStringValue:@"UNKNOWN - Enter Title"];
-            } else {
-                [searchButton setEnabled:TRUE];
-            }
-            [[self curUpcValue] setEnabled:TRUE];
-            [stopOrGoImage setImage:stopImage];
-            [haveOrRipLabel setStringValue:@"😥 RIP 😥"];
-            [badSound play];
-            [progressInd setHidden:TRUE];
-            [progressInd stopAnimation:self];
-            [[NSNotificationCenter defaultCenter] addObserver:self
-                                                     selector:@selector(textDidChange:)
-                                                         name:NSTextDidChangeNotification 
-                                                       object:nil];
-        }
-        // all done
-    }
-}
--(void)showUvfDetails:(NSDictionary *)uvfDetails
-{
-    // SMKLogDebug(@"uvfDetailts %@", uvfDetails);
-    [upcTitleTF setStringValue:[uvfDetails valueForKey:@"title"]];
-    [upcYearTF setStringValue:[uvfDetails valueForKey:@"vt_year"]];
-    [upcMpaaTF setStringValue:[uvfDetails valueForKey:@"mpaa_rating"]];
-    if( [uvfDetails valueForKey:@"desc_long"] != nil ) {
-        [upcDescTF setStringValue:[uvfDetails valueForKey:@"desc_long"]];
-    } else if( [uvfDetails valueForKey:@"desc_short"] != nil ) {
-        [upcDescTF setStringValue:[uvfDetails valueForKey:@"desc_short"]];        
-    } else {
-        [upcDescTF setStringValue:@""];
-    }
-    NSNumber * vid_id = [uvfDetails valueForKey:@"vid_id"];
-    [upcGenresTF setStringValue:[DIDB vtGenres:vid_id]];
-    [upcActorsTF setStringValue:[DIDB vtActors:vid_id]];
-    NSImage * thumb = [DIDB vtThumb:vid_id artid:[uvfDetails valueForKey:@"art_thumb_id"]];
-    if( thumb != nil) {
-        [upcThumbTF setImage:thumb];
-    } else {
-        [upcThumbTF setImage:noArtImage];
-    }
-    
-    if( ! [self custHasUPC] ) {
-        [saveButton setEnabled:TRUE];
-    } else {
-        [saveButton setEnabled:FALSE];        
-    }
-    if( [[upcTitleTF stringValue]length] > 0 ) {
-        [searchButton setEnabled:TRUE];
-    } else {
-        [searchButton setEnabled:FALSE];
-    }
-    [stopOrGoImage setImage:goImage];
-    [haveOrRipLabel setStringValue:@"😄 have 😄"];
-    [goodSound play];
-    [progressInd setHidden:TRUE];
-    [progressInd stopAnimation:self];
-    [self setNeedToRip:FALSE];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(textDidChange:)
-                                                 name:NSTextDidChangeNotification 
-                                               object:nil];
-    // ALREADY have media
-}
--(void)uvfDetailRecProc:(NSDictionary *)rec
-{
-    if( rec != nil ) {
-        [uvfDetailsCache setValue:rec forKey:curUpcValue.stringValue];
-        [self showUvfDetails:rec];
-    } else {
-        if( [uvfDetailsCache valueForKey:curUpcValue.stringValue] == nil ) {
-            // no uvfDetails - get what we can from upcs table
-            [db fetchAllRowsDictMtObj:self 
-                                 proc:@selector(upcDetailRecProc:) 
-                                  sql:[DIDB sel_upcs:curUpcValue.stringValue]];
-            
-        }
     }
 }
 #pragma mark UPC Selection
 -(void)getAndShowUpcDetails
 {
-    SMKLogDebug(@"get&show upc: %@", curUpcValue.stringValue );
-    if( [curUpcValue.stringValue length] > 0 ) {
+    NSString * upcStr = [[self curUpcValue]stringValue];
+    SMKLogDebug(@"get&show upc: %@", upcStr );
+    if( [upcStr length] > 0 
+       && ! [upcStr isEqualToString:[self showingUPC]] ) {
+        [self setShowingUPC:[[NSString alloc]initWithString:upcStr]];
+        
         [[self upcTitleTF] setStringValue:@""];
-        NSDictionary * uvfDetails = [uvfDetailsCache valueForKey:
-                                     curUpcValue.stringValue];
+        NSDictionary * upcDetails = [upcDetailsCache valueForKey: upcStr ];
         [saveButton setEnabled:FALSE];
         [self setNeedToRip:TRUE];
         
-        if( uvfDetails ) {
-            [self showUvfDetails:uvfDetails];
+        if( upcDetails ) {
+            [self showUpcDetails:upcDetails];
         } else {
             [progressInd setHidden:FALSE];
             [progressInd startAnimation:self];
             [db fetchAllRowsDictMtObj:self 
-                                 proc:@selector(uvfDetailRecProc:) 
-                                  sql:[DIDB sel_uvf_detailsWithUpc:
-                                       [curUpcValue stringValue]]];
+                                 proc:@selector(upcDetailRecProc:) 
+                                  sql:[DIDB sel_upc_detailsWithUpc:upcStr ]];
         }
     }
+    [myWindow makeFirstResponder:curUpcValue];
 }
 #pragma mark KVO Observer
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -372,6 +379,7 @@ static CustUpcViewCntlr * me;
         [[self upcDataSrc] removeObserver:me forKeyPath:[CustUpcDataSrc kvoData]];
         [self performSelectorOnMainThread:@selector(mtUpcDataAvailable) withObject:nil waitUntilDone:FALSE];
     }
+    [myWindow makeFirstResponder:curUpcValue];
 }
 
 #pragma mark Actions
@@ -385,7 +393,7 @@ static CustUpcViewCntlr * me;
         [[self saveButton]setEnabled:FALSE];
         [self getAndShowUpcDetails];
     }
-    [self.curUpcValue becomeFirstResponder];
+    [myWindow makeFirstResponder:curUpcValue];
 }
 
 
@@ -397,33 +405,42 @@ static CustUpcViewCntlr * me;
 - (IBAction)saveButton:(id)sender 
 {
     SMKLogDebug(@"saveButton");
-    if( [[curUpcValue stringValue] length] > 0 ) {
-        BOOL saved = FALSE;
+    NSString * mType = [[self mediaTypeCB] stringValue];
+    NSString * upcVal = [[self curUpcValue] stringValue];
+    
+    if( [upcVal length] > 0 
+       && ( [mType isEqualToString:@"audio"] 
+           || [mType isEqualToString:@"video"] ) ) {
+           BOOL saved = FALSE;
         
-        @try {
-            saved = [DIDB set_cust:custId
-                               upc:[curUpcValue stringValue]
-                         needToRip:needToRip];
-            
-        }
-        @catch (NSException *exception) {
-            [SMKAlertWin alertWithMsg:[exception reason]];
-            [saveButton setEnabled:FALSE];
-            saved = FALSE;
-        }
-        if( saved ) {
-            [saveButton setEnabled:FALSE];
-            NSNumber * upcNum = [[NSNumber alloc] initWithInteger:[[curUpcValue stringValue]integerValue]];
-            [[self upcDataSrc]addCustUpc:upcNum];
-            [upcListTableView reloadData];
-        }
-    }
+           @try {
+               saved = [DIDB set_cust:custId
+                                  upc:upcVal
+                            mediaType:mType
+                             isNewUpc:[self upcIsNew]
+                            needToRip:needToRip];
+               
+           }
+           @catch (NSException *exception) {
+               [SMKAlertWin alertWithMsg:[exception reason]];
+               [saveButton setEnabled:FALSE];
+               saved = FALSE;
+           }
+           if( saved ) {
+               [saveButton setEnabled:FALSE];
+               NSNumber * upcNum = [[NSNumber alloc] initWithInteger:[[curUpcValue stringValue]integerValue]];
+               [[self upcDataSrc]addCustUpc:upcNum];
+               [upcListTableView reloadData];
+           }
+       } else {
+           [SMKAlertWin alertWithMsg:@"upc value and type must be set"];
+       }
 }
 
 - (IBAction)cancelButton:(id)sender 
 {
     SMKLogDebug(@"cancelButton");
-    [[self curUpcValue] setEnabled:FALSE];
+    // [[self curUpcValue] setEnabled:FALSE];
     [CustomerViewCntlr showSelfIn:[self view]];
 
 }
@@ -431,22 +448,31 @@ static CustUpcViewCntlr * me;
 - (IBAction)searchButton:(id)sender 
 {
     SMKLogDebug(@"searchButton %@", [upcTitleTF stringValue]);
-    [curUpcValue setEnabled:FALSE];
-    [[[self view]window] endEditing];
+    // [curUpcValue setEnabled:FALSE];
+    NSString * mType = [[self mediaTypeCB] stringValue];
+    NSString * upcVal = [[self curUpcValue] stringValue];
+    NSString * title = [upcTitleTF stringValue];
     
-    if( [[upcTitleTF stringValue] length] > 1 ) {
-        metaSelViewCntlr = [VidMetaSelViewCntlr showSelfIn:[self view]
-                                                     title:[upcTitleTF stringValue]
-                                                      year:[upcYearTF stringValue]
-                                                       upc:[curUpcValue stringValue]];
-    } else {
-        [SMKAlertWin alertWithMsg:@"Need a title to search for"];
-        [searchButton setEnabled:FALSE];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(textDidChange:)
-                                                     name:NSTextDidChangeNotification 
-                                                   object:nil];
-    }
+    if( [upcVal length] > 1 
+       && [title length] > 1 
+       && ( [mType isEqualToString:@"audio"] 
+           || [mType isEqualToString:@"video"] ) ) {
+           
+           [[[self view]window] endEditing];
+    
+           metaSelViewCntlr = [VidMetaSelViewCntlr showSelfIn:[self view]
+                                                    mediaType:mType
+                                                        title:title
+                                                         year:[upcYearTF stringValue]
+                                                          upc:upcVal];
+       } else {
+           [SMKAlertWin alertWithMsg:@"Need a upc, title and type to search for"];
+           [searchButton setEnabled:FALSE];
+           [[NSNotificationCenter defaultCenter] addObserver:self
+                                                    selector:@selector(textDidChange:)
+                                                        name:NSTextDidChangeNotification 
+                                                      object:nil];
+       }
 }
 
 - (IBAction)upcEntered:(id)sender 
@@ -470,11 +496,38 @@ static CustUpcViewCntlr * me;
 
 - (IBAction)titleAction:(id)sender 
 {
-    if( [[upcTitleTF stringValue]length] > 0 ) {
-        [searchButton setEnabled:TRUE];
-    } else {
-        [searchButton setEnabled:FALSE];
+    NSString * mType = [[self mediaTypeCB] stringValue];
+    NSString * upcVal = [[self curUpcValue] stringValue];
+    NSString * title = [upcTitleTF stringValue];
+    
+    if( [upcVal length] > 1 
+       && [title length] > 1 
+       && ( [mType isEqualToString:@"audio"] 
+           || [mType isEqualToString:@"video"] ) ) {           
+           [saveButton setEnabled:custHasUPC == FALSE];
+           [searchButton setEnabled:TRUE];
+       } else {
+           [saveButton setEnabled:FALSE];        
+           [searchButton setEnabled:FALSE];
     }
+}
+
+- (IBAction)mediaTypeAction:(id)sender 
+{
+    NSString * mType = [[self mediaTypeCB] stringValue];
+    NSString * upcVal = [[self curUpcValue] stringValue];
+    NSString * title = [upcTitleTF stringValue];
+    
+    if( [upcVal length] > 1 
+       && [title length] > 1 
+       && ( [mType isEqualToString:@"audio"] 
+           || [mType isEqualToString:@"video"] ) ) {           
+           [saveButton setEnabled:custHasUPC == FALSE];
+           [searchButton setEnabled:TRUE];
+       } else {
+           [saveButton setEnabled:FALSE];        
+           [searchButton setEnabled:FALSE];
+       }
 }
 
 

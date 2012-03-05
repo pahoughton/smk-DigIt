@@ -224,11 +224,10 @@ static NSMutableArray * customersCols = nil;
             cid];
 }
 
-+(NSString *)sel_uvf_detailsWithUpc:(NSString *)upc
++(NSString *)sel_upc_detailsWithUpc:(NSString *)upc
 {
     return [NSString stringWithFormat:
-            @"select * from uvf_details where upc = %@",upc];
-    
+            @"select * from sel_upc_details_art( %@ )",upc];
 }
 +(NSString *)sel_upcs:(NSString *)upc
 {
@@ -309,6 +308,53 @@ static NSMutableArray * customersCols = nil;
     return [DIDB sel_v_art_mid_detailsMeta:FALSE];
 }
 
++(NSString *)sel_images_art_v_id:(NSString *)vid_id meta:(BOOL)isMeta
+{
+    const char * metaStr = "_";
+    const char * mtStr = "t";
+    if( isMeta ) {
+        metaStr = "_meta_";
+        mtStr = "m";
+    }
+    /*
+      0 vid_id
+      1 vid_img_id
+      2 title
+      3 thumb_art
+      4 thumb_filepath
+      5 thumb_url
+      6 thumb_width
+      7 thumb_height
+      8 mid_art
+      9 mid_filepath
+     10 mid_url
+     11 mid_width
+     12 mid_height
+     */
+    
+    return [NSString stringWithFormat:
+            @"SELECT vid%sid,\n"
+            "vid%simg_id,\n"
+            "title,\n"
+            "thumb_art,\n"
+            "thumb_filepath,\n"
+            "thumb_url,\n"
+            "thumb_width,\n"
+            "thumb_height,\n"
+            "mid_art,\n"
+            "mid_filepath,\n"
+            "mid_url,\n"
+            "mid_width,\n"
+            "mid_height\n"
+            "FROM v_v%s_image_thumb_mid\n"
+            "WHERE vid%sid = %@",
+            metaStr,
+            metaStr,
+            mtStr,
+            metaStr,
+            vid_id];
+}
+
 +(BOOL)setVidTitleArt:(NSNumber *)vidId 
                 thumb:(NSNumber *)thumbId
                  main:(NSNumber *)mainId
@@ -328,6 +374,101 @@ static NSMutableArray * customersCols = nil;
             thumbId,
             mainId,
             vidId];
+}
+
++(NSString *)sel_vid_meta_sel_details:(NSString *)title year:(NSString *)year
+{
+    // ignoring year for now
+    /*
+      0 source
+      1 source_id
+      2 title
+      3 rating
+      4 description
+      5 rel_year
+      6 genres
+      7 artists
+      8 supporters (i.e. director, composer)
+      9 thumb
+     10 slmr
+     */
+    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    return [NSString stringWithFormat:
+            @"SELECT source,\n"
+            "source_id,\n"
+            "title,\n"
+            "rating,\n"
+            "description,\n"
+            "rel_year,\n"
+            "genres,\n"
+            "artists,\n"
+            "supporters,\n"
+            "thumb,\n"
+            "similarity( search_value, %@ ) as smlr\n"
+            "FROM v_vid_meta_sel_details\n"
+            "WHERE search_value %% %@"
+            "ORDER BY smlr DESC",
+            [db q:title],
+            [db q:title]];
+}
+
++(NSString *)sel_aud_meta_sel_details:(NSString *)upc
+                                title:(NSString *)title 
+                                 year:(NSString *)year
+                              getMore:(BOOL)more
+{
+    // ignoring year for now
+    /*
+     0 source
+     1 source_id
+     2 title
+     3 rating
+     4 description
+     5 rel_year
+     6 genres
+     7 artists
+     8 supporters (i.e. director, composer)
+     9 thumb
+     10 slmr
+     */
+
+    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    return [NSString stringWithFormat:
+            @"SELECT source,\n"
+            "source_id,\n"
+            "title,\n"
+            "rating,\n"
+            "description,\n"
+            "rel_year,\n"
+            "genres,\n"
+            "artists,\n"
+            "supporters,\n"
+            "thumb,\n"
+            "smlr\n"
+            "FROM sel_aud_meta_sel_details( %@, %@, %s )",
+            upc,
+            [db q:title],
+            (more ? "true" : "false")];
+    
+    /*
+    return [NSString stringWithFormat:
+            @"SELECT source,\n"
+            "source_id,\n"
+            "title,\n"
+            "rating,\n"
+            "description,\n"
+            "rel_year,\n"
+            "genres,\n"
+            "artists,\n"
+            "supporters,\n"
+            "thumb,\n"
+            "similarity( search_value, %@ ) as smlr\n"
+            "FROM v_aud_meta_sel_details\n"
+            "WHERE search_value %% %@"
+            "ORDER BY smlr DESC LIMIT 25",
+            [db q:title],
+            [db q:title]];
+     */
 }
 
 +(NSString *)sel_v_info_title:(NSString *)title year:(NSString *)year meta:(BOOL)meta
@@ -389,213 +530,57 @@ static NSMutableArray * customersCols = nil;
     return [DIDB sel_v_info_title:title year:year meta:TRUE];
 }
 
-+(NSString *)vActors:(NSNumber *)vid_id meta:(BOOL)meta
++(BOOL)set_cust:(NSNumber *)cust_id 
+            upc:(NSString *)upc 
+      mediaType:(NSString *)mediaType
+       isNewUpc:(BOOL)upcIsNew
+      needToRip:(BOOL)needToRip
 {
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
-    id <SMKDBResults> rslt;
-    NSString * query;
-    
-    if( meta ) {
-        query = 
-        @"select name from vm_pl_rl "
-        "where vid_meta_id = %@ and vid_role = 'actor' "
-        "order by role_order limit 3";
-    } else {
-        query = 
-        @"select name from v_pl_rl "
-        "where vid_id = %@ and vid_role = 'actor' "
-        "order by role_order limit 3";        
-    }
-    rslt = [db queryFormat:query, vid_id];
-    
-    NSMutableArray * actorList = [[NSMutableArray alloc] initWithCapacity:3];
-    NSArray * rec;
-    while( (rec = [rslt fetchRowArray]) ) {
-        [actorList addObject:[rec objectAtIndex:0]];
-    }
-    return [actorList componentsJoinedByString:@", "];
-}
-+(NSString *)vtActors:(NSNumber *)vid_id
-{
-    return [DIDB vActors:vid_id meta:FALSE];
-}
-+(NSString *)vtmActors:(NSNumber *)vid_id
-{
-    return [DIDB vActors:vid_id meta:TRUE];
-}
-
-
-+(NSString *)vDirectors:(NSNumber *)vid_id meta:(BOOL)meta
-{
-    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
-    id <SMKDBResults> rslt;
-    NSString * query;
-    
-    if( meta ) {
-        query = 
-        @"select name from vm_pl_rl "
-        "where vid_meta_id = %@ and vid_role = 'director' "
-        "order by role_order limit 3";
-    } else {
-        query = 
-        @"select name from v_pl_rl "
-        "where vid_id = %@ and vid_role = 'director' "
-        "order by role_order limit 3";        
-    }
-    rslt = [db queryFormat:query, vid_id];
-    
-    NSMutableArray * actorList = [[NSMutableArray alloc] initWithCapacity:3];
-    NSArray * rec;
-    while( (rec = [rslt fetchRowArray]) ) {
-        [actorList addObject:[rec objectAtIndex:0]];
-    }
-    return [actorList componentsJoinedByString:@", "];
-}
-+(NSString *)vtDirectors:(NSNumber *)vid_id
-{
-    return[ DIDB vDirectors:vid_id meta:FALSE];
-}
-+(NSString *)vtmDirectors:(NSNumber *)vid_id
-{
-    return[ DIDB vDirectors:vid_id meta:TRUE];
-}
-
-
-+(NSString *)vGenres:(NSNumber *)vid_id meta:(BOOL)meta;
-{
-    
-    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
-    id <SMKDBResults> rslt;
-    NSString * query;
-    if( meta ) {
-        query = 
-        @"select genre from video_meta_genres "
-        "where vid_meta_id = %@ "
-        "order by genre_order limit 3";
-    } else {
-        query = 
-        @"select genre from video_genres "
-        "where vid_id = %@ "
-        "order by genre_order limit 3";
-    }
-    rslt = [db queryFormat:query,
-            vid_id];
-    NSMutableArray * genreList = [[NSMutableArray alloc] initWithCapacity:3];
-    NSArray * rec;
-    while( (rec = [rslt fetchRowArray]) ) {
-        [genreList addObject:[rec objectAtIndex:0]];
-    }
-    return [genreList componentsJoinedByString:@", "];
-}
-+(NSString *)vtGenres:(NSNumber *)vid_id
-{
-    return [DIDB vGenres:vid_id meta:FALSE];
-}
-+(NSString *)vtmGenres:(NSNumber *)vid_id
-{
-    return [DIDB vGenres:vid_id meta:TRUE];
-}
-
-+(NSImage *)vThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id meta:(BOOL)meta
-{
-    NSString * query;
-
-    if( meta ) {
-        if( art_id != nil && ! [art_id isKindOfClass:[NSNull class]]  ) {
-            query = [NSString stringWithFormat:
-                     @"select art from video_meta_art where art_meta_id = %@",art_id];
-        } else {
-            query = [NSString stringWithFormat:
-                     @"select art from video_meta_art "
-                     "where vid_meta_id = %@ "
-                     "and art is not null "
-                     "and size_x < 200",
-                     vid_id];
-        }
-     
-    } else {
-        if( art_id != nil && ! [art_id isKindOfClass:[NSNull class]]  ) {
-            query = [NSString stringWithFormat:
-                     @"select art from video_art where art_id = %@",art_id];
-        } else {
-            query = [NSString stringWithFormat:
-                     @"select art from video_art "
-                     "where vid_id = %@ "
-                     "and art is not null "
-                     "and size_x < 200",
-                     vid_id];
-        }
-    }
-    
-    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
-    id <SMKDBResults> rslt;
-    rslt = [db query:query];
-    NSArray * rec = [rslt fetchRowArray];
-    if( rec != nil && [rec objectAtIndex:0] != nil ) {
-        NSData * imgData = [rec objectAtIndex:0];
-        SMKLogDebug(@"obj class %@", [imgData className]);
-        if( ! SMKisNULL(imgData) && [imgData length] > 0 ) {
-            return [[NSImage alloc] initWithData:imgData];
-        } 
-    }
-    
-    return nil;
-}
-
-+(NSImage *)vtThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id
-{
-    return [DIDB vThumb:vid_id artid:art_id meta:FALSE];
-}
-+(NSImage *)vtmThumb:(NSNumber *)vid_id artid:(NSNumber *)art_id
-{
-    return [DIDB vThumb:vid_id artid:art_id meta:TRUE];
-}
-
-
-+(BOOL)set_cust:(NSNumber *)cust_id upc:(NSString *)upc needToRip:(BOOL)needToRip
-{
-    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    // Postgres Specific value - need somthing for BOOL in SMKDB
     return [db queryBoolFormat:
-            @"select add_cust_upc( %@, %@, %@ )",
+            @"select add_cust_upc( %@, %@, %@, %s, %s )",
             cust_id, 
             upc,
-            needToRip];           
+            [db q:mediaType],
+            upcIsNew ? "true" : "false",
+            needToRip ? "true" : "false"];           
 }
 
-+(NSNumber *)set_v_sel_upc:(NSString *)upc 
++(NSNumber *)set_media_meta:(NSString *)upc 
                      title:(NSString *)title 
                       year:(NSString *)year 
                    metaSrc:(SMKDigitDS)metaSrc 
                     metaId:(NSString *)metaId
 {
-    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
-    if( [db queryBoolFormat:
-         @"insert into video_meta_selection\n"
-         "(search_upc, search_title, search_year,\n"
-         " sel_source, sel_source_id, sel_staff_id )\n"
-         "values ( %@, %@, %@, %@, %@, %@ ) ",
-         upc, 
-         [db q:title],
-         year,
-         [db q:[DIDB dsTable:metaSrc]],
-         [db q:metaId],
-         [DIDB staff_id]] ) {
-        id <SMKDBResults> rslt = [db query:@"select currval( 'video_meta_selection_vid_meta_sel_id_seq' )"];
-        NSArray * idrow = [rslt fetchRowArray];
-        NSNumber * selId = [idrow objectAtIndex:0];
-        return selId;
+    NSString * myYear;
+    if( [year length] == 4 ) {
+        myYear = year;
     } else {
-        return nil;
+        myYear = @"NULL";
     }
+    id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    id <SMKDBResults> rslt = 
+    [db queryFormat:
+     @"select set_media_meta( %@, %@, %@, %@, %@ )",
+     upc,
+     [db q:title],
+     myYear,
+     [db q:[DIDB dsTable:metaSrc]],
+     [db q:metaId]];
+    NSArray * rec = [rslt fetchRowArray];
+    NSNumber * selid = [rec objectAtIndex:0];
+    return selid;
 }
+
 +(BOOL)set_meta_sel_art:(NSNumber *)selId artSource:(SMKDigitDS)artSrc artId:(NSString *)artId
 {
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     return [db queryBoolFormat:
-            @"update video_meta_selection set\n"
+            @"update media_meta_selection set\n"
             "sel_art_source = %@,\n"
             "sel_art_source_id = %@\n"
-            "where vid_meta_sel_id = %@\n",
+            "where meta_sel_id = %@\n",
             [db q:selId],
             [db q:[DIDB dsTable:artSrc]],
             [db q:artId]];

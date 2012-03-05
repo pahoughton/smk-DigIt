@@ -48,13 +48,18 @@
 @property (retain) NSMutableArray * data;
 @property (strong) NSMutableArray  * artGatherList;
 @property (retain) SMKDBConnMgr * db;
+@property (strong) NSString * searchMediaType;
+@property (strong) NSString * searchUpc;
 @property (retain) NSString * searchTitle;
 @property (retain) NSString * searchYear;
-@property (assign) BOOL doTMDbSearch;
+@property (assign) BOOL getMore;
+@property (assign) BOOL didMoreSearch;
 
--(id)initWithTitle:(NSString *)title 
-              year:(NSString *)year
-        TMDbSearch:(BOOL)doTMDb;
+-(id)initWithType:(NSString *)mediaType
+              upc:(NSString *)upc
+            title:(NSString *)title 
+             year:(NSString *)year
+          getMore:(BOOL)more;
 
 -(void)doSearch;
 
@@ -64,14 +69,17 @@
 @property (retain) NSMutableArray  * dataRows;
 @property (retain) NSMutableArray * artGatherList;
 @property (retain) VidMetaRecGather * gather;
-@property (assign) BOOL didTMDbSearch;
+@property (assign) BOOL didMoreSearch;
 
 +(NSString *)kvoDataRows;
 -(id)init;
 
--(void)findTitle:(NSString *)title year:(NSString *)year;
--(void)searchTMDb:(NSString *)title year:(NSString *)year;
+-(void)findMeta:(NSString *)mediaType 
+            upc:(NSString *)upc
+          title:(NSString *)title 
+           year:(NSString *)year
+        getMore:(BOOL)more;
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
+-(NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
 
 @end

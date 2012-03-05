@@ -24,9 +24,10 @@
 
 **/
 #import <Cocoa/Cocoa.h>
+@class DigItWinCntlr;
 
 @interface PrefsWinCntlr : NSWindowController
-@property (assign) NSWindow * mainWindow;
+@property (assign) DigItWinCntlr * mainWinCntlr;
 @property (weak) IBOutlet NSTextField *errorMessageTextField;
 @property (weak) IBOutlet NSComboBox *serverTypeSelector;
 

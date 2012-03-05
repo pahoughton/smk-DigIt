@@ -82,13 +82,18 @@
 @synthesize data;
 @synthesize artGatherList;
 @synthesize db;
+@synthesize searchMediaType;
+@synthesize searchUpc;
 @synthesize searchTitle;
 @synthesize searchYear;
-@synthesize doTMDbSearch;
+@synthesize getMore;
+@synthesize didMoreSearch;
 
--(id)initWithTitle:(NSString *)title 
-              year:(NSString *)year
-        TMDbSearch:(BOOL)doTMDb
+-(id)initWithType:(NSString *)mediaType
+              upc:(NSString *)upc
+            title:(NSString *)title 
+             year:(NSString *)year
+          getMore:(BOOL)more
 {
     self = [super init];
     if( self ) {
@@ -96,90 +101,150 @@
         [self setArtGatherList:[[NSMutableArray alloc]init]];
         [self setDb:[[SMKDBConnMgr alloc]init]];
 
+        [self setSearchMediaType:mediaType];
+        [self setSearchUpc:upc];
         [self setSearchTitle:title];
         [self setSearchYear:year];
-        [self setDoTMDbSearch:doTMDb];
+        [self setGetMore:more];
+        [self setDidMoreSearch:FALSE];
     }
     return self;
 }
 
--(void)searchTitles
+-(void)searchVideoMeta
 {
     id <SMKDBResults> metaRslts;
     NSMutableArray * rec;
     
+    SMKLogDebug(@"sql: %@", [DIDB sel_vid_meta_sel_details:searchTitle 
+                                                      year:searchYear] );
     // first Titles
     metaRslts = [[db connect]
-                 query:[DIDB sel_vt_info_title:searchTitle 
-                                          year:searchYear]];
+                 query:[DIDB sel_vid_meta_sel_details:searchTitle 
+                                                 year:searchYear]];
     while((rec = [metaRslts fetchRowArray])) {
         VidMetaSelEntity * meta = [[VidMetaSelEntity alloc] init];
         
-        NSNumber * vid_id_num = [rec objectAtIndex:0];
+        NSString * metaSource = [rec objectAtIndex:0];
+        NSNumber * vid_id_num = [rec objectAtIndex:1];
         NSString * vid_id = [vid_id_num stringValue];
         
-        // art_thumb_id 18
-        NSNumber * art_thumb_id = [rec objectAtIndex:18];
-        if( ! SMKisNULL( art_thumb_id ) ) {
-            [meta setThumb:[DIDB vtThumb:vid_id_num
-                                   artid:art_thumb_id]];
+        if( [metaSource isEqualToString:@"Vid Meta"] ) {
+            [meta setSource:SMKDIDS_VidMeta];
+        } else {
+            [meta setSource:SMKDIDS_VidTitles];
+        }
+        [meta setSourceId:vid_id];
+        
+        // thumb is 9
+        NSData * thumbData = [rec objectAtIndex:9];
+        if( ! SMKisNULL(thumbData) ) {
+            [meta setThumb:[[NSImage alloc]initWithData:thumbData]];
         } else {
             [meta setArtGath:[[ArtBrowswerItemGatherer alloc]initWithOpQ:nil]];
-            [[meta artGath]gatherDigVidTitleArt:vid_id_num];
+            if( [meta source] == SMKDIDS_VidMeta ) {
+                [[meta artGath]gatherDigVidMetaArt:vid_id_num];
+            } else if( [meta source] == SMKDIDS_VidTitles ) {
+                [[meta artGath]gatherDigVidTitleArt:vid_id_num];
+            }
             [artGatherList addObject:[meta artGath]];
         }
-        [meta setTitle:[rec objectAtIndex:1]];
-        [meta setYear:[DIDB dateYear:[rec objectAtIndex:4]]];
-        [meta setMpaa:[rec objectAtIndex:3]];
-        [meta setGenres:[DIDB vtGenres:vid_id_num]];
-        [meta setActors:[DIDB vtActors:vid_id_num]];
-        [meta setDirectors:[DIDB vtDirectors:vid_id_num]];
-        [meta setSource:SMKDIDS_VidTitles];
-        [meta setSourceId:vid_id];
-        [meta setDesc:[rec objectAtIndex:6]];
+        [meta setTitle:[rec objectAtIndex:2]];
+        id recValObj;
+        NSNumber * recValNum = [rec objectAtIndex:5];
+        NSString * recValStr;
+        if( ! SMKisNULL(recValNum) ) {
+            recValStr = [recValNum stringValue];
+        } else {
+            recValStr = @"";
+        }
+        [meta setYear:recValStr];
+        
+#define SETVAL( _sInx_, _dest_ ) \
+        recValObj = [rec objectAtIndex:_sInx_]; \
+        recValStr = (SMKisNULL(recValObj) ? @"" : recValObj);\
+        [meta _dest_:recValStr] \
+        
+        SETVAL(3, setMpaa);
+        SETVAL(4, setDesc);
+        SETVAL(6, setGenres);
+        SETVAL(7, setActors);
+        SETVAL(8, setDirectors);
+        
         [data addObject:meta];
     }    
 }
--(void)searchMeta
+
+
+-(void)searchAudioMeta
 {
     id <SMKDBResults> metaRslts;
     NSMutableArray * rec;
-    // Now Meta
-    metaRslts = [[db connect]
-                 query:[DIDB sel_vtm_info_title:searchTitle 
-                                           year:searchYear]];
+    SMKLogDebug(@"sql: %@", [DIDB sel_aud_meta_sel_details:searchUpc
+                                                     title:searchTitle 
+                                                      year:searchYear
+                                                   getMore:getMore] );
     
+    // first Titles
+    metaRslts = [[db connect]
+                 query:[DIDB sel_aud_meta_sel_details:searchUpc
+                                                title:searchTitle 
+                                                 year:searchYear
+                                              getMore:getMore]];
     while((rec = [metaRslts fetchRowArray])) {
         VidMetaSelEntity * meta = [[VidMetaSelEntity alloc] init];
         
-        NSNumber * vid_meta_id_num = [rec objectAtIndex:0];
-        NSString * vid_meta_id = [vid_meta_id_num stringValue];
+        NSString * metaSource = [rec objectAtIndex:0];
+        NSNumber * aud_id_num = [rec objectAtIndex:1];
+        NSString * aud_id = [aud_id_num stringValue];
         
-        NSNumber * art_thumb_id = [rec objectAtIndex:18];
-        if( ! SMKisNULL( art_thumb_id ) ) {
-            [meta setThumb:[DIDB vtThumb:vid_meta_id_num
-                                   artid:art_thumb_id]];
+        if( [metaSource isEqualToString:@"Aud FDB"] ) {
+            [meta setSource:SMKDIDS_AudFdb];
         } else {
+            [meta setSource:SMKDIDS_AudAlbums];
+        }
+        [meta setSourceId:aud_id];
+        
+        // thumb is 9
+        NSData * thumbData = [rec objectAtIndex:9];
+        if( ! SMKisNULL(thumbData) ) {
+            [meta setThumb:[[NSImage alloc]initWithData:thumbData]];
+        }
+        /*
+        else {
             [meta setArtGath:[[ArtBrowswerItemGatherer alloc]initWithOpQ:nil]];
-            [[meta artGath]gatherDigVidMetaArt:vid_meta_id_num];
+            if( [metaSource isEqualToString:@"Vid Meta"] ) {
+                [[meta artGath]gatherDigVidMetaArt:vid_id_num];
+            } else if( [metaSource isEqualToString:@"Video"] ) {
+                [[meta artGath]gatherDigVidTitleArt:vid_id_num];
+            }
             [artGatherList addObject:[meta artGath]];
         }
-        [meta setTitle:[rec objectAtIndex:1]];
-        [meta setYear:[DIDB dateYear:[rec objectAtIndex:4]]];
-        [meta setMpaa:[rec objectAtIndex:3]];
-        [meta setGenres:[DIDB vtmGenres:vid_meta_id_num]];
-        [meta setActors:[DIDB vtmActors:vid_meta_id_num]];
-        [meta setDirectors:[DIDB vtmDirectors:vid_meta_id_num]];
-        [meta setSource:SMKDIDS_VidMeta];
-        [meta setSourceId:vid_meta_id];
-        [meta setDesc:[rec objectAtIndex:6]];
+        */
+        [meta setTitle:[rec objectAtIndex:2]];
+        id recValObj;
+        NSNumber * recValNum = [rec objectAtIndex:5];
+        NSString * recValStr;
+        if( ! SMKisNULL(recValNum) ) {
+            recValStr = [recValNum stringValue];
+        } else {
+            recValStr = @"";
+        }
+        [meta setYear:recValStr];
+        
+        SETVAL(3, setMpaa);
+        SETVAL(4, setDesc);
+        SETVAL(6, setGenres);
+        SETVAL(7, setActors);
+        SETVAL(8, setDirectors);
+        
         [data addObject:meta];
-    }
-    
+    }    
 }
+
 -(void)searchTMDb
 {
-    [self setDoTMDbSearch:TRUE];
+    [self setDidMoreSearch:TRUE];
     
     TMDbQuery * tmdb = [[TMDbQuery alloc] init];
     if( [tmdb search:searchTitle getDetail:TRUE] ) {
@@ -245,7 +310,6 @@
             [data addObject:meta];
         }
     }
-
 }
 
 -(void)doSearch
@@ -254,14 +318,17 @@
 }
 -(void)main
 {
-    if(!  doTMDbSearch ) {
-        [self searchTitles];
-        [self searchMeta];
+    if( [[self searchMediaType] isEqualToString:@"video"] ) {
+        [self searchVideoMeta];
         if( [data count] < 1 ) {
             [self searchTMDb];
         }
-    } else {
-        [self searchTMDb];        
+        
+    } else if( [[self searchMediaType] isEqualToString:@"TMDb"] ) {
+        [self searchTMDb];                
+    
+    } else if( [[self searchMediaType] isEqualToString:@"audio"] ) {
+        [self searchAudioMeta];
     }
     for( ArtBrowswerItemGatherer * gath in artGatherList ) {
         [gath goWithOpQueue:[db opQueue]];
@@ -273,7 +340,7 @@
 @synthesize dataRows;
 @synthesize artGatherList;
 @synthesize gather;
-@synthesize didTMDbSearch;
+@synthesize didMoreSearch;
 
 +(NSString *)kvoDataRows
 {
@@ -283,7 +350,7 @@
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if( object == gather && [keyPath isEqualToString:@"isFinished"] ) {
-        [self setDidTMDbSearch:[gather doTMDbSearch]];
+        [self setDidMoreSearch:[gather didMoreSearch]];
         [self setArtGatherList:[gather artGatherList]];
         [self willChangeValueForKey:[VidMetaSelDataSrc kvoDataRows]];
         [self setDataRows:[gather data]];
@@ -304,28 +371,25 @@
     return self;    
 }
 
--(void)findTitle:(NSString *)title year:(NSString *)year
+-(void)findMeta:(NSString *)mediaType 
+            upc:(NSString *)upc
+          title:(NSString *)title 
+           year:(NSString *)year
+        getMore:(BOOL)more
 {
     if( [title length] < 2 ) {
         [SMKAlertWin alertWithMsg:
          [NSString stringWithFormat:@"Title must be 2 or more chars wide '%@'",title]];
         return;
     }
-    [self setGather:[[VidMetaRecGather alloc] initWithTitle:title year:year TMDbSearch:FALSE]];
+    SMKLogDebug(@"findMeta %@ %@", mediaType, title);
+    [self setGather:[[VidMetaRecGather alloc] initWithType:mediaType 
+                                                       upc:upc
+                                                     title:title 
+                                                      year:year 
+                                                   getMore:more]];
     [gather addObserver:self forKeyPath:@"isFinished" options:0 context:nil];
     [gather doSearch];
-}
-
--(void)searchTMDb:(NSString *)title year:(NSString *)year
-{
-    if( [title length] < 2 ) {
-        [SMKAlertWin alertWithMsg:
-         [NSString stringWithFormat:@"Title must be 2 or more chars wide '%@'",title]];
-        return;
-    }
-    [self setGather:[[VidMetaRecGather alloc] initWithTitle:title year:year TMDbSearch:TRUE]];
-    [gather addObserver:self forKeyPath:@"isFinished" options:0 context:nil];
-    [gather doSearch];    
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
