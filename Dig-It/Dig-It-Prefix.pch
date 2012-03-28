@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'Dig-It' target in the 'Dig-It' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
