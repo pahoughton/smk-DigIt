@@ -127,7 +127,6 @@ static VidMetaSelViewCntlr * me = nil;
 {
     SMKLogDebug(@"my text did change %@", note);
     [[self searchButton] setTitle:@"Search"];
-    [self setSrcUpc:@""];
     [[self searchButton] setEnabled:TRUE];
     /*
     [[NSNotificationCenter defaultCenter] removeObserver:self 
@@ -244,10 +243,17 @@ static VidMetaSelViewCntlr * me = nil;
 {
     NSInteger row = [[self metaTView] rowForView:sender];
     VidMetaSelEntity * meta = [[[self dataSrc] dataRows] objectAtIndex:row];
+    NSString * mediaType;
+    if( [mediaTypeRB selectedCell] == videoRB ) {
+        mediaType = @"video";
+    } else {
+        mediaType = @"audio";
+    }
     NSNumber * selId;
     selId = [DIDB set_media_meta:[self srcUpc]
                            title:[[self titleTF] stringValue]
                             year:[[self yearTF] stringValue]
+                       mediaType:mediaType
                          metaSrc:[meta source]
                           metaId:[meta sourceId]];
     if( selId != nil ) {
@@ -321,7 +327,7 @@ static VidMetaSelViewCntlr * me = nil;
             mediaType = @"audio";
         }
         [[self dataSrc] findMeta:mediaType
-                             upc:srcUpc
+                             upc:nil
                            title:[titleTF stringValue] 
                             year:[yearTF stringValue]
                          getMore:TRUE];
@@ -333,6 +339,8 @@ static VidMetaSelViewCntlr * me = nil;
     if( ! [[self progressInd] isHidden] ) {
         [dataSrc removeObserver:self forKeyPath:[VidMetaSelDataSrc kvoDataRows]];
     }
+    [self setDataSrc:[[VidMetaSelDataSrc alloc]init]];
+    
     [CustUpcViewCntlr showSelfIn:[self view] custInfo:nil upcData:nil];
 }
 

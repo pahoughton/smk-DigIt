@@ -32,6 +32,7 @@
 #import <SMKLogger.h>
 #import <SMKAlertWin.h>
 #import <SMKDB.h>
+#import <TMDbQuery.h>
 
 @implementation AppDelegate
 
@@ -59,6 +60,15 @@
     } else {
         [SMKAlertWin alertWithMsg:@"Bug - deligate is not DigiTWinCntlr"];
         sleep(10);
+        exit(1);
+    }
+    
+    NSString * tmdbApiKey;
+    @try {
+        tmdbApiKey = [TMDbQuery tmdbApiKey];
+    }
+    @catch (NSException *exception) {
+        [SMKAlertWin alertWithMsg:[exception reason]];
         exit(1);
     }
     

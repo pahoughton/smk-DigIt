@@ -258,7 +258,7 @@
             for( NSMutableDictionary * art in artlist ) {
                 if( [[art valueForKey:@"size"] isEqualToString:@"w154"] ) {
                     NSImage * img = [tmdb getImage:art];
-                    if( img == nil ) {
+                    if( img != nil ) {
                         [art setObject:img forKey:@"art"];
                         [meta setThumb:img];
                         break;
@@ -319,14 +319,14 @@
 -(void)main
 {
     if( [[self searchMediaType] isEqualToString:@"video"] ) {
-        [self searchVideoMeta];
-        if( [data count] < 1 ) {
+        if( ! [self getMore] ) {
+            [self searchVideoMeta];
+            if( [data count] < 1 ) {
+                [self searchTMDb];
+            }
+        } else {
             [self searchTMDb];
         }
-        
-    } else if( [[self searchMediaType] isEqualToString:@"TMDb"] ) {
-        [self searchTMDb];                
-    
     } else if( [[self searchMediaType] isEqualToString:@"audio"] ) {
         [self searchAudioMeta];
     }

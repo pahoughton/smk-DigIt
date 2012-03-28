@@ -62,10 +62,11 @@
       needToRip:(BOOL)needToRip;
 
 +(NSNumber *)set_media_meta:(NSString *)upc
-                     title:(NSString *)title
-                      year:(NSString *)year
-                   metaSrc:(SMKDigitDS)metaSrc
-                    metaId:(NSString *)metaId;
+                      title:(NSString *)title
+                       year:(NSString *)year
+                  mediaType:(NSString *)type
+                    metaSrc:(SMKDigitDS)metaSrc
+                     metaId:(NSString *)metaId;
 
 +(BOOL)set_meta_sel_art:(NSNumber *)selId
               artSource:(SMKDigitDS)artSrc

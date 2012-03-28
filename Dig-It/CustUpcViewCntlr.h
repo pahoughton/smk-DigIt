@@ -51,8 +51,7 @@
 @property (weak) IBOutlet NSComboBox *mediaTypeCB;
 
 @property (weak) IBOutlet NSTableView *upcListTableView;
-@property (weak) IBOutlet NSButton *saveButton;
-@property (weak) IBOutlet NSButton *searchButton;
+@property (weak) IBOutlet NSButton *saveSearchButton;
 @property (weak) IBOutlet NSImageView *stopOrGoImage;
 @property (weak) IBOutlet NSTextField *haveOrRipLabel;
 @property (weak) IBOutlet NSTextField *custLabel;
@@ -81,9 +80,8 @@
 - (IBAction)stopOrGoImageAct:(id)sender;
 - (IBAction)thumbButton:(id)sender;
 
-- (IBAction)saveButton:(id)sender;
+- (IBAction)saveSearchAction:(id)sender;
 - (IBAction)cancelButton:(id)sender;
-- (IBAction)searchButton:(id)sender;
 - (IBAction)upcEntered:(id)sender;
 - (IBAction)playMedia:(id)sender;
 - (IBAction)titleAction:(id)sender;

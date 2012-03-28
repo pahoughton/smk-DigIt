@@ -446,7 +446,7 @@ static NSMutableArray * customersCols = nil;
             "thumb,\n"
             "smlr\n"
             "FROM sel_aud_meta_sel_details( %@, %@, %s )",
-            upc,
+            ((upc == nil) ? @"NULL" : upc ),
             [db q:title],
             (more ? "true" : "false")];
     
@@ -548,10 +548,11 @@ static NSMutableArray * customersCols = nil;
 }
 
 +(NSNumber *)set_media_meta:(NSString *)upc 
-                     title:(NSString *)title 
-                      year:(NSString *)year 
-                   metaSrc:(SMKDigitDS)metaSrc 
-                    metaId:(NSString *)metaId
+                      title:(NSString *)title 
+                       year:(NSString *)year 
+                  mediaType:(NSString *)type
+                    metaSrc:(SMKDigitDS)metaSrc 
+                     metaId:(NSString *)metaId
 {
     NSString * myYear;
     if( [year length] == 4 ) {
@@ -562,10 +563,11 @@ static NSMutableArray * customersCols = nil;
     id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     id <SMKDBResults> rslt = 
     [db queryFormat:
-     @"select set_media_meta( %@, %@, %@, %@, %@ )",
+     @"select set_media_meta( %@, %@, %@, %@, %@, %@ )",
      upc,
      [db q:title],
      myYear,
+     [db q:type],
      [db q:[DIDB dsTable:metaSrc]],
      [db q:metaId]];
     NSArray * rec = [rslt fetchRowArray];
@@ -581,9 +583,9 @@ static NSMutableArray * customersCols = nil;
             "sel_art_source = %@,\n"
             "sel_art_source_id = %@\n"
             "where meta_sel_id = %@\n",
-            [db q:selId],
             [db q:[DIDB dsTable:artSrc]],
-            [db q:artId]];
+            [db q:artId],
+            [db q:selId]];
             
 }
 @end

@@ -214,6 +214,7 @@ static VidSelArtPickerViewCntlr * me = nil;
     NSUInteger selCell = [selSet firstIndex];
     NSArray * aList = [[self artGath]artList];
 
+    SMKLogDebug(@"select: %u cnt %u",selCell, [aList count] );
     // [selectedImageView setImage:nil imageProperties:nil];
     if( selCell < [aList count] ) {
         ArtBrowserItem * artRec = [aList objectAtIndex:selCell];
