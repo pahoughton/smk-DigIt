@@ -13,7 +13,6 @@
 		DA06BEF414E2F5530013A5E8 /* stop_button.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF314E2F5530013A5E8 /* stop_button.png */; };
 		DA06BEF614E2F55C0013A5E8 /* go_button.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF514E2F55C0013A5E8 /* go_button.png */; };
 		DA06BEF814E2F5710013A5E8 /* sMk.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF714E2F5710013A5E8 /* sMk.png */; };
-		DA09A9F514F46D100053B7C6 /* libSMKDigitDatabase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA09A9F414F46D0F0053B7C6 /* libSMKDigitDatabase.a */; };
 		DA171DFE14E32D3700EBD43D /* DIDB.m in Sources */ = {isa = PBXBuildFile; fileRef = DA171DFD14E32D3600EBD43D /* DIDB.m */; };
 		DA171E0B14E341A100EBD43D /* CustUpcViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA171E0914E341A100EBD43D /* CustUpcViewCntlr.m */; };
 		DA171E0C14E341A100EBD43D /* CustUpcView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA171E0A14E341A100EBD43D /* CustUpcView.xib */; };
@@ -51,7 +50,6 @@
 		DAA6789B14F01396004D9CD8 /* ArtPickerWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAA6789A14F01396004D9CD8 /* ArtPickerWin.xib */; };
 		DAA6789E14F0167A004D9CD8 /* ArtPickerWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAA6789D14F0167A004D9CD8 /* ArtPickerWinCntlr.m */; };
 		DAA678A014F0188F004D9CD8 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAA6789F14F0188F004D9CD8 /* Quartz.framework */; };
-		DAB7F4D314F52A7200D7339B /* libSMKCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB7F4D214F52A7200D7339B /* libSMKCommon.a */; };
 		DAC958A414F17E7900A3DCF3 /* CustomerViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAC958A214F17E7900A3DCF3 /* CustomerViewCntlr.m */; };
 		DAC958A514F17E7900A3DCF3 /* CustomerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAC958A314F17E7900A3DCF3 /* CustomerView.xib */; };
 		DADF23D114F3EC7C00189E4C /* ArtBrowserItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DADF23D014F3EC7B00189E4C /* ArtBrowserItem.m */; };
@@ -63,10 +61,13 @@
 		DAEC2F2814E56984005F7F4E /* VideoPreviewWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAEC2F2714E56984005F7F4E /* VideoPreviewWin.xib */; };
 		DAEC2F2A14E569AD005F7F4E /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEC2F2914E569AD005F7F4E /* QTKit.framework */; };
 		DAEC2F3214E596F5005F7F4E /* VideoPreviewWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAEC2F3114E596F5005F7F4E /* VideoPreviewWinCntlr.m */; };
+		DAEF88581523CFA400AF77B3 /* libpq.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF88571523CFA400AF77B3 /* libpq.dylib */; };
+		DAEF885A1523CFC600AF77B3 /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF88591523CFC600AF77B3 /* libmysqlclient.a */; };
+		DAEF885C1523D04800AF77B3 /* libSMKDB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF885B1523D04800AF77B3 /* libSMKDB.a */; };
+		DAEF885E1523D05700AF77B3 /* libSMKCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF885D1523D05700AF77B3 /* libSMKCommon.a */; };
 		DAF3A31E14F653500084DF9C /* CustUpcDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DAF3A31D14F653500084DF9C /* CustUpcDataSrc.m */; };
 		DAF9485214F22FE3002B6C03 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAF9485114F22FE3002B6C03 /* AddressBook.framework */; };
 		DAF9485714F23084002B6C03 /* libSMKCocoaCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */; };
-		DAF9485914F2308A002B6C03 /* libSMKDB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAF9485814F2308A002B6C03 /* libSMKDB.a */; };
 		DAF9485C14F23386002B6C03 /* CustomerDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DAF9485B14F23386002B6C03 /* CustomerDataSrc.m */; };
 /* End PBXBuildFile section */
 
@@ -88,7 +89,6 @@
 		DA06BEF314E2F5530013A5E8 /* stop_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_button.png; path = ../../../../Images/stop_button.png; sourceTree = "<group>"; };
 		DA06BEF514E2F55C0013A5E8 /* go_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = go_button.png; path = ../../../../Images/go_button.png; sourceTree = "<group>"; };
 		DA06BEF714E2F5710013A5E8 /* sMk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sMk.png; path = ../../../../Images/sMk.png; sourceTree = "<group>"; };
-		DA09A9F414F46D0F0053B7C6 /* libSMKDigitDatabase.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKDigitDatabase.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug/libSMKDigitDatabase.a"; sourceTree = "<group>"; };
 		DA171DFC14E32D3600EBD43D /* DIDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIDB.h; sourceTree = "<group>"; };
 		DA171DFD14E32D3600EBD43D /* DIDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIDB.m; sourceTree = "<group>"; };
 		DA171E0814E341A100EBD43D /* CustUpcViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustUpcViewCntlr.h; sourceTree = "<group>"; };
@@ -145,7 +145,6 @@
 		DAA6789C14F0167A004D9CD8 /* ArtPickerWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtPickerWinCntlr.h; sourceTree = "<group>"; };
 		DAA6789D14F0167A004D9CD8 /* ArtPickerWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtPickerWinCntlr.m; sourceTree = "<group>"; };
 		DAA6789F14F0188F004D9CD8 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
-		DAB7F4D214F52A7200D7339B /* libSMKCommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKCommon.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug/libSMKCommon.a"; sourceTree = "<group>"; };
 		DAC958A114F17E7900A3DCF3 /* CustomerViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomerViewCntlr.h; sourceTree = "<group>"; };
 		DAC958A214F17E7900A3DCF3 /* CustomerViewCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomerViewCntlr.m; sourceTree = "<group>"; };
 		DAC958A314F17E7900A3DCF3 /* CustomerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomerView.xib; sourceTree = "<group>"; };
@@ -161,11 +160,14 @@
 		DAEC2F2914E569AD005F7F4E /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
 		DAEC2F3014E596F5005F7F4E /* VideoPreviewWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPreviewWinCntlr.h; sourceTree = "<group>"; };
 		DAEC2F3114E596F5005F7F4E /* VideoPreviewWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPreviewWinCntlr.m; sourceTree = "<group>"; };
+		DAEF88571523CFA400AF77B3 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = usr/lib/libpq.dylib; sourceTree = SDKROOT; };
+		DAEF88591523CFC600AF77B3 /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = "/usr/local/mysql-connector-c-6.0.2-osx10.5-x86-64bit/lib/libmysqlclient.a"; sourceTree = "<absolute>"; };
+		DAEF885B1523D04800AF77B3 /* libSMKDB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKDB.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKReusable-dtlvfpmglqsabgfwqjimvxobquxq/Build/Products/Debug/libSMKDB.a"; sourceTree = "<group>"; };
+		DAEF885D1523D05700AF77B3 /* libSMKCommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKCommon.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKReusable-dtlvfpmglqsabgfwqjimvxobquxq/Build/Products/Debug/libSMKCommon.a"; sourceTree = "<group>"; };
 		DAF3A31C14F653500084DF9C /* CustUpcDataSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustUpcDataSrc.h; sourceTree = "<group>"; };
 		DAF3A31D14F653500084DF9C /* CustUpcDataSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustUpcDataSrc.m; sourceTree = "<group>"; };
 		DAF9485114F22FE3002B6C03 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKCocoaCommon.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug/libSMKCocoaCommon.a"; sourceTree = "<group>"; };
-		DAF9485814F2308A002B6C03 /* libSMKDB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKDB.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug/libSMKDB.a"; sourceTree = "<group>"; };
 		DAF9485A14F23386002B6C03 /* CustomerDataSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomerDataSrc.h; sourceTree = "<group>"; };
 		DAF9485B14F23386002B6C03 /* CustomerDataSrc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomerDataSrc.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -175,10 +177,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA09A9F514F46D100053B7C6 /* libSMKDigitDatabase.a in Frameworks */,
-				DAF9485914F2308A002B6C03 /* libSMKDB.a in Frameworks */,
+				DAEF885E1523D05700AF77B3 /* libSMKCommon.a in Frameworks */,
+				DAEF885C1523D04800AF77B3 /* libSMKDB.a in Frameworks */,
+				DAEF885A1523CFC600AF77B3 /* libmysqlclient.a in Frameworks */,
+				DAEF88581523CFA400AF77B3 /* libpq.dylib in Frameworks */,
 				DAF9485714F23084002B6C03 /* libSMKCocoaCommon.a in Frameworks */,
-				DAB7F4D314F52A7200D7339B /* libSMKCommon.a in Frameworks */,
 				DA5D42D514E31FD500A16783 /* libssl.0.9.8.dylib in Frameworks */,
 				DA5D42D714E31FE900A16783 /* libcrypto.0.9.8.dylib in Frameworks */,
 				DAF9485214F22FE3002B6C03 /* AddressBook.framework in Frameworks */,
@@ -226,6 +229,8 @@
 		DAA530D314E09DF500519A30 = {
 			isa = PBXGroup;
 			children = (
+				DAEF885D1523D05700AF77B3 /* libSMKCommon.a */,
+				DAEF885B1523D04800AF77B3 /* libSMKDB.a */,
 				DAA530E814E09DF600519A30 /* Dig-It */,
 				DAA5310514E09DF600519A30 /* Dig-ItTests */,
 				DAA530E114E09DF600519A30 /* Frameworks */,
@@ -245,10 +250,9 @@
 		DAA530E114E09DF600519A30 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DA09A9F414F46D0F0053B7C6 /* libSMKDigitDatabase.a */,
-				DAF9485814F2308A002B6C03 /* libSMKDB.a */,
+				DAEF88591523CFC600AF77B3 /* libmysqlclient.a */,
+				DAEF88571523CFA400AF77B3 /* libpq.dylib */,
 				DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */,
-				DAB7F4D214F52A7200D7339B /* libSMKCommon.a */,
 				DA5D42D614E31FE900A16783 /* libcrypto.0.9.8.dylib */,
 				DA5D42D414E31FD500A16783 /* libssl.0.9.8.dylib */,
 				DAF9485114F22FE3002B6C03 /* AddressBook.framework */,
@@ -631,6 +635,8 @@
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug\"",
 					/Support/lib,
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug\"",
+					"\"/usr/local/mysql-connector-c-6.0.2-osx10.5-x86-64bit/lib\"",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKReusable-dtlvfpmglqsabgfwqjimvxobquxq/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -654,6 +660,8 @@
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKApp-ezxzorsafnikfafzqihvxbssjagf/Build/Products/Debug\"",
 					/Support/lib,
 					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKDigit-flgpbbrawgwrgcfxztqfibgthtwn/Build/Products/Debug\"",
+					"\"/usr/local/mysql-connector-c-6.0.2-osx10.5-x86-64bit/lib\"",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/SMKReusable-dtlvfpmglqsabgfwqjimvxobquxq/Build/Products/Debug\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
