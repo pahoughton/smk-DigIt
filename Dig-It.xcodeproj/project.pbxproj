@@ -54,6 +54,8 @@
 		DAC958A514F17E7900A3DCF3 /* CustomerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAC958A314F17E7900A3DCF3 /* CustomerView.xib */; };
 		DADF23D114F3EC7C00189E4C /* ArtBrowserItem.m in Sources */ = {isa = PBXBuildFile; fileRef = DADF23D014F3EC7B00189E4C /* ArtBrowserItem.m */; };
 		DADF23D414F407F400189E4C /* ArtBrowswerItemGatherer.m in Sources */ = {isa = PBXBuildFile; fileRef = DADF23D314F407F400189E4C /* ArtBrowswerItemGatherer.m */; };
+		DAE4CB441529060600B1CD44 /* SMKCocoaDigitizeUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = DAE4CB40152905AC00B1CD44 /* SMKCocoaDigitizeUI.framework */; };
+		DAE4CB451529062500B1CD44 /* SMKCocoaDigitizeUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAE4CB40152905AC00B1CD44 /* SMKCocoaDigitizeUI.framework */; };
 		DAE594C314EDC6DE005EC086 /* glass.wav in Resources */ = {isa = PBXBuildFile; fileRef = DAE594C214EDC6DE005EC086 /* glass.wav */; };
 		DAEC2F0914E3F184005F7F4E /* Ping.aiff in Resources */ = {isa = PBXBuildFile; fileRef = DAEC2F0814E3F184005F7F4E /* Ping.aiff */; };
 		DAEC2F0D14E3F37A005F7F4E /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEC2F0C14E3F379005F7F4E /* AudioToolbox.framework */; };
@@ -62,7 +64,6 @@
 		DAEC2F2A14E569AD005F7F4E /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEC2F2914E569AD005F7F4E /* QTKit.framework */; };
 		DAEC2F3214E596F5005F7F4E /* VideoPreviewWinCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAEC2F3114E596F5005F7F4E /* VideoPreviewWinCntlr.m */; };
 		DAEF88581523CFA400AF77B3 /* libpq.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF88571523CFA400AF77B3 /* libpq.dylib */; };
-		DAEF885A1523CFC600AF77B3 /* libmysqlclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF88591523CFC600AF77B3 /* libmysqlclient.a */; };
 		DAEF885C1523D04800AF77B3 /* libSMKDB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF885B1523D04800AF77B3 /* libSMKDB.a */; };
 		DAEF885E1523D05700AF77B3 /* libSMKCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAEF885D1523D05700AF77B3 /* libSMKCommon.a */; };
 		DAF3A31E14F653500084DF9C /* CustUpcDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DAF3A31D14F653500084DF9C /* CustUpcDataSrc.m */; };
@@ -79,7 +80,34 @@
 			remoteGlobalIDString = DAA530DD14E09DF600519A30;
 			remoteInfo = "Dig-It";
 		};
+		DAE4CB3F152905AC00B1CD44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DAE4CB37152905AC00B1CD44 /* SMKCocoaDigitizeUI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DAAD54E2150B8EDF00E5E37D;
+			remoteInfo = SMKCocoaDigitizeUI;
+		};
+		DAE4CB41152905AC00B1CD44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DAE4CB37152905AC00B1CD44 /* SMKCocoaDigitizeUI.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DAAD54FA150B8EDF00E5E37D;
+			remoteInfo = SMKCocoaDigitizeUITests;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DAE4CB43152905E700B1CD44 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DAE4CB441529060600B1CD44 /* SMKCocoaDigitizeUI.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		DA06BEE414E2E2130013A5E8 /* DigItWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DigItWinCntlr.h; sourceTree = "<group>"; };
@@ -152,6 +180,7 @@
 		DADF23D014F3EC7B00189E4C /* ArtBrowserItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtBrowserItem.m; sourceTree = "<group>"; };
 		DADF23D214F407F400189E4C /* ArtBrowswerItemGatherer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtBrowswerItemGatherer.h; sourceTree = "<group>"; };
 		DADF23D314F407F400189E4C /* ArtBrowswerItemGatherer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtBrowswerItemGatherer.m; sourceTree = "<group>"; };
+		DAE4CB37152905AC00B1CD44 /* SMKCocoaDigitizeUI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SMKCocoaDigitizeUI.xcodeproj; path = ../../Libs/SMKCocoaDigitizeUI/SMKCocoaDigitizeUI.xcodeproj; sourceTree = "<group>"; };
 		DAE594C214EDC6DE005EC086 /* glass.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = glass.wav; path = Resources/glass.wav; sourceTree = SOURCE_ROOT; };
 		DAEC2F0814E3F184005F7F4E /* Ping.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = Ping.aiff; path = ../../../../../../../System/Library/Sounds/Ping.aiff; sourceTree = "<group>"; };
 		DAEC2F0C14E3F379005F7F4E /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -161,7 +190,6 @@
 		DAEC2F3014E596F5005F7F4E /* VideoPreviewWinCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPreviewWinCntlr.h; sourceTree = "<group>"; };
 		DAEC2F3114E596F5005F7F4E /* VideoPreviewWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPreviewWinCntlr.m; sourceTree = "<group>"; };
 		DAEF88571523CFA400AF77B3 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = usr/lib/libpq.dylib; sourceTree = SDKROOT; };
-		DAEF88591523CFC600AF77B3 /* libmysqlclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmysqlclient.a; path = "/usr/local/mysql-connector-c-6.0.2-osx10.5-x86-64bit/lib/libmysqlclient.a"; sourceTree = "<absolute>"; };
 		DAEF885B1523D04800AF77B3 /* libSMKDB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKDB.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKReusable-dtlvfpmglqsabgfwqjimvxobquxq/Build/Products/Debug/libSMKDB.a"; sourceTree = "<group>"; };
 		DAEF885D1523D05700AF77B3 /* libSMKCommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSMKCommon.a; path = "../../../../Library/Developer/Xcode/DerivedData/SMKReusable-dtlvfpmglqsabgfwqjimvxobquxq/Build/Products/Debug/libSMKCommon.a"; sourceTree = "<group>"; };
 		DAF3A31C14F653500084DF9C /* CustUpcDataSrc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustUpcDataSrc.h; sourceTree = "<group>"; };
@@ -177,9 +205,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAE4CB451529062500B1CD44 /* SMKCocoaDigitizeUI.framework in Frameworks */,
 				DAEF885E1523D05700AF77B3 /* libSMKCommon.a in Frameworks */,
 				DAEF885C1523D04800AF77B3 /* libSMKDB.a in Frameworks */,
-				DAEF885A1523CFC600AF77B3 /* libmysqlclient.a in Frameworks */,
 				DAEF88581523CFA400AF77B3 /* libpq.dylib in Frameworks */,
 				DAF9485714F23084002B6C03 /* libSMKCocoaCommon.a in Frameworks */,
 				DA5D42D514E31FD500A16783 /* libssl.0.9.8.dylib in Frameworks */,
@@ -229,8 +257,7 @@
 		DAA530D314E09DF500519A30 = {
 			isa = PBXGroup;
 			children = (
-				DAEF885D1523D05700AF77B3 /* libSMKCommon.a */,
-				DAEF885B1523D04800AF77B3 /* libSMKDB.a */,
+				DAE4CB37152905AC00B1CD44 /* SMKCocoaDigitizeUI.xcodeproj */,
 				DAA530E814E09DF600519A30 /* Dig-It */,
 				DAA5310514E09DF600519A30 /* Dig-ItTests */,
 				DAA530E114E09DF600519A30 /* Frameworks */,
@@ -250,7 +277,8 @@
 		DAA530E114E09DF600519A30 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DAEF88591523CFC600AF77B3 /* libmysqlclient.a */,
+				DAEF885D1523D05700AF77B3 /* libSMKCommon.a */,
+				DAEF885B1523D04800AF77B3 /* libSMKDB.a */,
 				DAEF88571523CFA400AF77B3 /* libpq.dylib */,
 				DAF9485614F23084002B6C03 /* libSMKCocoaCommon.a */,
 				DA5D42D614E31FE900A16783 /* libcrypto.0.9.8.dylib */,
@@ -366,6 +394,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		DAE4CB38152905AC00B1CD44 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DAE4CB40152905AC00B1CD44 /* SMKCocoaDigitizeUI.framework */,
+				DAE4CB42152905AC00B1CD44 /* SMKCocoaDigitizeUITests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -376,6 +413,7 @@
 				DAA530DA14E09DF600519A30 /* Sources */,
 				DAA530DB14E09DF600519A30 /* Frameworks */,
 				DAA530DC14E09DF600519A30 /* Resources */,
+				DAE4CB43152905E700B1CD44 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -424,6 +462,12 @@
 			mainGroup = DAA530D314E09DF500519A30;
 			productRefGroup = DAA530DF14E09DF600519A30 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DAE4CB38152905AC00B1CD44 /* Products */;
+					ProjectRef = DAE4CB37152905AC00B1CD44 /* SMKCocoaDigitizeUI.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				DAA530DD14E09DF600519A30 /* Dig-It */,
@@ -431,6 +475,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		DAE4CB40152905AC00B1CD44 /* SMKCocoaDigitizeUI.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SMKCocoaDigitizeUI.framework;
+			remoteRef = DAE4CB3F152905AC00B1CD44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DAE4CB42152905AC00B1CD44 /* SMKCocoaDigitizeUITests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SMKCocoaDigitizeUITests.octest;
+			remoteRef = DAE4CB41152905AC00B1CD44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DAA530DC14E09DF600519A30 /* Resources */ = {
