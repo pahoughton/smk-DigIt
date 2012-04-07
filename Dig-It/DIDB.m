@@ -547,12 +547,12 @@ static NSMutableArray * customersCols = nil;
             needToRip ? "true" : "false"];           
 }
 
-+(NSNumber *)set_media_meta:(NSString *)upc 
-                      title:(NSString *)title 
-                       year:(NSString *)year 
-                  mediaType:(NSString *)type
-                    metaSrc:(SMKDigitDS)metaSrc 
-                     metaId:(NSString *)metaId
++(NSNumber *)set_rip_media_meta:(NSString *)upc 
+                          title:(NSString *)title 
+                           year:(NSString *)year 
+                      mediaType:(NSString *)type
+                        metaSrc:(SMKDigitDS)metaSrc 
+                         metaId:(NSString *)metaId
 {
     NSString * myYear;
     if( [year length] == 4 ) {

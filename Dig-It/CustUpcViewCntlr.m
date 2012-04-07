@@ -403,27 +403,35 @@ static CustUpcViewCntlr * me;
 
 - (IBAction)saveSearchAction:(id)sender
 {
-    SMKLogDebug(@"saveSearchButton: %@",[[self saveSearchButton]title]);
-    BOOL doSearch = [[[self saveSearchButton]title]isEqualToString:@"Search"];
+  SMKLogDebug(@"saveSearchButton: %@",[[self saveSearchButton]title]);
+  BOOL doSearch = [[[self saveSearchButton]title]isEqualToString:@"Search"];
     
-    NSString * mType = [[self mediaTypeCB] stringValue];
-    NSString * upcVal = [[self curUpcValue] stringValue];
+  if( [[self.view window] firstResponder] == self.curUpcValue ) {
+    [[self.view window] makeFirstResponder:nil];
+    [[self.view window] makeFirstResponder:self.curUpcValue];
+  }
+  NSString * mType = [[self mediaTypeCB] stringValue];
+  NSString * upcVal = [[self curUpcValue] stringValue];
     
-    if( 0 < [upcVal length] && [upcVal length] < 14
-       && ( [mType isEqualToString:@"audio"] || [mType isEqualToString:@"video"] ) ) {
+  NSNumber * ripId = nil;
+  
+  if( 0 < [upcVal length] && [upcVal length] < 14
+     && ( [mType isEqualToString:@"audio"] || [mType isEqualToString:@"video"] ) 
+     && ! custHasUPC ) {
+    [[self progressInd] setHidden:FALSE];
+    [[self progressInd] startAnimation:self];
+    
+    ripId = [DIDB set_cust:custId
+                                upc:upcVal
+                          mediaType:mType
+                           isNewUpc:[self upcIsNew]
+                          needToRip:needToRip];
+    
         if( ! custHasUPC ) {
             BOOL saved = FALSE;
-            [[[self view]window] endEditing];
-            [[self progressInd] setHidden:FALSE];
-            [[self progressInd] startAnimation:self];
             
             @try {
-                saved = [DIDB set_cust:custId
-                                   upc:upcVal
-                             mediaType:mType
-                              isNewUpc:[self upcIsNew]
-                             needToRip:needToRip];
-                
+                saved = 
             }
             @catch (NSException *exception) {
                 [SMKAlertWin alertWithMsg:[exception reason]];

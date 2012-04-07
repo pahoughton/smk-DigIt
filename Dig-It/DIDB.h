@@ -55,18 +55,18 @@
                                  year:(NSString *)year
                               getMore:(BOOL)more;
 
-+(BOOL)set_cust:(NSNumber *)cust_id
-            upc:(NSString *)upc
-      mediaType:(NSString *)mediaType
-       isNewUpc:(BOOL)upcIsNew
-      needToRip:(BOOL)needToRip;
++(NSNumber *)set_cust:(NSNumber *)cust_id
+                  upc:(NSString *)upc
+            mediaType:(NSString *)mediaType
+             isNewUpc:(BOOL)upcIsNew
+            needToRip:(BOOL)needToRip;
 
-+(NSNumber *)set_media_meta:(NSString *)upc
-                      title:(NSString *)title
-                       year:(NSString *)year
-                  mediaType:(NSString *)type
-                    metaSrc:(SMKDigitDS)metaSrc
-                     metaId:(NSString *)metaId;
++(NSNumber *)set_rip_media_meta:(NSString *)upc
+                          title:(NSString *)title
+                           year:(NSString *)year
+                      mediaType:(NSString *)type
+                        metaSrc:(SMKDigitDS)metaSrc
+                         metaId:(NSString *)metaId;
 
 +(BOOL)set_meta_sel_art:(NSNumber *)selId
               artSource:(SMKDigitDS)artSrc
