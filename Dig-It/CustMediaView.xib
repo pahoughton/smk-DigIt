@@ -52,7 +52,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{244, 6}, {483, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1505</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="436910791">
@@ -198,7 +197,7 @@
 							<object class="NSComboTableView" key="NSTableView" id="570601971">
 								<reference key="NSNextResponder"/>
 								<int key="NSvFlags">274</int>
-								<string key="NSFrameSize">{13, 21}</string>
+								<string key="NSFrameSize">{13, 42}</string>
 								<reference key="NSSuperview"/>
 								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:24</string>
@@ -572,6 +571,14 @@
 						<reference key="destination" ref="1056087418"/>
 					</object>
 					<int key="connectionID">1061</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">searchYearTF</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="558609262"/>
+					</object>
+					<int key="connectionID">1064</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1690,7 +1697,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1063</int>
+			<int key="maxID">1064</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>

@@ -13,6 +13,7 @@
 		DA06BEF414E2F5530013A5E8 /* stop_button.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF314E2F5530013A5E8 /* stop_button.png */; };
 		DA06BEF614E2F55C0013A5E8 /* go_button.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF514E2F55C0013A5E8 /* go_button.png */; };
 		DA06BEF814E2F5710013A5E8 /* sMk.png in Resources */ = {isa = PBXBuildFile; fileRef = DA06BEF714E2F5710013A5E8 /* sMk.png */; };
+		DA0BFFDE1531B7D90070850A /* CustMediaListVCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA0BFFDD1531B7D90070850A /* CustMediaListVCntlr.m */; };
 		DA171DFE14E32D3700EBD43D /* DIDB.m in Sources */ = {isa = PBXBuildFile; fileRef = DA171DFD14E32D3600EBD43D /* DIDB.m */; };
 		DA171E0B14E341A100EBD43D /* CustUpcViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA171E0914E341A100EBD43D /* CustUpcViewCntlr.m */; };
 		DA171E0C14E341A100EBD43D /* CustUpcView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA171E0A14E341A100EBD43D /* CustUpcView.xib */; };
@@ -121,6 +122,8 @@
 		DA06BEF314E2F5530013A5E8 /* stop_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop_button.png; path = ../../../../Images/stop_button.png; sourceTree = "<group>"; };
 		DA06BEF514E2F55C0013A5E8 /* go_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = go_button.png; path = ../../../../Images/go_button.png; sourceTree = "<group>"; };
 		DA06BEF714E2F5710013A5E8 /* sMk.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sMk.png; path = ../../../../Images/sMk.png; sourceTree = "<group>"; };
+		DA0BFFDC1531B7D90070850A /* CustMediaListVCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustMediaListVCntlr.h; sourceTree = "<group>"; };
+		DA0BFFDD1531B7D90070850A /* CustMediaListVCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustMediaListVCntlr.m; sourceTree = "<group>"; };
 		DA171DFC14E32D3600EBD43D /* DIDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIDB.h; sourceTree = "<group>"; };
 		DA171DFD14E32D3600EBD43D /* DIDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIDB.m; sourceTree = "<group>"; };
 		DA171E0814E341A100EBD43D /* CustUpcViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustUpcViewCntlr.h; sourceTree = "<group>"; };
@@ -341,6 +344,8 @@
 				DAF9485B14F23386002B6C03 /* CustomerDataSrc.m */,
 				DA412058152F20B100947229 /* CustMediaVCntlr.h */,
 				DA412059152F20B100947229 /* CustMediaVCntlr.m */,
+				DA0BFFDC1531B7D90070850A /* CustMediaListVCntlr.h */,
+				DA0BFFDD1531B7D90070850A /* CustMediaListVCntlr.m */,
 				DA171E0814E341A100EBD43D /* CustUpcViewCntlr.h */,
 				DA171E0914E341A100EBD43D /* CustUpcViewCntlr.m */,
 				DAF3A31C14F653500084DF9C /* CustUpcDataSrc.h */,
@@ -592,6 +597,7 @@
 				DADF23D414F407F400189E4C /* ArtBrowswerItemGatherer.m in Sources */,
 				DAF3A31E14F653500084DF9C /* CustUpcDataSrc.m in Sources */,
 				DA41205A152F20B100947229 /* CustMediaVCntlr.m in Sources */,
+				DA0BFFDE1531B7D90070850A /* CustMediaListVCntlr.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,25 +7,45 @@
 //
 
 #import "CustMediaVCntlr.h"
+#import "SMKLogger.h"
 
 @interface CustMediaVCntlr ()
 
 @end
 
 @implementation CustMediaVCntlr
-@synthesize cancelAction;
-@synthesize searchOrSaveAction;
-@synthesize listSearch;
+@synthesize custId = _custId;
 @synthesize searchUpcTF;
 @synthesize MediaTypeCB;
 @synthesize searchTitleTF;
-@synthesize searchYear;
+@synthesize searchYearTF;
 @synthesize stopOrGoIW;
 @synthesize progressInd;
 @synthesize statusTF;
 @synthesize searchOrSaveButton;
 @synthesize listView;
 @synthesize detailView;
+@synthesize custMediaListVC = _custMediaListVC;
+@synthesize upcDetailsV = _upcDetailsV;
+
++(CustMediaVCntlr *)createAndReplaceView:(NSView *)viewToReplace custId:(NSNumber *)cid;
+{
+  NSBundle * myBundle = [NSBundle bundleForClass:[CustMediaVCntlr class]];
+  CustMediaVCntlr * me = [[CustMediaVCntlr alloc]
+                          initWithNibName:@"CustMediaView" bundle:myBundle];
+  [me setCustId:cid];
+  SMKLogDebug(@"lv: %@  dv: %@",me.listView,me.detailView);
+  
+  [me setCustMediaListVC:
+   [CustMediaListVCntlr createAndReplaceView:[me listView] 
+                                      custId:me.custId]];
+  [me.custMediaListVC setSelectionDelegate:me];
+  [me setUpcDetailsV:[[UpcMetaSelectionDetailsView alloc]
+                      initWithViewToReplace:me.detailView]];
+  
+  [me replaceView:viewToReplace makeResizable:TRUE];
+  return me;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -35,6 +55,11 @@
     }
     
     return self;
+}
+
+-(void)selected:(MetaListDataEntity *)item
+{
+  
 }
 
 - (IBAction)listSearchAction:(id)sender {
