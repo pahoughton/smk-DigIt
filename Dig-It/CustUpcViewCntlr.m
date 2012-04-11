@@ -403,6 +403,7 @@ static CustUpcViewCntlr * me;
 
 - (IBAction)saveSearchAction:(id)sender
 {
+  /*
   SMKLogDebug(@"saveSearchButton: %@",[[self saveSearchButton]title]);
   BOOL doSearch = [[[self saveSearchButton]title]isEqualToString:@"Search"];
     
@@ -479,6 +480,7 @@ static CustUpcViewCntlr * me;
                                    @"upc(%@) value and type must be set",
                                    upcVal ]];
     }
+   */
 }
 
 - (IBAction)cancelButton:(id)sender 

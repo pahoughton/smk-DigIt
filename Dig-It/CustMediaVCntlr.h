@@ -7,7 +7,7 @@
 //
 
 #import <ReplacementViewCntlr.h>
-#import "CustMediaListVCntlr.h"
+#import "SMKCocoaDigitizeUI/MetaListViewCntlr.h"
 #import "SMKCocoaDigitizeUI/UpcMetaSelectionDetailsView.h"
 
 @interface CustMediaVCntlr : ReplacementViewCntlr <ListSelectionDelegate>
@@ -26,11 +26,14 @@
 @property (weak) IBOutlet ReplacementView *listView;
 @property (weak) IBOutlet ReplacementView *detailView;
 
-@property (strong) CustMediaListVCntlr * custMediaListVC;
-@property (strong) UpcMetaSelectionDetailsView * upcDetailsV;
+@property (strong) MetaListViewCntlr *           custMediaListVC;
+// @property (strong) UpcMetaSelectionDetailsView * upcDetailsV;
 
-+(CustMediaVCntlr *)createAndReplaceView:(NSView *)viewToReplace;
--(void)selected:(MetaListDataEntity *)item;
++(CustMediaVCntlr *)createAndReplaceView:(NSView *)viewToReplace
+                                  custId:(NSNumber *)cid;
+-(void)replaceView:(NSView *)viewToReplace custId:cid;
+
+-(void)selected:(id <MetaListDataEntity>)item;
 
 - (IBAction)listSearchAction:(id)sender;
 - (IBAction)searchUpcAction:(id)sender;

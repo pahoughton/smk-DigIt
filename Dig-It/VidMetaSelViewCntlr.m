@@ -241,6 +241,7 @@ static VidMetaSelViewCntlr * me = nil;
 
 - (IBAction)selectMetaAction:(id)sender 
 {
+  /*
     NSInteger row = [[self metaTView] rowForView:sender];
     VidMetaSelEntity * meta = [[[self dataSrc] dataRows] objectAtIndex:row];
     NSString * mediaType;
@@ -266,9 +267,9 @@ static VidMetaSelViewCntlr * me = nil;
                 [DIDB dsDesc:[meta source]],
                 [meta sourceId], 
                 selId);
-    /* 
-      on to art, but first cancel any 'OTHER' art gatherers
-     */
+    
+      // on to art, but first cancel any 'OTHER' art gatherers
+    
     for( ArtBrowswerItemGatherer * gath in [[self dataSrc]artGatherList] ) {
         // This SHOULD work
         if( gath != [meta artGath] ) {
@@ -287,10 +288,12 @@ static VidMetaSelViewCntlr * me = nil;
     } else {
         [self cancelAction:self];
     }
+   */
 }
 
 - (IBAction)searchAction:(id)sender 
 {
+  /*
     SMKLogDebug(@"search win: %@", [[self view]window]);
     [[[self view]window] endEditing];
     
@@ -332,6 +335,7 @@ static VidMetaSelViewCntlr * me = nil;
                             year:[yearTF stringValue]
                          getMore:TRUE];
     }
+   */
 }
     
 - (IBAction)cancelAction:(id)sender 

@@ -7,6 +7,8 @@
 //
 
 #import "CustMediaVCntlr.h"
+#import "CustMediaListDataSrc.h"
+
 #import "SMKLogger.h"
 
 @interface CustMediaVCntlr ()
@@ -26,7 +28,7 @@
 @synthesize listView;
 @synthesize detailView;
 @synthesize custMediaListVC = _custMediaListVC;
-@synthesize upcDetailsV = _upcDetailsV;
+//@synthesize upcDetailsV = _upcDetailsV;
 
 +(CustMediaVCntlr *)createAndReplaceView:(NSView *)viewToReplace custId:(NSNumber *)cid;
 {
@@ -34,17 +36,14 @@
   CustMediaVCntlr * me = [[CustMediaVCntlr alloc]
                           initWithNibName:@"CustMediaView" bundle:myBundle];
   [me setCustId:cid];
-  SMKLogDebug(@"lv: %@  dv: %@",me.listView,me.detailView);
-  
-  [me setCustMediaListVC:
-   [CustMediaListVCntlr createAndReplaceView:[me listView] 
-                                      custId:me.custId]];
-  [me.custMediaListVC setSelectionDelegate:me];
-  [me setUpcDetailsV:[[UpcMetaSelectionDetailsView alloc]
-                      initWithViewToReplace:me.detailView]];
-  
   [me replaceView:viewToReplace makeResizable:TRUE];
   return me;
+}
+
+-(void)replaceView:(NSView *)viewToReplace custId:(id)cid
+{
+  [self replaceView:viewToReplace makeResizable:TRUE];
+  [self.custMediaListVC changeDataSrcKey:cid];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -56,10 +55,23 @@
     
     return self;
 }
-
--(void)selected:(MetaListDataEntity *)item
+-(void)awakeFromNib
 {
+  SMKLogDebug(@"lv: %@  dv: %@",self.listView,self.detailView);
   
+  [self setCustMediaListVC:[MetaListViewCntlr 
+                          createAndReplaceView:self.listView 
+                          dataSrc: [[CustMediaListDataSrc alloc] init ]]];
+  [self.custMediaListVC setSelectionDelegate:self];
+  [self.custMediaListVC changeDataSrcKey:self.custId];
+  /*
+   [me setUpcDetailsV:[[UpcMetaSelectionDetailsView alloc]
+   initWithViewToReplace:me.detailView]];
+   */
+}
+-(void)selected:( id<MetaListDataEntity>)item
+{
+  SMKLogDebug(@"selected %@",item);
 }
 
 - (IBAction)listSearchAction:(id)sender {

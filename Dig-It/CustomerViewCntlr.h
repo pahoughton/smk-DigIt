@@ -26,6 +26,8 @@
 #import <Cocoa/Cocoa.h>
 #import <AddressBook/AddressBook.h>
 #import <AddressBook/ABPersonView.h>
+#import "CustMediaVCntlr.h"
+
 @class CustomerDataSrc;
 @class CustUpcDataSrc;
 
@@ -33,6 +35,8 @@
 @property (strong) CustomerDataSrc * dataSrc;
 @property (strong) NSNumber * curCustId;
 @property (strong) CustUpcDataSrc * upcDataSrc;
+
+@property (strong) CustMediaVCntlr * custMediaVC;
 
 @property (weak) IBOutlet NSTableView *contactListTV;
 @property (weak) IBOutlet NSSearchField *contactSearch;

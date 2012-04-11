@@ -36,6 +36,9 @@ static CustomerViewCntlr * me;
 @synthesize dataSrc;
 @synthesize curCustId;
 @synthesize upcDataSrc;
+
+@synthesize custMediaVC = _custMediaVC;
+
 @synthesize contactListTV;
 @synthesize contactSearch;
 @synthesize fullNameTF;
@@ -242,7 +245,7 @@ static CustomerViewCntlr * me;
 {
   /* FIXME */
   
-    [[[self view] window] endEditing];
+    //c++[[[self view] window] endEditing];
     NSInteger sel = [contactListTV selectedRow];
     if( 0 <= sel && sel < [[dataSrc tableData] count] ) {
         CustomerEntity * cEnt = [[dataSrc tableData] objectAtIndex:sel];
@@ -446,7 +449,24 @@ static CustomerViewCntlr * me;
     }
 }
 
-- (IBAction)mediaAction:(id)sender {
+- (IBAction)mediaAction:(id)sender 
+{
+  NSInteger sel = [contactListTV selectedRow];
+  if( sel < 0 ) {
+    SMKLogDebug(@"opps no selection"); 
+  } else {
+    CustomerEntity * cust = [[dataSrc tableData] objectAtIndex:sel];
+    ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
+                                  recordForUniqueId:[cust abPersonID]];
+    NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+    if( self.custMediaVC == nil ) {
+      [self setCustMediaVC:
+       [CustMediaVCntlr createAndReplaceView: [self view] 
+                                      custId: custId ]];
+    } else {
+      [self.custMediaVC replaceView: [self view] custId: custId];
+    }
+  }
 }
 
 - (IBAction)contactListSelection:(NSTableView *)sender
