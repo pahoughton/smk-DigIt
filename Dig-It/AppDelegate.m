@@ -34,6 +34,33 @@
 #import <SMKDB.h>
 #import <TMDbQuery.h>
 
+NSUncaughtExceptionHandler * origExcptHndlr = 0;
+
+void SMKUncaughtExceptionHandler(NSException *exception);
+
+void SMKUncaughtExceptionHandler(NSException *exception)
+{
+  NSMutableString * excptDesc = [[NSMutableString alloc]initWithFormat:
+                                 @"Uncaught Exception: %@ - %@\n",
+                                 [exception name],
+                                 [exception reason]];
+  
+  NSArray * callStack = [exception callStackSymbols];
+  NSUInteger symCnt = [callStack count];
+  [excptDesc appendFormat:@"Symbols(%u)\n",symCnt];
+  
+  for( NSString * sym in callStack ) {
+    [excptDesc appendFormat:@"   %@\n",sym];
+  }
+  SMKLogError(excptDesc);
+  if( origExcptHndlr != nil ) {
+    (*origExcptHndlr)(exception);
+  } else {
+    [NSApp terminate:nil];
+    exit(1);
+  }
+}
+
 @implementation AppDelegate
 
 @synthesize window = _window;
@@ -48,6 +75,12 @@
     // [myLogger setTeeLogger:[[SMKLogger alloc]initToStderr]];
     SMKLogDebug(@"App LogFile: %@",[myLogger logFileFn] );
     
+  NSUncaughtExceptionHandler * myHndlr = &SMKUncaughtExceptionHandler;
+  
+  origExcptHndlr = NSGetUncaughtExceptionHandler();
+  
+  NSSetUncaughtExceptionHandler(myHndlr);
+  
     AppUserValues * aud = [[AppUserValues alloc]init];
     SMKLogDebug(@"%@",[aud description]);
     [SMKDBConnMgr setDefaultInfoProvider:aud];
@@ -62,7 +95,7 @@
         sleep(10);
         exit(1);
     }
-    
+  [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
     NSString * tmdbApiKey;
     @try {
         tmdbApiKey = [TMDbQuery tmdbApiKey];

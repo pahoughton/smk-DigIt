@@ -17,9 +17,10 @@
 @end
 
 @implementation CustMediaVCntlr
-@synthesize custId        = _custId;
+@synthesize doneVC        = _doneVC;
+@synthesize myCustId      = _myCustId;
 @synthesize custHasMedia  = _custHasMedia;
-@synthesize gatherer      = _gatherer;
+@synthesize metaSearch    = _metaSearch;
 
 @synthesize foundSrc      = _foundSrc;
 @synthesize foundSrcId    = _foundSrcId;
@@ -32,7 +33,7 @@
 @synthesize stopImage      = _stopImage;
 
 @synthesize searchUpcTF;
-@synthesize MediaTypeCB;
+@synthesize mediaTypeCB;
 @synthesize searchTitleTF;
 @synthesize searchYearTF;
 @synthesize stopOrGoIW;
@@ -42,81 +43,97 @@
 @synthesize listView;
 @synthesize detailView;
 
-@synthesize custMediaListVC = _custMediaListVC;
+@synthesize custMediaListVC   = _custMediaListVC;
 @synthesize mediaMetaDetailVC = _mediaMetaDetailVC;
+@synthesize metaSelVC         = _metaSelVC;
 
-//@synthesize upcDetailsV = _upcDetailsV;
-
-+(CustMediaVCntlr *)createAndReplaceView:(NSView *)viewToReplace custId:(NSNumber *)cid;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)bndl
 {
-  NSBundle * myBundle = [NSBundle bundleForClass:[CustMediaVCntlr class]];
-  CustMediaVCntlr * me = [[CustMediaVCntlr alloc]
-                          initWithNibName:@"CustMediaView" bundle:myBundle];
-  [me setCustId:cid];
-  [me replaceView:viewToReplace makeResizable:TRUE];
-  return me;
-}
-
--(void)replaceView:(NSView *)viewToReplace custId:(id)cid
-{
-  [self replaceView:viewToReplace makeResizable:TRUE];
-  [self.custMediaListVC changeDataSrcKey:cid];
-  [self.searchUpcTF becomeFirstResponder];
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-      NSBundle * myBndl = [NSBundle bundleForClass:[self class]];
-      NSError * err;
-      NSData * noArtImgData = [NSData dataWithContentsOfFile:
-                               [myBndl pathForImageResource:@"NO ART.tif"]
-                                                     options:0 
-                                                       error:&err];
-      [self setNoArtImageData:noArtImgData];
-      [self setGoodSound: [NSSound soundNamed:@"Ping.aiff"]];
-      [self setBadSound:  [NSSound soundNamed:@"glass.wav"]];
-      [self.goodSound setVolume:0.5];
-      [self.badSound  setVolume:0.5];
-      [self setNoArtImage:[[NSImage alloc]initWithData:noArtImgData]];
-      [self setGoImage:   [NSImage imageNamed:@"go_button.png"]];
-      [self setStopImage: [NSImage imageNamed:@"stop_button.png"]];
-        // Initialization code here.
-    }
+  self = [super initWithNibName: nibNameOrNil bundle: bndl];
+  if (self) {
+    NSError * err;
+    NSData * noArtImgData = [NSData dataWithContentsOfFile:
+                             [bndl pathForImageResource:@"NO ART.tif"]
+                                                   options:0 
+                                                     error:&err];
     
-    return self;
+    [self setNoArtImageData:noArtImgData];
+    [self setGoodSound: [NSSound soundNamed:@"Ping.aiff"]];
+    [self setBadSound:  [NSSound soundNamed:@"glass.wav"]];
+    [self.goodSound setVolume:0.5];
+    [self.badSound  setVolume:0.5];
+    
+    [self setNoArtImage:[[NSImage alloc]initWithData:noArtImgData]];
+    [self setGoImage:   [NSImage imageNamed:@"go_button.png"]];
+    [self setStopImage: [NSImage imageNamed:@"stop_button.png"]];
+  }
+  
+  return self;
 }
+
+-(id)init
+{
+  self = [self initWithNibName:@"CustMediaView"
+                        bundle:[NSBundle bundleForClass:
+                                [CustMediaVCntlr class]]];
+  if( self ) {
+    if( self.custMediaListVC == nil ) {
+      [self setCustMediaListVC:[[MetaListViewCntlr alloc] 
+                                initViewWithDataSrc:
+                                [[CustMediaListDataSrc alloc] init]
+                                selDelegate:self ]
+       ];
+    }
+  }
+  return self;
+}
+
+-(id)initWithDoneVC:(ReplacementViewCntlr *)doneVC
+{
+  self = [self init];
+  if( self ) {
+    [self setDoneVC: doneVC];
+    [self setCustMediaListVC:[[MetaListViewCntlr alloc] 
+                              initViewWithDataSrc:
+                              [[CustMediaListDataSrc alloc] init]
+                              selDelegate:self ]
+     ];
+  }
+  return self;
+}
+
 -(void)awakeFromNib
 {
   SMKLogDebug(@"lv: %@  dv: %@",self.listView,self.detailView);
   
-  [self setCustMediaListVC:[MetaListViewCntlr 
-                          createAndReplaceView:self.listView 
-                          dataSrc: [[CustMediaListDataSrc alloc] init ]]];
-  [self.custMediaListVC setSelectionDelegate:self];
-  [self.custMediaListVC changeDataSrcKey:self.custId];
-  [self setMediaMetaDetailVC:[[MediaMetaDetailsView alloc]
-                              initWithViewToReplace:self.detailView]];
   [self.searchUpcTF becomeFirstResponder];
-                               
+  [self replaceView: self.doneVC.rview ];
+  [self.custMediaListVC replaceView:self.listView makeResizable:TRUE];
+  [self setMediaMetaDetailVC:
+   [[MediaMetaDetailsView alloc]
+    initWithViewToReplace:self.detailView]];
   /*
    [me setUpcDetailsV:[[UpcMetaSelectionDetailsView alloc]
    initWithViewToReplace:me.detailView]];
    */
 }
+-(void)replaceView:(ReplacementView *)vToReplace
+{
+  [super replaceView:vToReplace makeResizable:TRUE];
+}
+
+-(void)replaceView:(ReplacementView *)viewToReplace custId:(id)cid
+{
+  [self replaceView:viewToReplace];
+  [self.custMediaListVC changeDataSrcKey:cid];
+  [self.searchUpcTF becomeFirstResponder];
+}
+
 -(void)selected:( id<MetaListDataEntity>)item
 {
   SMKLogDebug(@"selected %@",item);
   [self setCustHasMedia:TRUE];
-  if( [item conformsToProtocol:@protocol(MediaArt)] ) {
-    id <MediaArt> mArt = (id <MediaArt>)item;
-    if( [mArt thumbData] == nil 
-       || [[NSImage alloc]initWithData:[mArt thumbData]] == nil) {
-      [mArt setThumbData:self.noArtImageData];
-    }
-  }
-  [self.mediaMetaDetailVC setViewWithMetaData:item];
+  [self.mediaMetaDetailVC setViewWithMetaData: item ];
   [self.searchUpcTF becomeFirstResponder];
   [self.searchOrSaveButton setEnabled:FALSE];
   if( [item isKindOfClass:[MediaIdMetaDetails class]] ) {
@@ -169,15 +186,15 @@
       [self.badSound play];
       id <UpcMetaDataEntity> upcMeta = (id <UpcMetaDataEntity>)it;
       
-      [self.searchUpcTF setObjectValue:  [upcMeta upc]];
-      [self.searchTitleTF setObjectValue:[upcMeta title]];
-      [self.searchYearTF setObjectValue: [upcMeta year]];
-      [self.MediaTypeCB setObjectValue:  [upcMeta mediaTypeStr]];
+      [self.searchUpcTF   setObjectValue: [upcMeta upc]];
+      [self.searchTitleTF setObjectValue: [upcMeta title]];
+      [self.searchYearTF  setObjectValue: [upcMeta year]];
+      [self.mediaTypeCB   setObjectValue: [upcMeta mediaTypeStr]];
       
       [self.searchOrSaveButton setTitle:@"Search"];
       [self.stopOrGoIW setImage:self.stopImage];
       if( [self.searchTitleTF.stringValue length] > 0 
-         && SMKStringToMediaType(self.MediaTypeCB.stringValue) != SMK_MT_UNKNOWN ) {
+         && SMKStringToMediaType(self.mediaTypeCB.stringValue) != SMK_MT_UNKNOWN ) {
         [self.searchOrSaveButton setEnabled:TRUE];
         [self.statusTF setStringValue:
          [NSString stringWithFormat:
@@ -213,22 +230,20 @@
 }
 -(void)retrieveDone:(id<MetaDataRetriever>)obj
 {
-  if( [obj isKindOfClass:[MediaMetaSearch class]] ) {
-    MediaMetaSearch * mmSearch = (MediaMetaSearch *)obj;
-    [self setFoundSrc:[mmSearch foundSrc]];
-    [self setFoundSrcId:[mmSearch foundSrcId]];
-    
-    if( mmSearch.searchMediaType == SMK_MT_UNKNOWN ) {
-      // UPC search
-      [self upcFoundMeta:[mmSearch.found objectAtIndex:0]];
-    }
+  if( obj == self.metaSearch ) {
+    [self setFoundSrc:   self.metaSearch.foundSrc];
+    [self setFoundSrcId: self.metaSearch.foundSrcId];
+    [self upcFoundMeta:  [self.metaSearch.found objectAtIndex:0]];
   }
 }
+
 - (IBAction)searchUpcAction:(id)sender 
 {
   if( [self.searchUpcTF.stringValue length] < 1 ) {
     return;
   }
+  [self.progressInd startAnimation:self];
+  [self.progressInd setHidden:FALSE];
   [self setFoundSrc:nil];
   [self setFoundSrcId:nil];
   // see if cust has this upc and show meta
@@ -239,21 +254,22 @@
     MediaIdMetaDetails * it = [cMediaList findUpc:self.searchUpcTF.stringValue];
     if( it != nil ) {
       [self selected:it];
+      [self.progressInd stopAnimation:self];
+      [self.progressInd setHidden:TRUE];
       return;
     }
   }
-  if( self.gatherer == nil ) {
-    [self setGatherer:[[MetaDataGatherer alloc]initWithDelegate:self]];
-  }
-  [self.progressInd startAnimation:self];
-  [self.progressInd setHidden:FALSE];
   [self.statusTF setStringValue:
    [NSString stringWithFormat:
     @"Searching meta data for UPC: %@"
     ,self.searchUpcTF.stringValue]];
-  MediaMetaSearch * mmSearch = [[MediaMetaSearch alloc]init];
-  [mmSearch searchForUpc:[self.searchUpcTF stringValue]];
-  [self.gatherer gather:mmSearch key:nil];
+  if( self.metaSearch == nil ) {
+    [self setMetaSearch:[[MetaSearchDataSrc alloc]
+                         init]];
+  }
+  [self.metaSearch setGathDelegate: self ];
+  [self.metaSearch searchForUpc: self.searchUpcTF.stringValue ];
+  [self.metaSearch gather:nil ];
 }
 
 - (IBAction)searchTitleAction:(id)sender 
@@ -269,9 +285,35 @@
     }
   } else {
     // do search
+    SMKMediaType mt = SMKStringToMediaType( self.mediaTypeCB.stringValue );
+    if( mt != SMK_MT_Audio && mt != SMK_MT_Video ) {
+      [self.statusTF setObjectValue:
+       [NSString stringWithFormat:
+        @"Invalid media type (req Video|Audio) %@"
+        ,self.mediaTypeCB.stringValue]];
+    } else if( self.searchTitleTF.stringValue.length < 2 ) {
+      [self.statusTF setObjectValue:
+       [NSString stringWithFormat:
+        @"Search title not long enough '%@'"
+        ,self.searchTitleTF.stringValue ]];
+    } else {
+      if( self.metaSelVC == nil ) {
+        [self setMetaSelVC:[[MetaDetailListVCntlr alloc]
+                            initWithDoneVC: self
+                            metaSearchDS:self.metaSearch]];
+      }
+      [self.metaSearch setSearchTitle: self.searchTitleTF.stringValue ];
+      [self.metaSearch setSearchMediaType: mt ];
+      [self.metaSearch setGathDelegate: self.metaSelVC ];
+      [self.metaSearch gather:nil];
+      [self.metaSelVC replaceView:self.rview];
+    }
   }
 }
 
-- (IBAction)cancelAction:(id)sender {
+- (IBAction)cancelAction:(id)sender 
+{
+  [self.doneVC replaceView:self.view makeResizable:TRUE];
 }
+
 @end

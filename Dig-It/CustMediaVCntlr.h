@@ -9,15 +9,17 @@
 #import <ReplacementViewCntlr.h>
 #import "SMKCocoaDigitizeUI/MetaListViewCntlr.h"
 #import "SMKCocoaDigitizeUI/MediaMetaDetailsView.h"
-#import "MetaDataGatherer.h"
+#import "SMKCocoaDigitizeUI/MetaDetailListVCntlr.h"
+#import "MetaSearchDataSrc.h"
 
 @interface CustMediaVCntlr : ReplacementViewCntlr 
 <ListSelectionDelegate
 ,MetaDataRetrieverDelegate>
 
-@property (strong) NSNumber *          custId;
-@property (assign) BOOL                custHasMedia;
-@property (strong) MetaDataGatherer *  gatherer;
+@property (strong) ReplacementViewCntlr * doneVC;
+@property (strong) NSNumber *             myCustId;
+@property (assign) BOOL                   custHasMedia;
+@property (strong) MetaSearchDataSrc *    metaSearch;
 
 @property (strong) NSString *          foundSrc;
 @property (strong) NSNumber *          foundSrcId;
@@ -30,7 +32,7 @@
 @property (retain) NSImage * stopImage;
 
 @property (weak) IBOutlet NSTextField *   searchUpcTF;
-@property (weak) IBOutlet NSComboBox *    MediaTypeCB;
+@property (weak) IBOutlet NSComboBox *    mediaTypeCB;
 @property (weak) IBOutlet NSTextField *   searchTitleTF;
 @property (weak) IBOutlet NSTextField *   searchYearTF;
 @property (weak) IBOutlet NSImageView *   stopOrGoIW;
@@ -43,13 +45,14 @@
 
 @property (strong) MetaListViewCntlr *           custMediaListVC;
 @property (strong) MediaMetaDetailsView *        mediaMetaDetailVC;
+@property (strong) MetaDetailListVCntlr *        metaSelVC;
+
+-(id)initWithDoneVC:(ReplacementViewCntlr *)doneVC;
+
+-(void)replaceView:(ReplacementView *)vToReplace;
+-(void)replaceView:(ReplacementView *)vToReplace custId:(NSNumber *)cid;
 
 
-// @property (strong) UpcMetaSelectionDetailsView * upcDetailsV;
-
-+(CustMediaVCntlr *)createAndReplaceView:(NSView *)viewToReplace
-                                  custId:(NSNumber *)cid;
--(void)replaceView:(NSView *)viewToReplace custId:cid;
 
 -(void)selected:(id <MetaListDataEntity>)item;
 

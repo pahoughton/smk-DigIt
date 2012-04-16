@@ -31,10 +31,10 @@
 @class CustomerDataSrc;
 @class CustUpcDataSrc;
 
-@interface CustomerViewCntlr : NSViewController
+@interface CustomerViewCntlr : ReplacementViewCntlr
 @property (strong) CustomerDataSrc * dataSrc;
-@property (strong) NSNumber * curCustId;
-@property (strong) CustUpcDataSrc * upcDataSrc;
+@property (strong) NSNumber *        curCustId;
+@property (strong) CustUpcDataSrc *  upcDataSrc;
 
 @property (strong) CustMediaVCntlr * custMediaVC;
 

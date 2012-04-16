@@ -460,12 +460,11 @@ static CustomerViewCntlr * me;
                                   recordForUniqueId:[cust abPersonID]];
     NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]];
     if( self.custMediaVC == nil ) {
-      [self setCustMediaVC:
-       [CustMediaVCntlr createAndReplaceView: [self view] 
-                                      custId: custId ]];
-    } else {
-      [self.custMediaVC replaceView: [self view] custId: custId];
-    }
+      [self setCustMediaVC: [[CustMediaVCntlr alloc]
+                             initWithDoneVC: self ]];
+      
+    } 
+    [self.custMediaVC replaceView: self.rview custId: custId];
   }
 }
 
