@@ -58,40 +58,46 @@ static NSString * udGradyAngleKey = @"digit-winGradyAngle";
 
 - (void)goodToGo
 {
-    SMKLogDebug(@"good to Go?? win %@ view %@ grady %@", 
-                [self window],
-                [[contentView superview] class],
-                mainWinGradyView);
-
-    // note these vals would be good in user defaults
-    NSColor * fromColor = nil;
-    NSColor * toColor = nil;
-    NSData * colorData = nil;
-    colorData =[[NSUserDefaults standardUserDefaults] dataForKey:udFromColorKey];
-    if (colorData != nil) {
-        fromColor =(NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
-    } else {
-        fromColor = [NSColor lightGrayColor];
-    }
-    colorData =[[NSUserDefaults standardUserDefaults] dataForKey:udToColorKey];
-    if (colorData != nil) {
-        toColor =(NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
-    } else {
-        toColor = [NSColor darkGrayColor];
-    }
-    float gradyAngle = [[NSUserDefaults standardUserDefaults] floatForKey:udGradyAngleKey];
-    if( gradyAngle == 0.0 ) {
-        gradyAngle = 90.0;
-    }
-    mainWinGradyView = (MainWinGradyView *)[contentView superview];
-    [mainWinGradyView setStartColor:fromColor];
-    [fromColorWell setColor:fromColor];
-    [mainWinGradyView setEndColor:toColor];
-    [toColorWell setColor:toColor];
-    [mainWinGradyView setAngle:gradyAngle];
-    [directionSlider setFloatValue:gradyAngle];
-        
-    custViewCntlr = [CustomerViewCntlr showSelfIn:contentView];
+  SMKLogDebug(@"good to Go?? win %@ view %@ grady %@", 
+              [self window],
+              [[contentView superview] class],
+              mainWinGradyView);
+  
+  // note these vals would be good in user defaults
+  NSColor * fromColor = nil;
+  NSColor * toColor = nil;
+  NSData * colorData = nil;
+  colorData =[[NSUserDefaults standardUserDefaults] dataForKey:udFromColorKey];
+  if (colorData != nil) {
+    fromColor =(NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+  } else {
+    fromColor = [NSColor lightGrayColor];
+  }
+  colorData =[[NSUserDefaults standardUserDefaults] dataForKey:udToColorKey];
+  if (colorData != nil) {
+    toColor =(NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+  } else {
+    toColor = [NSColor darkGrayColor];
+  }
+  float gradyAngle = [[NSUserDefaults standardUserDefaults] floatForKey:udGradyAngleKey];
+  if( gradyAngle == 0.0 ) {
+    gradyAngle = 90.0;
+  }
+  mainWinGradyView = (MainWinGradyView *)[contentView superview];
+  [mainWinGradyView setStartColor:fromColor];
+  [fromColorWell setColor:fromColor];
+  [mainWinGradyView setEndColor:toColor];
+  [toColorWell setColor:toColor];
+  [mainWinGradyView setAngle:gradyAngle];
+  [directionSlider setFloatValue:gradyAngle];
+  [self setCustViewCntlr:[[CustomerViewCntlr alloc]
+                          initWithViewToReplace:self.contentView]];
+  if( self.custViewCntlr.view != nil ) {
+    SMKLogDebug(@"cust view is nil");
+  } else {
+    [self.custViewCntlr replaceView:contentView makeResizable:TRUE];
+  }
+  // custViewCntlr = [CustomerViewCntlr showSelfIn:contentView];
 }
 
 - (IBAction)fromColorAction:(id)sender 

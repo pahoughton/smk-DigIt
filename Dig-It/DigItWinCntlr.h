@@ -30,6 +30,7 @@
 
 @interface DigItWinCntlr : NSWindowController
 @property (retain) CustomerViewCntlr * custViewCntlr;
+
 @property (weak) IBOutlet MainWinGradyView * mainWinGradyView;
 
 @property (weak) IBOutlet NSColorWell *fromColorWell;

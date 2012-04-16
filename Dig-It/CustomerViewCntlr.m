@@ -33,11 +33,13 @@
 static CustomerViewCntlr * me;
 
 @implementation CustomerViewCntlr
+@synthesize vToRplc  = _vToRplc;
 @synthesize dataSrc;
 @synthesize curCustId;
 @synthesize upcDataSrc;
 
 @synthesize custMediaVC = _custMediaVC;
+@synthesize splitView;
 
 @synthesize contactListTV;
 @synthesize contactSearch;
@@ -89,16 +91,33 @@ static CustomerViewCntlr * me;
     
     return self;
 }
-
+-(id)init
+{
+  self = [self initWithNibName:@"CustomerView" bundle:nil];
+  
+  return self;
+}
+-(id)initWithViewToReplace:(NSView *)vToRplc
+{
+  self = [self init];
+  if( self ) {
+    [self setVToRplc:vToRplc];
+  }
+  return self;
+}
 -(void) awakeFromNib
 {
-    [contactListTV setDataSource:dataSrc];
-    [smkCustImage setHidden:TRUE];
-    [zipCodeNFmt setFormat:@"00000"];
-    [dataSrc addObserver:self forKeyPath:[CustomerDataSrc kvoTableData] options:0 context:nil];
-    if( [dataSrc tableData] != nil ) {
-        [contactListTV reloadData];
-    }
+  if( self.vToRplc != nil ) {
+    [self replaceView:self.vToRplc makeResizable:TRUE];
+    [self setVToRplc:nil];
+  }
+  [contactListTV setDataSource:dataSrc];
+  [smkCustImage setHidden:TRUE];
+  [zipCodeNFmt setFormat:@"00000"];
+  [dataSrc addObserver:self forKeyPath:[CustomerDataSrc kvoTableData] options:0 context:nil];
+  if( [dataSrc tableData] != nil ) {
+    [contactListTV reloadData];
+  }
 }
 
 -(void) textDidChange:(NSNotification *)note

@@ -108,7 +108,7 @@
   
   [self.searchUpcTF becomeFirstResponder];
   [self replaceView: self.doneVC.rview ];
-  [self.custMediaListVC replaceView:self.listView makeResizable:TRUE];
+  [self.custMediaListVC replaceView:self.listView makeResizable:FALSE];
   [self setMediaMetaDetailVC:
    [[MediaMetaDetailsView alloc]
     initWithViewToReplace:self.detailView]];
@@ -119,7 +119,7 @@
 }
 -(void)replaceView:(ReplacementView *)vToReplace
 {
-  [super replaceView:vToReplace makeResizable:TRUE];
+  [super replaceView:vToReplace makeResizable:FALSE];
 }
 
 -(void)replaceView:(ReplacementView *)viewToReplace custId:(id)cid

@@ -487,7 +487,7 @@ static CustUpcViewCntlr * me;
 {
     SMKLogDebug(@"cancelButton");
     // [[self curUpcValue] setEnabled:FALSE];
-    [CustomerViewCntlr showSelfIn:[self view]];
+//    [CustomerViewCntlr showSelfIn:[self view]];
 
 }
 

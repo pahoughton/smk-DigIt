@@ -32,11 +32,14 @@
 @class CustUpcDataSrc;
 
 @interface CustomerViewCntlr : ReplacementViewCntlr
+@property (strong) NSView *          vToRplc;
 @property (strong) CustomerDataSrc * dataSrc;
 @property (strong) NSNumber *        curCustId;
 @property (strong) CustUpcDataSrc *  upcDataSrc;
 
 @property (strong) CustMediaVCntlr * custMediaVC;
+@property (weak) IBOutlet NSSplitView *splitView;
+
 
 @property (weak) IBOutlet NSTableView *contactListTV;
 @property (weak) IBOutlet NSSearchField *contactSearch;
@@ -62,7 +65,9 @@
 @property (weak) IBOutlet NSButton *upcButton;
 @property (weak) IBOutlet NSButton *mediaButton;
 
-+(CustomerViewCntlr *)showSelfIn:(NSView *)viewToReplace;
+-(id)initWithViewToReplace:(NSView *)vToRplc;
+
+// +(CustomerViewCntlr *)showSelfIn:(NSView *)viewToReplace;
 - (IBAction)contactListSelection:(NSTableView *)sender;
 - (IBAction)searchContactListAct:(NSSearchField *)sender;
 - (IBAction)addCustAction:(id)sender;
