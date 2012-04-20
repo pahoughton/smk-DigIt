@@ -19,10 +19,10 @@
 @property (strong) ReplacementViewCntlr * doneVC;
 @property (strong) NSNumber *             myCustId;
 @property (assign) BOOL                   custHasMedia;
-@property (strong) MetaSearchDataSrc *    metaSearch;
+@property (strong) MediaMetaSearch *      metaSearch;
+@property (strong) MetaDataGatherer *     gath;
 
-@property (strong) NSString *          foundSrc;
-@property (strong) NSNumber *          foundSrcId;
+@property (strong) id<MetaDataRetriever>  upcFoundObj;
 
 @property (retain) NSSound * goodSound;
 @property (retain) NSSound * badSound;
@@ -36,12 +36,12 @@
 @property (weak) IBOutlet NSTextField *   searchTitleTF;
 @property (weak) IBOutlet NSTextField *   searchYearTF;
 @property (weak) IBOutlet NSImageView *   stopOrGoIW;
-@property (weak) IBOutlet NSProgressIndicator * progressInd;
-@property (weak) IBOutlet NSTextField *   statusTF;
 @property (weak) IBOutlet NSButton *      searchOrSaveButton;
 
-@property (weak) IBOutlet ReplacementView * listView;
-@property (weak) IBOutlet ReplacementView * detailView;
+
+@property (weak) IBOutlet ReplacementView * listV;
+@property (weak) IBOutlet ReplacementView * detailV;
+
 
 @property (strong) MetaListViewCntlr *           custMediaListVC;
 @property (strong) MediaMetaDetailsView *        mediaMetaDetailVC;

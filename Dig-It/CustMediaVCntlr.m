@@ -21,9 +21,9 @@
 @synthesize myCustId      = _myCustId;
 @synthesize custHasMedia  = _custHasMedia;
 @synthesize metaSearch    = _metaSearch;
+@synthesize gath          = _gath;
 
-@synthesize foundSrc      = _foundSrc;
-@synthesize foundSrcId    = _foundSrcId;
+@synthesize upcFoundObj   = _upcFoundObj;
 
 @synthesize goodSound      = _goodSound;
 @synthesize badSound       = _badSound;
@@ -32,16 +32,15 @@
 @synthesize goImage        = _goImage;
 @synthesize stopImage      = _stopImage;
 
-@synthesize searchUpcTF;
-@synthesize mediaTypeCB;
-@synthesize searchTitleTF;
-@synthesize searchYearTF;
-@synthesize stopOrGoIW;
-@synthesize progressInd;
-@synthesize statusTF;
-@synthesize searchOrSaveButton;
-@synthesize listView;
-@synthesize detailView;
+@synthesize searchUpcTF    = _searchUpcTF;
+@synthesize mediaTypeCB    = _mediaTypeCB;
+@synthesize searchTitleTF  = _searchTitleTF;
+@synthesize searchYearTF   = _searchYearTF;
+@synthesize stopOrGoIW     = _stopOrGoIW;
+@synthesize searchOrSaveButton = _searchOrSaveButton;
+
+@synthesize listV              = _listV;
+@synthesize detailV            = _detailV;
 
 @synthesize custMediaListVC   = _custMediaListVC;
 @synthesize mediaMetaDetailVC = _mediaMetaDetailVC;
@@ -66,6 +65,16 @@
     [self setNoArtImage:[[NSImage alloc]initWithData:noArtImgData]];
     [self setGoImage:   [NSImage imageNamed:@"go_button.png"]];
     [self setStopImage: [NSImage imageNamed:@"stop_button.png"]];
+    if( self.mediaMetaDetailVC == nil ) {
+      [self setCustMediaListVC:[[MetaListViewCntlr alloc] 
+                                initViewWithDataSrc:
+                                [[CustMediaListDataSrc alloc] init]
+                                selDelegate:self ]
+       ];
+    }
+    if( self.mediaMetaDetailVC == nil ) {
+      [self setMediaMetaDetailVC:[[MediaMetaDetailsView alloc]init]];
+    }
   }
   
   return self;
@@ -83,6 +92,9 @@
                                 [[CustMediaListDataSrc alloc] init]
                                 selDelegate:self ]
        ];
+      if( self.mediaMetaDetailVC == nil ) {
+        [self setMediaMetaDetailVC:[[MediaMetaDetailsView alloc]init]];        
+      }
     }
   }
   return self;
@@ -93,70 +105,92 @@
   self = [self init];
   if( self ) {
     [self setDoneVC: doneVC];
-    [self setCustMediaListVC:[[MetaListViewCntlr alloc] 
-                              initViewWithDataSrc:
-                              [[CustMediaListDataSrc alloc] init]
-                              selDelegate:self ]
-     ];
+    if( self.mediaMetaDetailVC == nil ) {
+      [self setCustMediaListVC:[[MetaListViewCntlr alloc] 
+                                initViewWithDataSrc:
+                                [[CustMediaListDataSrc alloc] init]
+                                selDelegate:self ]
+       ];
+    }
+    if( self.mediaMetaDetailVC == nil ) {
+      [self setMediaMetaDetailVC:[[MediaMetaDetailsView alloc]init]];
+    }
   }
   return self;
 }
 
 -(void)awakeFromNib
 {
-  SMKLogDebug(@"lv: %@  dv: %@",self.listView,self.detailView);
+  SMKLogDebug(@"lv: %@  dv: %@",self.listV,self.detailV);
   
   [self.searchUpcTF becomeFirstResponder];
-  [self replaceView: self.doneVC.rview ];
-  [self.custMediaListVC replaceView:self.listView makeResizable:FALSE];
-  [self setMediaMetaDetailVC:
-   [[MediaMetaDetailsView alloc]
-    initWithViewToReplace:self.detailView]];
-  /*
-   [me setUpcDetailsV:[[UpcMetaSelectionDetailsView alloc]
-   initWithViewToReplace:me.detailView]];
-   */
+  // [self replaceView: self.doneVC.rview ];
+  [self.custMediaListVC replaceView:self.listV makeResizable: TRUE];
+  [self.mediaMetaDetailVC setViewToReplace: self.detailV ];
 }
 -(void)replaceView:(ReplacementView *)vToReplace
 {
-  [super replaceView:vToReplace makeResizable:FALSE];
+  [super replaceView:vToReplace];
+  
+  id <MetaDataEntity> selMeta = self.metaSelVC.selMeta;
+  NSString * selUpc = self.searchUpcTF.stringValue;
+  NSString * selTitle = self.searchTitleTF.stringValue;
+  SMKLogDebug(@"%s upc: %@ title: %@ meta:\n%@"
+              ,__func__
+              ,selUpc
+              ,selTitle
+              ,selMeta );
+  id objCmld = self.custMediaListVC.tvDataSrc.origValues;
+  if( ! [objCmld isKindOfClass:[CustMediaListData class]] ) {
+    [NSException raise:self.className
+                format:@"%@ not a CustMediaListData",objCmld];
+    return;
+  }
+  CustMediaListData * cmld = objCmld;
+  [objCmld.addMediaUpc:selUpc title:selTitle meta:selMeta ];
+  [self.custMediaListVC.tableView reloadData];
+  [self.searchOrSaveButton setEnabled:FALSE];
 }
 
 -(void)replaceView:(ReplacementView *)viewToReplace custId:(id)cid
 {
   [self replaceView:viewToReplace];
   [self.custMediaListVC changeDataSrcKey:cid];
+  
+  SMKLogDebug(@"%s mmdvc: %@",__func__, self.mediaMetaDetailVC);
+  [self.mediaMetaDetailVC setViewWithMetaData: nil ];
+  [self.searchUpcTF   setObjectValue:nil];
+  [self.searchTitleTF setObjectValue:nil];
+  [self.searchYearTF  setObjectValue:nil];
+  [self.mediaTypeCB   setObjectValue:nil];
+  [self.searchOrSaveButton setEnabled:FALSE];
+  
   [self.searchUpcTF becomeFirstResponder];
 }
 
 -(void)selected:( id<MetaListDataEntity>)item
 {
   SMKLogDebug(@"selected %@",item);
+  SMKStatus( @"Customer has %@ 😄",item.listValue);
   [self setCustHasMedia:TRUE];
   [self.mediaMetaDetailVC setViewWithMetaData: item ];
   [self.searchUpcTF becomeFirstResponder];
   [self.searchOrSaveButton setEnabled:FALSE];
-  if( [item isKindOfClass:[MediaIdMetaDetails class]] ) {
-    MediaIdMetaDetails * mim = (MediaIdMetaDetails *)item;
-    [self.statusTF setStringValue:[NSString stringWithFormat:
-                                   @"Customer has %@ 😄"
-                                   ,[mim mediaTitle]]];
-  }
+  [self.stopOrGoIW setImage:self.goImage];
 }
 
 -(void)upcFoundMeta:(id<MetaDataEntity>)it
 {
-  [self.progressInd stopAnimation:self];
-  [self.progressInd setHidden:TRUE];
+  SMKProgStop();
+  SMKLogDebug(@"mms %@",self.metaSearch);
   if( it == nil ) {
-    [self.statusTF setStringValue:
-     [NSString stringWithFormat:
-      @"UPC: %@ not found 😥",self.searchUpcTF.stringValue]];
+    SMKStatus( @"UPC: %@ not found 😥",self.searchUpcTF.stringValue );
     [self.mediaMetaDetailVC setViewWithMetaData:nil];
     [self.searchOrSaveButton setEnabled:FALSE];
     [self.stopOrGoIW setImage:self.stopImage];
     
   } else {
+    [self.mediaMetaDetailVC setViewWithMetaData: it ];
     SMKMetaDataSource ds = [it dataSrc];
     if( ds == SMK_DS_VideoTitles 
        || ds == SMK_DS_AudioAlbums ) {
@@ -174,9 +208,7 @@
                  ,[[aud artists]stringValue]
                  ,[aud albName]];
       }
-      [self.statusTF setStringValue:
-       [NSString stringWithFormat:
-        @"SMK Has %@ 😄, click Save Button.",title]];
+      SMKStatus( @"SMK Has %@ 😄, click Save Button.",title );
       [self.searchOrSaveButton setTitle:@"Save"];
       [self.searchOrSaveButton setEnabled:TRUE];
       [self.stopOrGoIW setImage:self.goImage];
@@ -196,14 +228,10 @@
       if( [self.searchTitleTF.stringValue length] > 0 
          && SMKStringToMediaType(self.mediaTypeCB.stringValue) != SMK_MT_UNKNOWN ) {
         [self.searchOrSaveButton setEnabled:TRUE];
-        [self.statusTF setStringValue:
-         [NSString stringWithFormat:
-          @"%@ needs Ripped 😥, click Search Button.",[upcMeta upc]]];
+        SMKStatus( @"%@ needs Ripped 😥, click Search Button.",upcMeta.upc );
       } else {
         [self.searchOrSaveButton setEnabled:TRUE];
-        [self.statusTF setStringValue:
-         [NSString stringWithFormat:
-          @"%@ needs Ripped 😥, enter Title and Media Type.",[upcMeta upc]]];        
+        SMKStatus( @"%@ needs Ripped 😥, enter Title and Media Type.", upcMeta.upc );        
       }
     } else { 
       // item SHOULD be in rip queue
@@ -222,18 +250,21 @@
                  ,[[aud artists]stringValue]
                  ,[aud albName]];
       }
-      [self.statusTF setStringValue:
-       [NSString stringWithFormat:
-        @"SMK Needs to Rip %@ 😥, click Save Button.",title]];
+      SMKStatus( @"SMK Needs to Rip %@ 😥, click Save Button.",title );
     }
   }
+  SMKLogDebug(@"mms %@",self.metaSearch);
+
 }
 -(void)retrieveDone:(id<MetaDataRetriever>)obj
 {
+  SMKLogDebug(@"retr done: obj:%@ mms %@",obj,self.metaSearch);
   if( obj == self.metaSearch ) {
-    [self setFoundSrc:   self.metaSearch.foundSrc];
-    [self setFoundSrcId: self.metaSearch.foundSrcId];
-    [self upcFoundMeta:  [self.metaSearch.found objectAtIndex:0]];
+    [self setUpcFoundObj: [self.metaSearch.found objectAtIndex:0] ];
+    [self setGath:nil];
+    [self performSelectorOnMainThread:@selector(upcFoundMeta:) 
+                           withObject:self.upcFoundObj
+                        waitUntilDone:FALSE];
   }
 }
 
@@ -242,10 +273,16 @@
   if( [self.searchUpcTF.stringValue length] < 1 ) {
     return;
   }
-  [self.progressInd startAnimation:self];
-  [self.progressInd setHidden:FALSE];
-  [self setFoundSrc:nil];
-  [self setFoundSrcId:nil];
+  SMKLogDebug(@"%s upc %@ mms.upc %@"
+              ,__func__
+              ,self.searchUpcTF.stringValue
+              ,self.metaSearch );
+  
+  if( [self.searchUpcTF.stringValue isEqualToString: self.metaSearch.searchUpc] ) {
+    return;
+  }
+  SMKProgStart();
+  [self setUpcFoundObj:nil];
   // see if cust has this upc and show meta
   CustMediaListData * cMediaList;
   id lvDataSrc = self.custMediaListVC.tvDataSrc.origValues;
@@ -254,22 +291,17 @@
     MediaIdMetaDetails * it = [cMediaList findUpc:self.searchUpcTF.stringValue];
     if( it != nil ) {
       [self selected:it];
-      [self.progressInd stopAnimation:self];
-      [self.progressInd setHidden:TRUE];
+      SMKProgStop();
       return;
     }
   }
-  [self.statusTF setStringValue:
-   [NSString stringWithFormat:
-    @"Searching meta data for UPC: %@"
-    ,self.searchUpcTF.stringValue]];
-  if( self.metaSearch == nil ) {
-    [self setMetaSearch:[[MetaSearchDataSrc alloc]
+  SMKStatus( @"Searching meta data for UPC: %@"
+            ,self.searchUpcTF.stringValue );
+  [self setMetaSearch:[[MediaMetaSearch alloc]
                          init]];
-  }
-  [self.metaSearch setGathDelegate: self ];
   [self.metaSearch searchForUpc: self.searchUpcTF.stringValue ];
-  [self.metaSearch gather:nil ];
+  [self setGath:[[MetaDataGatherer alloc]initWithDelegate:self]];
+  [self.gath gather: self.metaSearch key:nil ];
 }
 
 - (IBAction)searchTitleAction:(id)sender 
@@ -278,35 +310,46 @@
 
 - (IBAction)searchOrSaveAction:(id)sender 
 {
-  if( [[self.searchOrSaveButton title] isEqualToString:@"Save"] ) {
+  SMKLogDebug(@"%s %@",__func__,self.searchOrSaveButton.title );
+  
+  if( [self.searchOrSaveButton.title isEqualToString:@"Save"] ) {
     // do save
-    if( self.foundSrc != nil && self.foundSrcId != nil ) {
-      
+    if( self.upcFoundObj != nil ) {
+      id objCmld = self.custMediaListVC.tvDataSrc.origValues;
+      if( ! [objCmld isKindOfClass:[CustMediaListData class]] ) {
+        [NSException raise:self.className
+                    format:@"%@ not a CustMediaListData",objCmld];
+        return;
+      }
+      CustMediaListData * cmld = objCmld;
+      [objCmld.addMedia: self.upcFoundObj ];
+      [self.custMediaListVC.tableView reloadData];
+
     }
   } else {
     // do search
     SMKMediaType mt = SMKStringToMediaType( self.mediaTypeCB.stringValue );
     if( mt != SMK_MT_Audio && mt != SMK_MT_Video ) {
-      [self.statusTF setObjectValue:
-       [NSString stringWithFormat:
-        @"Invalid media type (req Video|Audio) %@"
-        ,self.mediaTypeCB.stringValue]];
+      SMKStatus( @"Invalid media type (req Video|Audio) %@"
+                ,self.mediaTypeCB.stringValue );
     } else if( self.searchTitleTF.stringValue.length < 2 ) {
-      [self.statusTF setObjectValue:
-       [NSString stringWithFormat:
-        @"Search title not long enough '%@'"
-        ,self.searchTitleTF.stringValue ]];
+      SMKStatus( @"Search title not long enough '%@'"
+                ,self.searchTitleTF.stringValue );
     } else {
+      MediaMetaSearch * mms = [self.metaSearch copy];
+      
+      [mms setSearchTitle: self.searchTitleTF.stringValue ];
+      [mms setSearchMediaType: mt ];
+      
       if( self.metaSelVC == nil ) {
-        [self setMetaSelVC:[[MetaDetailListVCntlr alloc]
-                            initWithDoneVC: self
-                            metaSearchDS:self.metaSearch]];
+        [self setMetaSelVC:[[MetaDetailListVCntlr alloc] init]];
+        [self.metaSelVC showWithDoneVC: self 
+                         viewToReplace: self.rview 
+                            metaSearch: mms ];
+      } else {
+        [self.metaSelVC showWithViewToReplace: self.rview 
+                                   metaSearch: mms ];
       }
-      [self.metaSearch setSearchTitle: self.searchTitleTF.stringValue ];
-      [self.metaSearch setSearchMediaType: mt ];
-      [self.metaSearch setGathDelegate: self.metaSelVC ];
-      [self.metaSearch gather:nil];
-      [self.metaSelVC replaceView:self.rview];
     }
   }
 }

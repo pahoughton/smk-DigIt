@@ -22,18 +22,17 @@
  $Id$
  
  **/
-#import <Cocoa/Cocoa.h>
-
-@class PrefsWinCntlr;
-@class DigItWinCntlr;
-@class ArtPickerWinCntlr;
+#import "ReplacementViewCntlr.h"
+#import "GradyVCntlr.h"
+#import "SMKCocoaDigitizeUI/DigitizePrefsWinCntlr.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
-@property (retain) DigItWinCntlr * digItWinCntlr;
-@property (retain) PrefsWinCntlr * prefsWinCntlr;
-@property (retain) ArtPickerWinCntlr * artWinCntlr;
+@property (assign) IBOutlet NSWindow *      window;
+@property (weak) IBOutlet ReplacementView * contentV;
+
+@property (strong) GradyVCntlr *            gradyVC;
+@property (strong) DigitizePrefsWinCntlr *  prefsWC;
 
 - (IBAction)prefsMenuItem:(id)sender;
 - (IBAction)artPickerMenuItem:(id)sender;

@@ -23,27 +23,25 @@
   $Id$
 
 **/
-#import <Cocoa/Cocoa.h>
-#import "MainWinGradyView.h"
-
-@class CustomerViewCntlr;
+#import "GradyView.h"
+#import "ReplacementViewCntlr.h"
+#import "CustomerViewCntlr.h"
 
 @interface DigItWinCntlr : NSWindowController
+
+@property (weak) IBOutlet GradyView * mainWinGradyView;
+@property (weak) IBOutlet ReplacementView *contentV;
+
 @property (retain) CustomerViewCntlr * custViewCntlr;
 
-@property (weak) IBOutlet MainWinGradyView * mainWinGradyView;
-
-@property (weak) IBOutlet NSColorWell *fromColorWell;
-@property (weak) IBOutlet NSColorWell *toColorWell;
-@property (weak) IBOutlet NSSlider *directionSlider;
+@property (weak) IBOutlet NSColorWell * fromColorWell;
+@property (weak) IBOutlet NSColorWell * toColorWell;
+@property (weak) IBOutlet NSSlider *    directionSlider;
 
 -(void)goodToGo;
 
 - (IBAction)fromColorAction:(id)sender;
 - (IBAction)toColorAction:(id)sender;
 - (IBAction)directionAction:(id)sender;
-
-
-@property (weak) IBOutlet NSView *contentView;
 
 @end

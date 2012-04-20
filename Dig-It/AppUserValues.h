@@ -23,40 +23,10 @@
   $Id$
 
 **/
-#import <Foundation/Foundation.h>
-#import <SMKDB.h>
-// UDK - i.e. user default key
-extern NSString * AppUDKdbServer;
-extern NSString * AppUDKdbHost;
-extern NSString * AppUDKdbPort;
-extern NSString * AppUDKdbDatabase;
-extern NSString * AppUDKdbUser;
-extern NSString * AppUDKdbPassItem;
-extern NSString * AppUDKartBrowserImgWidth;
-@interface AppUserValues : NSObject <SMKDBConnInfo>
-@property (assign) NSUserDefaults * ud;
+#import "DigitizeAppDefaults.h"
 
--(enum SMKDB_TYPE)dbType;
+@interface AppUserValues : DigitizeAppDefaults
 
--(NSString *)dbHost;
--(unsigned int)dbPort;
--(NSString *)dbUser;
--(NSString *)dbPass;
--(NSString *)dbDatabase;
 -(NSString *)dbApp;
--(NSString *)dbPassItem; // servertype.host.database
-+(NSString *)dbUser;
-
-+(NSString *)dbPassItem; // servertype.host.database
-+(void)setDbPass:(NSString *)pass;
-
-+(NSString *)mediaBaseDir;
-
-+(NSUInteger)artBrowserImgWidth;
-+(void)setArtBrowserImgWidth:(NSUInteger) val;
-
--(BOOL)recProcOnMainTread;
-
--(NSString *)description;
 
 @end

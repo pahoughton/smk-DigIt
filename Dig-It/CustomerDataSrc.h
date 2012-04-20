@@ -23,9 +23,11 @@
   $Id$
 
 **/
-#import <Foundation/Foundation.h>
 #import <AddressBook/AddressBook.h>
 
+extern NSString * SMK_AbpCustIdPropName;
+extern NSString * SMK_AbpCustEmailIdentPropName;
+extern NSString * SMK_AbpCustEmailPropName;
 
 @interface CustomerEntity : NSObject
 @property (strong) NSString * abPersonID;

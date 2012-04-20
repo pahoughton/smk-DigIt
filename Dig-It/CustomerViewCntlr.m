@@ -25,7 +25,6 @@
 #import "CustomerDataSrc.h"
 #import "CustUpcViewCntlr.h"
 #import "CustUpcDataSrc.h"
-#import "DIDB.h"
 
 #import <SMKCocoaCommon.h>
 #import <SMKCommon.h>
@@ -33,10 +32,9 @@
 static CustomerViewCntlr * me;
 
 @implementation CustomerViewCntlr
-@synthesize vToRplc  = _vToRplc;
-@synthesize dataSrc;
+@synthesize vToRplc     = _vToRplc;
+@synthesize dataSrc     = _dataSrc;
 @synthesize curCustId;
-@synthesize upcDataSrc;
 
 @synthesize custMediaVC = _custMediaVC;
 @synthesize splitView;
@@ -67,7 +65,7 @@ static CustomerViewCntlr * me;
 {
     if( me == nil ) {
         me = [CustomerViewCntlr alloc];
-        me = [me initWithNibName:@"CustomerView" bundle:nil];
+        me = [me initWithNibName:@"CustomerViewX" bundle:nil];
     }
     NSView * curSuper = [viewToReplace superview];
     NSRect viewFrame = [viewToReplace frame];
@@ -84,8 +82,8 @@ static CustomerViewCntlr * me;
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+      [self setDebug:TRUE];
         [self setDataSrc:[[CustomerDataSrc alloc]init]];
-        [self setUpcDataSrc:nil];
         // Initialization code here.
     }
     
@@ -94,32 +92,53 @@ static CustomerViewCntlr * me;
 -(id)init
 {
   self = [self initWithNibName:@"CustomerView" bundle:nil];
-  
   return self;
 }
--(id)initWithViewToReplace:(NSView *)vToRplc
+-(id)initWithViewToReplace:(NSView *)vtr
 {
   self = [self init];
   if( self ) {
-    [self setVToRplc:vToRplc];
+    SMKLogDebug(@"%s vtr %@(%@) v %@(%@)",__func__
+                ,vtr, vtr.identifier
+                ,self.view, self.view.identifier);
+    for( NSLayoutConstraint * lc in self.view.constraints ) {
+      SMKLogDebug(@"pre vlc: %@",lc);
+    }
+    [self replaceView:vtr makeResizable:TRUE];
   }
   return self;
 }
 -(void) awakeFromNib
 {
-  if( self.vToRplc != nil ) {
-    [self replaceView:self.vToRplc makeResizable:TRUE];
-    [self setVToRplc:nil];
-  }
-  [contactListTV setDataSource:dataSrc];
+  [contactListTV setDataSource: self.dataSrc];
   [smkCustImage setHidden:TRUE];
   [zipCodeNFmt setFormat:@"00000"];
-  [dataSrc addObserver:self forKeyPath:[CustomerDataSrc kvoTableData] options:0 context:nil];
-  if( [dataSrc tableData] != nil ) {
+  [self.dataSrc addObserver:self forKeyPath:[CustomerDataSrc kvoTableData] options:0 context:nil];
+  if( [self.dataSrc tableData] != nil ) {
     [contactListTV reloadData];
   }
+  /*
+  for( NSLayoutConstraint * lc in self.view.superview.constraints ) {
+    SMKLogDebug(@"Slc: %@",lc);
+  }
+  for( NSLayoutConstraint * lc in self.view.constraints ) {
+    SMKLogDebug(@"vlc: %@",lc);
+  }
+   */
 }
-
+-(void)viewIsInWindow
+{
+  /*
+  SMKLogDebug(@"%s",__func__);
+  NSLog(@"VINWIN %s",__func__);
+  for( NSLayoutConstraint * lc in self.view.superview.constraints ) {
+    SMKLogDebug(@"Slc: %@",lc);
+  }
+  for( NSLayoutConstraint * lc in self.view.constraints ) {
+    SMKLogDebug(@"vlc: %@",lc);
+  }
+   */
+}
 -(void) textDidChange:(NSNotification *)note
 {
     // NSLog(@"text change %@",note);
@@ -134,7 +153,7 @@ static CustomerViewCntlr * me;
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if([keyPath isEqualToString:[CustomerDataSrc kvoTableData]] ) {
-        SMKLogDebug(@"kvo view %d", [dataSrc numberOfRowsInTableView:contactListTV]);
+        SMKLogDebug(@"kvo view %d", [self.dataSrc numberOfRowsInTableView:contactListTV]);
         [contactListTV reloadData];
     }
 }
@@ -156,7 +175,7 @@ static CustomerViewCntlr * me;
     
     ABMultiValue * abMulti = nil;
     NSString * email = nil;
-    abVal = [abp valueForProperty:[DIDB abpCustIdPropName]];
+    abVal = [abp valueForProperty:SMK_AbpCustIdPropName];
     if( abVal == nil ) {
         abMulti = [abp valueForProperty:kABEmailProperty];
         if( abMulti != nil ) {
@@ -173,7 +192,7 @@ static CustomerViewCntlr * me;
         }
     } else {
         // existing cust - check email match and resolve changes
-        NSString * smkEmIdent = [abp valueForProperty:[DIDB abpCustEmailIdentPropName]];
+        NSString * smkEmIdent = [abp valueForProperty:SMK_AbpCustEmailIdentPropName];
         if( ! smkEmIdent ) {
             [NSException raise:@"customer" 
                          format:@"Opps no smk email ident for cust %@",abVal];
@@ -257,11 +276,13 @@ static CustomerViewCntlr * me;
 #pragma mark Actions
 - (IBAction)searchContactListAct:(NSSearchField *)sender 
 {
-    [dataSrc setFilter:[sender stringValue]];
+    [self.dataSrc setFilter:[sender stringValue]];
 }
 
 - (IBAction)addCustAction:(id)sender 
 {
+  SMKFunctUnsup;
+#if defined( EDIT_SUPPORT )
   /* FIXME */
   
     //c++[[[self view] window] endEditing];
@@ -271,7 +292,7 @@ static CustomerViewCntlr * me;
         ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
                                       recordForUniqueId:[cEnt abPersonID]];
         
-        if( [abp valueForProperty:[DIDB abpCustIdPropName]] != nil ) {
+        if( [abp valueForProperty:SMK_AbpCustIdPropName] != nil ) {
             // this is a cust, so add a fresh one
             [self addNewCust];
         } else {
@@ -319,7 +340,7 @@ static CustomerViewCntlr * me;
             if( [saveCustButton isEnabled] ) {
                 [self saveCustAction:self];
             }
-            [abp setValue:[newRec objectForKey:@"cust_id"] forProperty:[DIDB abpCustIdPropName]];
+            [abp setValue:[newRec objectForKey:@"cust_id"] forProperty:SMK_AbpCustIdPropName];
             SMKLogDebug(@"new cust id: %@", [newRec objectForKey:@"cust_id"] );
             if( [cEnt emailInx] >= 0 ) {
                 ABMultiValue * abMulti = nil;
@@ -329,8 +350,8 @@ static CustomerViewCntlr * me;
                     NSString * emIdent;
                     email = [abMulti valueAtIndex:[cEnt emailInx]];
                     emIdent = [abMulti identifierAtIndex:[cEnt emailInx]];
-                    [abp setValue:email forProperty:[DIDB abpCustEmailPropName]];
-                    [abp setValue:emIdent forProperty:[DIDB abpCustEmailIdentPropName]];
+                    [abp setValue:email forProperty:SMK_AbpCustEmailPropName];
+                    [abp setValue:emIdent forProperty:SMK_AbpCustEmailIdentPropName];
                 } else {
                     [NSException raise:@"cust" format:@"UGG em inx w/o em prop"];
                 }
@@ -345,9 +366,9 @@ static CustomerViewCntlr * me;
                 }
                 if( mi < [abMulti count] ) {
                     [abp setValue:[abMulti identifierAtIndex:mi] 
-                      forProperty:[DIDB abpCustEmailIdentPropName]];
+                      forProperty:SMK_AbpCustEmailIdentPropName];
                     [abp setValue:email 
-                      forProperty:[DIDB abpCustEmailPropName]];
+                      forProperty:SMK_AbpCustEmailPropName];
                 } else { 
                     [NSException raise:@"cust" format:@"UGG where did the email addr go!"];
                 }
@@ -379,6 +400,8 @@ static CustomerViewCntlr * me;
     } else {
         [self addNewCust];    
     }
+#endif
+  
 }
 -(BOOL)updateABMulti:(NSString *)value oInx:(NSInteger)inx person:(ABPerson *)abp key:(NSString *)abKey
 {
@@ -399,11 +422,14 @@ static CustomerViewCntlr * me;
             return TRUE;
         }
     }
+  
     return FALSE;
 }
 
 - (IBAction)saveCustAction:(id)sender 
 {
+  SMKFunctUnsup;
+#if defined( EDIT_SUPPORT )
     NSInteger sel = [contactListTV selectedRow];
     if( 0 <= sel && sel < [[dataSrc tableData] count] ) {
         CustomerEntity * cEnt = [[dataSrc tableData] objectAtIndex:sel];
@@ -415,7 +441,7 @@ static CustomerViewCntlr * me;
                          person:abp 
                             key:kABEmailProperty] ) {
             // updated email - update the db;
-            NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+            NSNumber * custId = [abp valueForProperty:SMK_AbpCustIdPropName];
             if( custId != nil ) {
                 [DIDB upd_cust:custId email:[[self emailTF]stringValue]];
             }
@@ -430,7 +456,7 @@ static CustomerViewCntlr * me;
            && [val length] > 0 
            && ! [val isEqualToString:[abp valueForProperty:kABNoteProperty ]] ) {
             [abp setValue:val forProperty:kABNoteProperty ];
-            NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+            NSNumber * custId = [abp valueForProperty:SMK_AbpCustIdPropName];
             if( custId != nil ) {
                 [DIDB add_cust_note:custId note:[[self custNotesTF]stringValue]];
             }
@@ -446,26 +472,11 @@ static CustomerViewCntlr * me;
                                                  name:NSTextDidChangeNotification 
                                                object:nil];
     }
+#endif
 }
 
 - (IBAction)ordersAction:(id)sender 
 {
-}
-
-- (IBAction)upcsAction:(id)sender 
-{
-    NSInteger sel = [contactListTV selectedRow];
-    if( sel < 0 ) {
-        SMKLogDebug(@"opps no selection"); 
-    } else {
-        CustomerEntity * cust = [[dataSrc tableData] objectAtIndex:sel];
-        ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cust abPersonID]];
-        NSDictionary * custInfo = [[NSDictionary alloc]initWithObjectsAndKeys:
-                                   [abp valueForProperty:[DIDB abpCustIdPropName]], @"cust_id",
-                                   [fullNameTF stringValue],@"full_name",
-                                   nil];
-        [CustUpcViewCntlr showSelfIn:[self view] custInfo:custInfo upcData:upcDataSrc];
-    }
 }
 
 - (IBAction)mediaAction:(id)sender 
@@ -474,10 +485,10 @@ static CustomerViewCntlr * me;
   if( sel < 0 ) {
     SMKLogDebug(@"opps no selection"); 
   } else {
-    CustomerEntity * cust = [[dataSrc tableData] objectAtIndex:sel];
+    CustomerEntity * cust = [[self.dataSrc tableData] objectAtIndex:sel];
     ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
                                   recordForUniqueId:[cust abPersonID]];
-    NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]];
+    NSNumber * custId = [abp valueForProperty:SMK_AbpCustIdPropName];
     if( self.custMediaVC == nil ) {
       [self setCustMediaVC: [[CustMediaVCntlr alloc]
                              initWithDoneVC: self ]];
@@ -490,22 +501,17 @@ static CustomerViewCntlr * me;
 - (IBAction)contactListSelection:(NSTableView *)sender
 {
     NSInteger sel = [contactListTV selectedRow];
-    if( 0 <= sel && sel < [[dataSrc tableData] count] ) {
-        CustomerEntity * cust = [[dataSrc tableData] objectAtIndex:sel];
+    if( 0 <= sel && sel < [[self.dataSrc tableData] count] ) {
+        CustomerEntity * cust = [[self.dataSrc tableData] objectAtIndex:sel];
         ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cust abPersonID]];
 
-        NSNumber * custId = [abp valueForProperty:[DIDB abpCustIdPropName]] ;
+        NSNumber * custId = [abp valueForProperty:SMK_AbpCustIdPropName] ;
         if( custId != nil ) {
             [smkCustImage setHidden:FALSE];
             [addCustButton setEnabled:FALSE];
             [upcButton setEnabled:TRUE];
             [ordersButton setEnabled:TRUE];
             [mediaButton setEnabled:TRUE];
-            if( [self upcDataSrc] != nil ) {
-                [[upcDataSrc opQueue] cancelAllOperations];
-            }
-            [self setUpcDataSrc:[[CustUpcDataSrc alloc] init]];
-            [[self upcDataSrc] getCustUpcs:custId];
             [self setContactDetail:cust];
         } else {
             [smkCustImage setHidden:TRUE];

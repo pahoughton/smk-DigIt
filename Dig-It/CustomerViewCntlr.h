@@ -35,7 +35,6 @@
 @property (strong) NSView *          vToRplc;
 @property (strong) CustomerDataSrc * dataSrc;
 @property (strong) NSNumber *        curCustId;
-@property (strong) CustUpcDataSrc *  upcDataSrc;
 
 @property (strong) CustMediaVCntlr * custMediaVC;
 @property (weak) IBOutlet NSSplitView *splitView;
@@ -73,7 +72,6 @@
 - (IBAction)addCustAction:(id)sender;
 - (IBAction)saveCustAction:(id)sender;
 - (IBAction)ordersAction:(id)sender;
-- (IBAction)upcsAction:(id)sender;
 - (IBAction)mediaAction:(id)sender;
 
 @end

@@ -25,9 +25,6 @@
 
 #import "AppDelegate.h"
 #import "AppUserValues.h"
-#import "PrefsWinCntlr.h"
-#import "DigItWinCntlr.h"
-#import "ArtPickerWinCntlr.h"
 
 #import <SMKLogger.h>
 #import <SMKAlertWin.h>
@@ -63,39 +60,36 @@ void SMKUncaughtExceptionHandler(NSException *exception)
 
 @implementation AppDelegate
 
-@synthesize window = _window;
-@synthesize digItWinCntlr;
-@synthesize prefsWinCntlr;
-@synthesize artWinCntlr;
+@synthesize window    = _window;
+@synthesize contentV  = _contentV;
+
+@synthesize gradyVC   = _gradyVC;
+@synthesize prefsWC   = _prefsWC;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+  SMKLogFunct;
   // First things first - init SMKLogger
   SMKLogger * myLogger = [SMKLogger appLogger];
   // [myLogger setTeeLogger:[[SMKLogger alloc]initToStderr]];
-  SMKLogDebug(@"App LogFile: %@",[myLogger logFileFn] );
+  NSLog(@"App LogFile: %@",myLogger.logFileFn );
+  SMKLogFunct;
   
   NSUncaughtExceptionHandler * myHndlr = &SMKUncaughtExceptionHandler;
   
   origExcptHndlr = NSGetUncaughtExceptionHandler();
   
   NSSetUncaughtExceptionHandler(myHndlr);
+
+  [[NSUserDefaults standardUserDefaults] 
+   setBool:TRUE 
+   forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
   
   AppUserValues * aud = [[AppUserValues alloc]init];
   SMKLogDebug(@"%@",[aud description]);
   [SMKDBConnMgr setDefaultInfoProvider:aud];
   
   
-  NSObject * winDelegate = [[self window]delegate];
-  SMKLogDebug(@"ad my win delegate %p %@", winDelegate, [winDelegate className]);
-  if( [winDelegate isKindOfClass:[DigItWinCntlr class]] ) {
-    digItWinCntlr = (DigItWinCntlr *)winDelegate;
-  } else {
-    [SMKAlertWin alertWithMsg:@"Bug - deligate is not DigiTWinCntlr"];
-    sleep(10);
-    exit(1);
-  }
-  [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
   NSString * tmdbApiKey;
   @try {
     tmdbApiKey = [TMDbQuery tmdbApiKey];
@@ -120,22 +114,35 @@ void SMKUncaughtExceptionHandler(NSException *exception)
     [[self window] orderOut:self];
   } else {
     SMKLogDebug(@"Woot Connected :)");
-    [digItWinCntlr goodToGo];
   }
+  [self setGradyVC:[[GradyVCntlr alloc]initWithViewToReplace:self.contentV]];  
+}
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+{
+  SMKLogFunct;
+  return TRUE;
+}
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+  SMKLogFunct;
+  return NSTerminateNow;
 }
 
 - (IBAction)prefsMenuItem:(id)sender 
 {
-  if( prefsWinCntlr == nil ) {
-    prefsWinCntlr = [[PrefsWinCntlr alloc] initWithWindowNibName:@"PrefsWin"];
-    [prefsWinCntlr setMainWinCntlr:digItWinCntlr];
+  SMKLogDebug(@"prefsAction");
+  if( self.prefsWC == nil ) {
+    [self setPrefsWC: [DigitizePrefsWinCntlr createSelf]];
   }
-  [prefsWinCntlr showWindow:prefsWinCntlr];
-  [[prefsWinCntlr window] makeKeyAndOrderFront:self];
+  
+  //[self.prefsWinCntlr showWindow:self]; 
+  SMKLogDebug(@"pref win %@", [self.prefsWC window]);
+  [[self.prefsWC window] makeKeyAndOrderFront:self];
 }
 
 - (IBAction)artPickerMenuItem:(id)sender
 {
+  /*
   if( artWinCntlr == nil ) {
     artWinCntlr = [[ArtPickerWinCntlr alloc] initWithWindowNibName:@"ArtPickerWin"];
   }
@@ -143,6 +150,7 @@ void SMKUncaughtExceptionHandler(NSException *exception)
   if( [artWinCntlr window] ) {
     [[artWinCntlr window] makeKeyAndOrderFront:self];
   }
+   */
 }
 
 @end

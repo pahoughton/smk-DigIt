@@ -25,18 +25,18 @@
 #import "CustomerViewCntlr.h"
 #import <SMKLogger.h>
 
-static NSString * udFromColorKey = @"digit-winFromColorKey";
-static NSString * udToColorKey = @"digit-winToColorKey";
+static NSString * udFromColorKey  = @"digit-winFromColorKey";
+static NSString * udToColorKey    = @"digit-winToColorKey";
 static NSString * udGradyAngleKey = @"digit-winGradyAngle";
 
 
 @implementation DigItWinCntlr
-@synthesize custViewCntlr;
 @synthesize mainWinGradyView;
+@synthesize contentV;
+@synthesize custViewCntlr;
 @synthesize fromColorWell;
 @synthesize toColorWell;
 @synthesize directionSlider;
-@synthesize contentView;
 
 - (id)initWithWindow:(NSWindow *)window
 {
@@ -58,15 +58,10 @@ static NSString * udGradyAngleKey = @"digit-winGradyAngle";
 
 - (void)goodToGo
 {
-  SMKLogDebug(@"good to Go?? win %@ view %@ grady %@", 
-              [self window],
-              [[contentView superview] class],
-              mainWinGradyView);
   
-  // note these vals would be good in user defaults
-  NSColor * fromColor = nil;
-  NSColor * toColor = nil;
-  NSData * colorData = nil;
+  NSColor *  fromColor = nil;
+  NSColor *  toColor   = nil;
+  NSData *   colorData = nil;
   colorData =[[NSUserDefaults standardUserDefaults] dataForKey:udFromColorKey];
   if (colorData != nil) {
     fromColor =(NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
@@ -83,37 +78,33 @@ static NSString * udGradyAngleKey = @"digit-winGradyAngle";
   if( gradyAngle == 0.0 ) {
     gradyAngle = 90.0;
   }
-  mainWinGradyView = (MainWinGradyView *)[contentView superview];
-  [mainWinGradyView setStartColor:fromColor];
+  
+  [self.mainWinGradyView setStartColor:fromColor];
   [fromColorWell setColor:fromColor];
-  [mainWinGradyView setEndColor:toColor];
+  [self.mainWinGradyView setEndColor:toColor];
   [toColorWell setColor:toColor];
-  [mainWinGradyView setAngle:gradyAngle];
+  [self.mainWinGradyView setAngle:gradyAngle];
   [directionSlider setFloatValue:gradyAngle];
-  [self setCustViewCntlr:[[CustomerViewCntlr alloc]
-                          initWithViewToReplace:self.contentView]];
-  if( self.custViewCntlr.view != nil ) {
-    SMKLogDebug(@"cust view is nil");
-  } else {
-    [self.custViewCntlr replaceView:contentView makeResizable:TRUE];
-  }
-  // custViewCntlr = [CustomerViewCntlr showSelfIn:contentView];
+  
+  [self setCustViewCntlr:[[CustomerViewCntlr alloc]init]];
+  [self.custViewCntlr replaceView:self.contentV makeResizable:TRUE];
 }
 
 - (IBAction)fromColorAction:(id)sender 
 {
-    SMKLogDebug(@"color Well action color: %@", [fromColorWell color] );
-    NSColor* newColor = [sender color];
-    [mainWinGradyView setStartColor: newColor];
-    NSData * colorData=[NSArchiver archivedDataWithRootObject:newColor];
-    [[NSUserDefaults standardUserDefaults] setObject:colorData forKey:udFromColorKey];
+  SMKLogDebug(@"color Well action color: %@", [fromColorWell color] );
+  NSColor* newColor = [sender color];
+  [self.mainWinGradyView setStartColor: newColor];
+  NSData * colorData=[NSArchiver archivedDataWithRootObject:newColor];
+  [[NSUserDefaults standardUserDefaults] setObject:colorData forKey:udFromColorKey];
+  
     //[[self window] setBackgroundColor:[fromColorWell color]];     
 }
 
 - (IBAction)toColorAction:(id)sender 
 {
     NSColor* newColor = [sender color];
-    [mainWinGradyView setEndColor: newColor];
+    [self.mainWinGradyView setEndColor: newColor];
     NSData * colorData=[NSArchiver archivedDataWithRootObject:newColor];
     [[NSUserDefaults standardUserDefaults] setObject:colorData forKey:udToColorKey];
 
@@ -121,7 +112,7 @@ static NSString * udGradyAngleKey = @"digit-winGradyAngle";
 - (IBAction)directionAction:(id)sender 
 {
     float angleValue = [sender floatValue];
-    [mainWinGradyView setAngle: angleValue];
+    [self.mainWinGradyView setAngle: angleValue];
     [[NSUserDefaults standardUserDefaults] setFloat:angleValue forKey:udGradyAngleKey];
 }
 @end
