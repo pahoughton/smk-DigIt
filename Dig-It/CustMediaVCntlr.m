@@ -262,11 +262,15 @@
 {
   SMKLogDebug(@"retr done: obj:%@ mms %@",obj,self.metaSearch);
   if( obj == self.metaSearch ) {
-    [self setUpcFoundObj: [self.metaSearch.found objectAtIndex:0] ];
-    [self setGath:nil];
-    [self performSelectorOnMainThread:@selector(upcFoundMeta:) 
-                           withObject:self.upcFoundObj
-                        waitUntilDone:FALSE];
+    if( self.metaSearch.found.count ) {
+      [self setUpcFoundObj: [self.metaSearch.found objectAtIndex:0] ];
+    } else {
+      [self setUpcFoundObj: nil ];
+    }
+    [self setGath: nil];
+    [self performSelectorOnMainThread: @selector(upcFoundMeta:) 
+                           withObject: self.upcFoundObj
+                        waitUntilDone: FALSE];
   }
 }
 
@@ -280,7 +284,7 @@
               ,self.searchUpcTF.stringValue
               ,self.metaSearch );
   
-  if( [self.searchUpcTF.stringValue isEqualToString: self.metaSearch.searchUpc] ) {
+  if( self.searchUpcTF.integerValue == self.metaSearch.searchUpc.integerValue ) {
     return;
   }
   SMKProgStart();
