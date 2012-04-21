@@ -8,7 +8,7 @@
 
 #import "ReplacementViewCntlr.h"
 #import "GradyView.h"
-#import "TestVCntlr.h"
+//#import "TestVCntlr.h"
 #import "CustomerViewCntlr.h"
 
 @interface GradyVCntlr : ReplacementViewCntlr
@@ -23,7 +23,7 @@
 @property (weak) IBOutlet ReplacementView *     contentV;
 
 @property (strong) CustomerViewCntlr *          custVC;
-@property (strong) TestVCntlr * tvc;
+//@property (strong) TestVCntlr * tvc;
 
 -(id)initWithViewToReplace:(NSView *)vtr;
 

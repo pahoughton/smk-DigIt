@@ -44,7 +44,7 @@ void SMKUncaughtExceptionHandler(NSException *exception)
   
   NSArray * callStack = [exception callStackSymbols];
   NSUInteger symCnt = [callStack count];
-  [excptDesc appendFormat:@"Symbols(%u)\n",symCnt];
+  [excptDesc appendFormat:@"Symbols(%lu)\n",symCnt];
   
   for( NSString * sym in callStack ) {
     [excptDesc appendFormat:@"   %@\n",sym];

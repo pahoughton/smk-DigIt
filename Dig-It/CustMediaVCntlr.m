@@ -130,8 +130,8 @@
 }
 -(void)replaceView:(ReplacementView *)vToReplace
 {
-  [super replaceView:vToReplace];
-  
+  [self.searchOrSaveButton setEnabled: FALSE];
+  SMKProgStart();
   id <MetaDataEntity> selMeta = self.metaSelVC.selMeta;
   NSString * selUpc = self.searchUpcTF.stringValue;
   NSString * selTitle = self.searchTitleTF.stringValue;
@@ -147,14 +147,15 @@
     return;
   }
   CustMediaListData * cmld = objCmld;
-  [objCmld.addMediaUpc:selUpc title:selTitle meta:selMeta ];
+  [cmld addMediaUpc:selUpc title:selTitle meta:selMeta ];
   [self.custMediaListVC.tableView reloadData];
-  [self.searchOrSaveButton setEnabled:FALSE];
+  SMKProgStop();
+  [super replaceView: vToReplace];
 }
 
 -(void)replaceView:(ReplacementView *)viewToReplace custId:(id)cid
 {
-  [self replaceView:viewToReplace];
+  [super replaceView: viewToReplace];
   [self.custMediaListVC changeDataSrcKey:cid];
   
   SMKLogDebug(@"%s mmdvc: %@",__func__, self.mediaMetaDetailVC);
@@ -170,6 +171,7 @@
 
 -(void)selected:( id<MetaListDataEntity>)item
 {
+  SMKProgStart();
   SMKLogDebug(@"selected %@",item);
   SMKStatus( @"Customer has %@ 😄",item.listValue);
   [self setCustHasMedia:TRUE];
@@ -322,7 +324,7 @@
         return;
       }
       CustMediaListData * cmld = objCmld;
-      [objCmld.addMedia: self.upcFoundObj ];
+      [cmld addMediaMeta: self.upcFoundObj ];
       [self.custMediaListVC.tableView reloadData];
 
     }

@@ -45,7 +45,7 @@ NSColor * UDColor( NSString * udk, NSColor * dfltColor )
 @synthesize progPI            = _progPI;
 @synthesize contentV          = _contentV;
 @synthesize custVC            = _custVC;
-@synthesize tvc               = _tvc;
+//@synthesize tvc               = _tvc;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

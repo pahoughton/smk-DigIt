@@ -28,12 +28,10 @@
 		DA5D42D714E31FE900A16783 /* libcrypto.0.9.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DA5D42D614E31FE900A16783 /* libcrypto.0.9.8.dylib */; };
 		DA796B59153D7D4C006A9A0F /* GradyVCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA796B57153D7D4C006A9A0F /* GradyVCntlr.m */; };
 		DA796B5A153D7D4C006A9A0F /* GradyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA796B58153D7D4C006A9A0F /* GradyView.xib */; };
-		DA796B62153D9BDD006A9A0F /* TestVCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA796B61153D9BDD006A9A0F /* TestVCntlr.m */; };
 		DA796B68153DA71E006A9A0F /* CustomerViewCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DAC958A214F17E7900A3DCF3 /* CustomerViewCntlr.m */; };
 		DA796B69153DA723006A9A0F /* CustomerDataSrc.m in Sources */ = {isa = PBXBuildFile; fileRef = DAF9485B14F23386002B6C03 /* CustomerDataSrc.m */; };
 		DA796B6A153DA7E8006A9A0F /* AppUserValues.m in Sources */ = {isa = PBXBuildFile; fileRef = DA5D42C314E30F5D00A16783 /* AppUserValues.m */; };
 		DA796B70153DB3F1006A9A0F /* CustMediaVCntlr.m in Sources */ = {isa = PBXBuildFile; fileRef = DA412059152F20B100947229 /* CustMediaVCntlr.m */; };
-		DA796B72153DC592006A9A0F /* CustomerViewORIG.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA796B71153DC592006A9A0F /* CustomerViewORIG.xib */; };
 		DA819E8C14E2D9D5008EE066 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA819E8B14E2D9D5008EE066 /* QuartzCore.framework */; };
 		DA819E8F14E2DB40008EE066 /* PrefsWin.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA819E8E14E2DB40008EE066 /* PrefsWin.xib */; };
 		DAA530E314E09DF600519A30 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAA530E214E09DF600519A30 /* Cocoa.framework */; };
@@ -52,8 +50,6 @@
 		DABE136D153E216D007B7026 /* CustUpcView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA171E0A14E341A100EBD43D /* CustUpcView.xib */; };
 		DABE136E153E2597007B7026 /* TrashView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DAEC2F1414E54F98005F7F4E /* TrashView.xib */; };
 		DABE137A153E39E2007B7026 /* CustomerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DABE1379153E39E2007B7026 /* CustomerView.xib */; };
-		DABE137C153E3B68007B7026 /* CustomerView2.xib in Resources */ = {isa = PBXBuildFile; fileRef = DABE137B153E3B68007B7026 /* CustomerView2.xib */; };
-		DACB345E153ECD3B00995339 /* CustomerView3.xib in Resources */ = {isa = PBXBuildFile; fileRef = DACB345D153ECD3B00995339 /* CustomerView3.xib */; };
 		DAE4CB441529060600B1CD44 /* SMKCocoaDigitizeUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = DAE4CB40152905AC00B1CD44 /* SMKCocoaDigitizeUI.framework */; };
 		DAE4CB451529062500B1CD44 /* SMKCocoaDigitizeUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAE4CB40152905AC00B1CD44 /* SMKCocoaDigitizeUI.framework */; };
 		DAE594C314EDC6DE005EC086 /* glass.wav in Resources */ = {isa = PBXBuildFile; fileRef = DAE594C214EDC6DE005EC086 /* glass.wav */; };
@@ -141,10 +137,6 @@
 		DA796B56153D7D4C006A9A0F /* GradyVCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradyVCntlr.h; sourceTree = "<group>"; };
 		DA796B57153D7D4C006A9A0F /* GradyVCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GradyVCntlr.m; sourceTree = "<group>"; };
 		DA796B58153D7D4C006A9A0F /* GradyView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GradyView.xib; sourceTree = "<group>"; };
-		DA796B5B153D908C006A9A0F /* MainMenuOrig.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenuOrig.xib; sourceTree = "<group>"; };
-		DA796B60153D9BDD006A9A0F /* TestVCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestVCntlr.h; sourceTree = "<group>"; };
-		DA796B61153D9BDD006A9A0F /* TestVCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestVCntlr.m; sourceTree = "<group>"; };
-		DA796B71153DC592006A9A0F /* CustomerViewORIG.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomerViewORIG.xib; sourceTree = "<group>"; };
 		DA7FC07D14EAB4E5004423F5 /* VidMetaSelWin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VidMetaSelWin.xib; sourceTree = "<group>"; };
 		DA7FC08714EAB8B8004423F5 /* VidMetaSelCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VidMetaSelCellView.h; sourceTree = "<group>"; };
 		DA7FC08814EAB8B8004423F5 /* VidMetaSelCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VidMetaSelCellView.m; sourceTree = "<group>"; };
@@ -181,10 +173,8 @@
 		DAA6789D14F0167A004D9CD8 /* ArtPickerWinCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtPickerWinCntlr.m; sourceTree = "<group>"; };
 		DAA6789F14F0188F004D9CD8 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		DABE1379153E39E2007B7026 /* CustomerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomerView.xib; sourceTree = "<group>"; };
-		DABE137B153E3B68007B7026 /* CustomerView2.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomerView2.xib; sourceTree = "<group>"; };
 		DAC958A114F17E7900A3DCF3 /* CustomerViewCntlr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomerViewCntlr.h; sourceTree = "<group>"; };
 		DAC958A214F17E7900A3DCF3 /* CustomerViewCntlr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomerViewCntlr.m; sourceTree = "<group>"; };
-		DACB345D153ECD3B00995339 /* CustomerView3.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomerView3.xib; sourceTree = "<group>"; };
 		DADF23CF14F3EC7B00189E4C /* ArtBrowserItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtBrowserItem.h; sourceTree = "<group>"; };
 		DADF23D014F3EC7B00189E4C /* ArtBrowserItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtBrowserItem.m; sourceTree = "<group>"; };
 		DADF23D214F407F400189E4C /* ArtBrowswerItemGatherer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtBrowswerItemGatherer.h; sourceTree = "<group>"; };
@@ -290,13 +280,9 @@
 				DAA530F714E09DF600519A30 /* MainMenu.xib */,
 				DABE1379153E39E2007B7026 /* CustomerView.xib */,
 				DA41205B152F20ED00947229 /* CustMediaView.xib */,
-				DACB345D153ECD3B00995339 /* CustomerView3.xib */,
 				DAEC2F1414E54F98005F7F4E /* TrashView.xib */,
 				DA171E0A14E341A100EBD43D /* CustUpcView.xib */,
-				DA796B5B153D908C006A9A0F /* MainMenuOrig.xib */,
 				DA819E8E14E2DB40008EE066 /* PrefsWin.xib */,
-				DA796B71153DC592006A9A0F /* CustomerViewORIG.xib */,
-				DABE137B153E3B68007B7026 /* CustomerView2.xib */,
 			);
 			name = Interfaces;
 			sourceTree = "<group>";
@@ -375,8 +361,6 @@
 				DAF9485B14F23386002B6C03 /* CustomerDataSrc.m */,
 				DA412058152F20B100947229 /* CustMediaVCntlr.h */,
 				DA412059152F20B100947229 /* CustMediaVCntlr.m */,
-				DA796B60153D9BDD006A9A0F /* TestVCntlr.h */,
-				DA796B61153D9BDD006A9A0F /* TestVCntlr.m */,
 				DA819E8D14E2DB09008EE066 /* Interfaces */,
 				DAA530E914E09DF600519A30 /* Supporting Files */,
 			);
@@ -546,12 +530,9 @@
 				DA1C5AEC14F2799C004AD774 /* sMk.68x48.png in Resources */,
 				DA41205C152F20ED00947229 /* CustMediaView.xib in Resources */,
 				DA796B5A153D7D4C006A9A0F /* GradyView.xib in Resources */,
-				DA796B72153DC592006A9A0F /* CustomerViewORIG.xib in Resources */,
 				DABE136D153E216D007B7026 /* CustUpcView.xib in Resources */,
 				DABE136E153E2597007B7026 /* TrashView.xib in Resources */,
 				DABE137A153E39E2007B7026 /* CustomerView.xib in Resources */,
-				DABE137C153E3B68007B7026 /* CustomerView2.xib in Resources */,
-				DACB345E153ECD3B00995339 /* CustomerView3.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,7 +571,6 @@
 				DAA530F614E09DF600519A30 /* AppDelegate.m in Sources */,
 				DA53D63C14ED1A1900A8BE98 /* GradyView.m in Sources */,
 				DA796B59153D7D4C006A9A0F /* GradyVCntlr.m in Sources */,
-				DA796B62153D9BDD006A9A0F /* TestVCntlr.m in Sources */,
 				DA796B68153DA71E006A9A0F /* CustomerViewCntlr.m in Sources */,
 				DA796B69153DA723006A9A0F /* CustomerDataSrc.m in Sources */,
 				DA796B6A153DA7E8006A9A0F /* AppUserValues.m in Sources */,

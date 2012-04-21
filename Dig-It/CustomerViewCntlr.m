@@ -153,7 +153,7 @@ static CustomerViewCntlr * me;
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if([keyPath isEqualToString:[CustomerDataSrc kvoTableData]] ) {
-        SMKLogDebug(@"kvo view %d", [self.dataSrc numberOfRowsInTableView:contactListTV]);
+        SMKLogDebug(@"kvo view %ld", [self.dataSrc numberOfRowsInTableView:contactListTV]);
         [contactListTV reloadData];
     }
 }
