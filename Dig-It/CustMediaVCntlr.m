@@ -9,8 +9,9 @@
 #import "CustMediaVCntlr.h"
 #import "CustMediaListDataSrc.h"
 #import "MediaMetaSearch.h"
+#import "RipQueueMetaDetails.h"
 #import "SMKLogger.h"
-#import "MediaArt.h"
+#import "MediaArtSelImageList.h"
 
 @interface CustMediaVCntlr ()
 
@@ -24,6 +25,7 @@
 @synthesize gath          = _gath;
 
 @synthesize upcFoundObj   = _upcFoundObj;
+@synthesize upcFoundSrc   = _upcFoundSrc;
 
 @synthesize goodSound      = _goodSound;
 @synthesize badSound       = _badSound;
@@ -141,14 +143,22 @@
               ,selTitle
               ,selMeta );
   id objCmld = self.custMediaListVC.tvDataSrc.origValues;
-  if( ! [objCmld isKindOfClass:[CustMediaListData class]] ) {
+  if( ! [objCmld isKindOfClass:[CustMediaListDataSrc class]] ) {
     [NSException raise:self.className
                 format:@"%@ not a CustMediaListData",objCmld];
     return;
   }
-  CustMediaListData * cmld = objCmld;
-  [cmld addMediaUpc:selUpc title:selTitle meta:selMeta ];
-  [self.custMediaListVC.tableView reloadData];
+  CustMediaListDataSrc * cmld = objCmld;
+  
+  [self.custMediaListVC.tvDataSrc insertObj:
+   [cmld addMediaUpc:selUpc title:selTitle meta:selMeta]
+                                    atIndex: 0 ];
+  [self.searchOrSaveButton setEnabled: FALSE];
+  [self.searchUpcTF setObjectValue:nil];
+  [self.searchTitleTF setObjectValue:nil];
+  [self.searchYearTF setObjectValue:nil];
+  [self.mediaMetaDetailVC setViewWithMetaData:nil];
+  
   SMKProgStop();
   [super replaceView: vToReplace];
 }
@@ -242,15 +252,19 @@
       [self.searchOrSaveButton setEnabled:TRUE];
       [self.stopOrGoIW setImage:self.stopImage];      
       NSString * title;
-      if( ds == SMK_DS_VideoTitles ) {
-        id <VideoMetaDetailsEntity> vid = (id <VideoMetaDetailsEntity>)it;
-        title = [vid title];
-      } else {
+      if( [it conformsToProtocol:@protocol(VideoMetaDetailsEntity)] ) {
+        id <VideoMetaDetailsEntity> vmd = (id <VideoMetaDetailsEntity>)it;
+        title = [vmd title];
+      } else if( [it conformsToProtocol:@protocol(AudioAlbumMetaDetailsEntity)] ) {
         id <AudioAlbumMetaDetailsEntity> aud = (id <AudioAlbumMetaDetailsEntity>)it;
         title = [NSString stringWithFormat:
                  @"%@ - %@"
                  ,[[aud artists]stringValue]
                  ,[aud albName]];
+      } else {
+        [NSException raise:self.className
+                    format:@"%s - unsupported entity %@",__func__,it];
+        return;
       }
       SMKStatus( @"SMK Needs to Rip %@ 😥, click Save Button.",title );
     }
@@ -263,6 +277,24 @@
   SMKLogDebug(@"retr done: obj:%@ mms %@",obj,self.metaSearch);
   if( obj == self.metaSearch ) {
     if( self.metaSearch.found.count ) {
+      SMKMetaDataSource fndDs;
+      fndDs = SMKTableNameToMetaDataSource( self.metaSearch.foundSrc);
+      if( fndDs == SMK_DS_MediaIdMeta ) {
+        MediaIdMetaDetails * mim;
+        mim = [[MediaIdMetaDetails alloc]
+               initWithDataSrcId: self.metaSearch.foundSrcId ];
+        [self setUpcFoundSrc: mim];
+        
+      } else if( fndDs == SMK_DS_RipQueue ) {
+        RipQueueMetaDetails * rq;
+        rq = [[RipQueueMetaDetails alloc]
+              init];
+        [rq retrieve: self.metaSearch.foundSrcId];
+        [self setUpcFoundSrc: rq ];
+        
+      } else if( fndDs == SMK_DS_Upcs ) {
+        //
+      }
       [self setUpcFoundObj: [self.metaSearch.found objectAtIndex:0] ];
     } else {
       [self setUpcFoundObj: nil ];
@@ -322,14 +354,19 @@
     // do save
     if( self.upcFoundObj != nil ) {
       id objCmld = self.custMediaListVC.tvDataSrc.origValues;
-      if( ! [objCmld isKindOfClass:[CustMediaListData class]] ) {
+      if( ! [objCmld isKindOfClass:[CustMediaListDataSrc class]] ) {
         [NSException raise:self.className
                     format:@"%@ not a CustMediaListData",objCmld];
         return;
       }
-      CustMediaListData * cmld = objCmld;
-      [cmld addMediaMeta: self.upcFoundObj ];
-      [self.custMediaListVC.tableView reloadData];
+      CustMediaListDataSrc * cmld = objCmld;
+
+      [self.custMediaListVC.tvDataSrc insertObj:
+       [cmld addMediaMeta: self.upcFoundSrc ]
+                                        atIndex: 0 ];
+      [self.searchOrSaveButton setEnabled: FALSE];
+      [self.searchUpcTF setObjectValue:nil];
+      [self.mediaMetaDetailVC setViewWithMetaData:nil];
 
     }
   } else {
@@ -362,6 +399,7 @@
 
 - (IBAction)cancelAction:(id)sender 
 {
+  SMKStatus(@"");
   [self.doneVC replaceView:self.view makeResizable:TRUE];
 }
 

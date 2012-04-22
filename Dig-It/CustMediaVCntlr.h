@@ -23,6 +23,7 @@
 @property (strong) MetaDataGatherer *     gath;
 
 @property (strong) id<MetaDataRetriever>  upcFoundObj;
+@property (strong) id<MetaDataEntity>     upcFoundSrc;
 
 @property (retain) NSSound * goodSound;
 @property (retain) NSSound * badSound;
