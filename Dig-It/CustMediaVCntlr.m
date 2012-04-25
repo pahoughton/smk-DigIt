@@ -10,8 +10,9 @@
 #import "CustMediaListDataSrc.h"
 #import "MediaMetaSearch.h"
 #import "RipQueueMetaDetails.h"
-#import "SMKLogger.h"
 #import "MediaArtSelImageList.h"
+#import "SMKLogger.h"
+#import "SMKAlertWin.h"
 
 @interface CustMediaVCntlr ()
 
@@ -149,10 +150,31 @@
     return;
   }
   CustMediaListDataSrc * cmld = objCmld;
+  id<SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+  [db beginTransaction];
+  MediaIdMetaDetails * added = nil;
+  @try {
+    added = [cmld addMediadb: db 
+                         upc: selUpc 
+                       title: selTitle 
+                        meta: selMeta ];
   
-  [self.custMediaListVC.tvDataSrc insertObj:
-   [cmld addMediaUpc:selUpc title:selTitle meta:selMeta]
-                                    atIndex: 0 ];
+  }
+  @catch (NSException *exception) {
+    [db rollback];
+    NSString * msg = [NSString stringWithFormat:
+                      @"%s add failed %@",__func__,exception];
+    
+    SMKLogError( msg );
+    SMKStatus( msg );
+    [SMKAlertWin alertWithMsg: msg ];
+  }
+  if( added ) {
+    [db commit];
+    [self.custMediaListVC.tvDataSrc 
+     insertObj: added atIndex:0 ];
+    [self.custMediaListVC.tableView reloadData];
+  }
   [self.searchOrSaveButton setEnabled: FALSE];
   [self.searchUpcTF setObjectValue:nil];
   [self.searchTitleTF setObjectValue:nil];
@@ -272,24 +294,25 @@
   SMKLogDebug(@"mms %@",self.metaSearch);
 
 }
--(void)retrieveDone:(id<MetaDataRetriever>)obj
+-(void)retrieveDone:(id<DBMetaDataEntity>)obj
 {
   SMKLogDebug(@"retr done: obj:%@ mms %@",obj,self.metaSearch);
   if( obj == self.metaSearch ) {
+    id<SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
     if( self.metaSearch.found.count ) {
       SMKMetaDataSource fndDs;
       fndDs = SMKTableNameToMetaDataSource( self.metaSearch.foundSrc);
       if( fndDs == SMK_DS_MediaIdMeta ) {
         MediaIdMetaDetails * mim;
         mim = [[MediaIdMetaDetails alloc]
-               initWithDataSrcId: self.metaSearch.foundSrcId ];
+               initWithDb: db dataSrcId: self.metaSearch.foundSrcId gath:nil];
         [self setUpcFoundSrc: mim];
         
       } else if( fndDs == SMK_DS_RipQueue ) {
         RipQueueMetaDetails * rq;
         rq = [[RipQueueMetaDetails alloc]
               init];
-        [rq retrieve: self.metaSearch.foundSrcId];
+        [rq retrievedb: db key: self.metaSearch.foundSrcId gathOp: nil ];
         [self setUpcFoundSrc: rq ];
         
       } else if( fndDs == SMK_DS_Upcs ) {
@@ -338,8 +361,8 @@
   [self setMetaSearch:[[MediaMetaSearch alloc]
                          init]];
   [self.metaSearch searchForUpc: self.searchUpcTF.stringValue ];
-  [self setGath:[[MetaDataGatherer alloc]initWithDelegate:self]];
-  [self.gath gather: self.metaSearch key:nil ];
+  [self setGath:[[MetaDbGatherer alloc] initWithDelegate: self ]];
+  [self.gath gatherdb: nil retriever: self.metaSearch key: nil ];
 }
 
 - (IBAction)searchTitleAction:(id)sender 
@@ -360,10 +383,28 @@
         return;
       }
       CustMediaListDataSrc * cmld = objCmld;
-
-      [self.custMediaListVC.tvDataSrc insertObj:
-       [cmld addMediaMeta: self.upcFoundSrc ]
-                                        atIndex: 0 ];
+      
+      id<SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+      [db beginTransaction];
+      MediaIdMetaDetails * added = nil;
+      @try {
+        added = [cmld addMediaMeta: self.upcFoundSrc db: db];
+      }
+      @catch (NSException *exception) {
+        [db rollback];
+        NSString * msg = [NSString stringWithFormat:
+                          @"%s add failed %@",__func__,exception];
+        
+        SMKLogError( msg );
+        SMKStatus( msg );
+        [SMKAlertWin alertWithMsg: msg ];
+      }
+      if( added ) {
+        [db commit];
+        [self.custMediaListVC.tvDataSrc 
+         insertObj: added atIndex:0 ];
+        [self.custMediaListVC.tableView reloadData];
+      }
       [self.searchOrSaveButton setEnabled: FALSE];
       [self.searchUpcTF setObjectValue:nil];
       [self.mediaMetaDetailVC setViewWithMetaData:nil];

@@ -20,7 +20,7 @@
 @property (strong) NSNumber *             myCustId;
 @property (assign) BOOL                   custHasMedia;
 @property (strong) MediaMetaSearch *      metaSearch;
-@property (strong) MetaDataGatherer *     gath;
+@property (strong) MetaDbGatherer *     gath;
 
 @property (strong) id<MetaDataRetriever>  upcFoundObj;
 @property (strong) id<MetaDataEntity>     upcFoundSrc;
