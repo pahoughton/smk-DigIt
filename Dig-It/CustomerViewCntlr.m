@@ -194,8 +194,7 @@ static CustomerViewCntlr * me;
         // existing cust - check email match and resolve changes
         NSString * smkEmIdent = [abp valueForProperty:SMK_AbpCustEmailIdentPropName];
         if( ! smkEmIdent ) {
-            [NSException raise:@"customer" 
-                         format:@"Opps no smk email ident for cust %@",abVal];
+            SMKThrow( @"Opps no smk email ident for cust %@",abVal );
         }
         ABMultiValue * abMulti = [abp valueForProperty:kABEmailProperty];
         if( abMulti != nil ) {
@@ -353,7 +352,7 @@ static CustomerViewCntlr * me;
                     [abp setValue:email forProperty:SMK_AbpCustEmailPropName];
                     [abp setValue:emIdent forProperty:SMK_AbpCustEmailIdentPropName];
                 } else {
-                    [NSException raise:@"cust" format:@"UGG em inx w/o em prop"];
+                    SMKThrow( @"UGG em inx w/o em prop" );
                 }
             } else {
                 NSString * email = [[self emailTF] stringValue];
@@ -370,7 +369,7 @@ static CustomerViewCntlr * me;
                     [abp setValue:email 
                       forProperty:SMK_AbpCustEmailPropName];
                 } else { 
-                    [NSException raise:@"cust" format:@"UGG where did the email addr go!"];
+                    SMKThrow( @"UGG where did the email addr go!" );
                 }
             }
             [[ABAddressBook addressBook] save];

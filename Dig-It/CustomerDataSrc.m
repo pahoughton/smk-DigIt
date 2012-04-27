@@ -26,6 +26,7 @@
 #import "CustomerDataSrc.h"
 #import <SMKCocoaCommon.h>
 #import <SMKDB.h>
+#import <SMKCommon.h>
 #import <AddressBook/ABAddressBook.h>
 
 NSString * SMK_AbpCustIdPropName         = @"com.SecureMediaKeepers.cust_id";
@@ -96,7 +97,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
        SMK_AbpCustIdPropName,
        nil];
       if( [ABPerson addPropertiesAndTypes:apbProp] < 0 ) {
-        [NSException raise:@"ABPerson" format:@"add cust id prop failed for %@",apbProp];
+        SMKThrow( @"add cust id prop failed for %@",apbProp );
       }
     }
   }
@@ -125,19 +126,19 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
           forProperty:valPropKey
                 error:&err] ) {
     // opps
-    [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+    SMKThrow( @"set cust error %@",err );
   } else if( ! [abp setValue:emAddr
                  forProperty:SMK_AbpCustEmailPropName
                        error:&err] ) {
     // opps
-    [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+    SMKThrow( @"set cust error %@",err );
     
   } else if( emIdent != nil
             && ! [abp setValue:emIdent
                    forProperty:SMK_AbpCustIdPropName
                          error:&err] ) {
               // opps
-              [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+              SMKThrow( @"set cust error %@",err );
             }
   return TRUE;
 }
@@ -242,7 +243,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
                       forProperty:SMK_AbpCustIdPropName
                             error:&err] ) {
                  // opps
-                 [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+                 SMKThrow( @"set cust error %@",err );
                }
             
           }
@@ -261,14 +262,14 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
                     forProperty:SMK_AbpCustEmailPropName
                           error:&err] ) {
               // opps
-              [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+              SMKThrow( @"set cust error %@",err );
               
             } else if( emIdent != nil
                       && ! [abp setValue:emIdent
                              forProperty:SMK_AbpCustIdPropName
                                    error:&err] ) {
                         // opps
-                        [NSException raise:@"ABPerson" format:@"set cust error %@",err];
+                        SMKThrow( @"set cust error %@",err );
                       }
           }
         }

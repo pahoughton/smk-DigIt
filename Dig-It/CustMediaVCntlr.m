@@ -145,8 +145,7 @@
               ,selMeta );
   id objCmld = self.custMediaListVC.tvDataSrc.origValues;
   if( ! [objCmld isKindOfClass:[CustMediaListDataSrc class]] ) {
-    [NSException raise:self.className
-                format:@"%@ not a CustMediaListData",objCmld];
+    SMKThrow( @"%@ not a CustMediaListData",objCmld );
     return;
   }
   CustMediaListDataSrc * cmld = objCmld;
@@ -284,8 +283,7 @@
                  ,[[aud artists]stringValue]
                  ,[aud albName]];
       } else {
-        [NSException raise:self.className
-                    format:@"%s - unsupported entity %@",__func__,it];
+        SMKThrow( @"unsupported entity %@", it );
         return;
       }
       SMKStatus( @"SMK Needs to Rip %@ 😥, click Save Button.",title );
@@ -378,8 +376,7 @@
     if( self.upcFoundObj != nil ) {
       id objCmld = self.custMediaListVC.tvDataSrc.origValues;
       if( ! [objCmld isKindOfClass:[CustMediaListDataSrc class]] ) {
-        [NSException raise:self.className
-                    format:@"%@ not a CustMediaListData",objCmld];
+        SMKThrow( @"%@ not a CustMediaListData",objCmld );
         return;
       }
       CustMediaListDataSrc * cmld = objCmld;

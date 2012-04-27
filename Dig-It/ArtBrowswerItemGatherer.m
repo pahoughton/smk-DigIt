@@ -27,7 +27,7 @@
 #import "AppUserValues.h"
 #import <SMKCocoaCommon.h>
 #import <SMKDB.h>
-#import <SMKLogger.h>
+#import <SMKCommon.h>
 
 @interface ABIGathSpec : NSObject
 enum ABIGSpec { 
@@ -91,7 +91,7 @@ enum ABIGSpec {
 }
 -(void)gatherTMDb:(NSString *)tmdb_id
 {
-    [NSException raise:@"ArtBrowerItemGatherer" format:@"Opps, not implemented"];
+  SMKFunctUnsup;
 }
 // a list of TMDbQuery art from getInfo or search;
 -(void)gatherTMDBArtDictList:(NSArray *)tmdbArtList
@@ -103,7 +103,7 @@ enum ABIGSpec {
 // a list of ArtBrowserItems
 -(void)gatherABItems:(NSMutableArray *)items
 {
-    [NSException raise:@"ArtBrowerItemGatherer" format:@"Opps, not implemented"];    
+  SMKFunctUnsup;
 }
 
 -(void)gatherDigVidTitleArt:(NSNumber *)vid_id
