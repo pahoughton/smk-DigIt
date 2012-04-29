@@ -19,8 +19,9 @@
 @property (strong) ReplacementViewCntlr * doneVC;
 @property (strong) NSNumber *             myCustId;
 @property (assign) BOOL                   custHasMedia;
+@property (assign) BOOL                   upcIsNew;
 @property (strong) MediaMetaSearch *      metaSearch;
-@property (strong) MetaDbGatherer *     gath;
+@property (strong) MetaDbGatherer *       gath;
 
 @property (strong) id<MetaDataRetriever>  upcFoundObj;
 @property (strong) id<MetaDataEntity>     upcFoundSrc;
@@ -59,6 +60,7 @@
 
 - (IBAction)searchUpcAction:(id)sender;
 - (IBAction)searchTitleAction:(id)sender;
+- (IBAction)mediaTypeCB:(id)sender;
 
 - (IBAction)searchOrSaveAction:(id)sender;
 - (IBAction)cancelAction:(id)sender;

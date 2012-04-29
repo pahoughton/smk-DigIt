@@ -22,6 +22,7 @@
 @synthesize doneVC        = _doneVC;
 @synthesize myCustId      = _myCustId;
 @synthesize custHasMedia  = _custHasMedia;
+@synthesize upcIsNew      = _upcIsNew;
 @synthesize metaSearch    = _metaSearch;
 @synthesize gath          = _gath;
 
@@ -153,9 +154,10 @@
   [db beginTransaction];
   MediaIdMetaDetails * added = nil;
   @try {
-    added = [cmld addMediadb: db 
-                         upc: selUpc 
-                       title: selTitle 
+    added = [cmld addMediadb: db
+                         upc: selUpc
+                    upcIsNew: self.upcIsNew
+                       title: selTitle
                         meta: selMeta ];
   
   }
@@ -219,10 +221,11 @@
   if( it == nil ) {
     SMKStatus( @"UPC: %@ not found 😥",self.searchUpcTF.stringValue );
     [self.mediaMetaDetailVC setViewWithMetaData:nil];
-    [self.searchOrSaveButton setEnabled:FALSE];
-    [self.stopOrGoIW setImage:self.stopImage];
-    
+    [self.searchOrSaveButton setEnabled: FALSE];
+    [self.stopOrGoIW setImage: self.stopImage];
+    [self setUpcIsNew: TRUE];
   } else {
+    [self setUpcIsNew: FALSE];
     [self.mediaMetaDetailVC setViewWithMetaData: it ];
     SMKMetaDataSource ds = [it dataSrc];
     if( ds == SMK_DS_VideoTitles 
@@ -365,6 +368,21 @@
 
 - (IBAction)searchTitleAction:(id)sender 
 {
+  if( [self.searchTitleTF.stringValue length] > 0 
+     && SMKStringToMediaType(self.mediaTypeCB.stringValue) != SMK_MT_UNKNOWN ) {
+    [self.searchOrSaveButton setEnabled:TRUE];
+  } else {
+    [self.searchOrSaveButton setEnabled: FALSE ];
+  }
+}
+- (IBAction)mediaTypeCB:(id)sender
+{
+  if( [self.searchTitleTF.stringValue length] > 0 
+     && SMKStringToMediaType(self.mediaTypeCB.stringValue) != SMK_MT_UNKNOWN ) {
+    [self.searchOrSaveButton setEnabled:TRUE];
+  } else {
+    [self.searchOrSaveButton setEnabled: FALSE ];
+  }  
 }
 
 - (IBAction)searchOrSaveAction:(id)sender 

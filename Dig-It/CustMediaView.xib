@@ -53,14 +53,12 @@
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{49, 217}, {191, 162}}</string>
 								<reference key="NSSuperview" ref="802917752"/>
-								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<string key="NSClassName">ReplacementView</string>
 							</object>
 						</array>
 						<string key="NSFrame">{{280, 0}, {364, 451}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="681174998"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSClassName">NSView</string>
@@ -74,7 +72,6 @@
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{43, 324}, {143, 77}}</string>
 								<reference key="NSSuperview" ref="664933157"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="802917752"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<string key="NSClassName">ReplacementView</string>
@@ -82,7 +79,6 @@
 						</array>
 						<string key="NSFrame">{{20, 0}, {252, 451}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="998318580"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSClassName">NSView</string>
@@ -92,7 +88,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{414, 453}, {82, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="180848699"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -121,12 +116,11 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{341, 460}, {66, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1056087418"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="384727435">
-							<int key="NSCellFlags">-1804505023</int>
+							<int key="NSCellFlags">-1804562367</int>
 							<int key="NSCellFlags2">138413056</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="127111739"/>
@@ -160,12 +154,11 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{125, 459}, {208, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="558609262"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="942902266">
-							<int key="NSCellFlags">-1804505023</int>
+							<int key="NSCellFlags">-1804562367</int>
 							<int key="NSCellFlags2">138413056</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="127111739"/>
@@ -191,7 +184,6 @@
 						</set>
 						<string key="NSFrame">{{574, 460}, {48, 48}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="664933157"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSHuggingPriority">{432, 438}</string>
@@ -213,7 +205,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{414, 482}, {82, 31}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="344163280"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -238,7 +229,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{310, 485}, {99, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="980606168"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -351,12 +341,11 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{125, 489}, {177, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="436816562"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="809625972">
-							<int key="NSCellFlags">-1804505023</int>
+							<int key="NSCellFlags">-1804562367</int>
 							<int key="NSCellFlags2">138413056</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="127111739"/>
@@ -372,7 +361,6 @@
 				</array>
 				<string key="NSFrameSize">{664, 514}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="885684450"/>
 				<string key="NSClassName">ReplacementView</string>
 			</object>
@@ -506,6 +494,14 @@
 						<reference key="destination" ref="998318580"/>
 					</object>
 					<int key="connectionID">1448</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">mediaTypeCB:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="436816562"/>
+					</object>
+					<int key="connectionID">1534</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1704,96 +1700,9 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1533</int>
+			<int key="maxID">1534</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">CustMediaVCntlr</string>
-					<string key="superclassName">ReplacementViewCntlr</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="cancelAction:">id</string>
-						<string key="searchOrSaveAction:">id</string>
-						<string key="searchTitleAction:">id</string>
-						<string key="searchUpcAction:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="cancelAction:">
-							<string key="name">cancelAction:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="searchOrSaveAction:">
-							<string key="name">searchOrSaveAction:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="searchTitleAction:">
-							<string key="name">searchTitleAction:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="searchUpcAction:">
-							<string key="name">searchUpcAction:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="detailV">ReplacementView</string>
-						<string key="listV">ReplacementView</string>
-						<string key="mediaTypeCB">NSComboBox</string>
-						<string key="searchOrSaveButton">NSButton</string>
-						<string key="searchTitleTF">NSTextField</string>
-						<string key="searchUpcTF">NSTextField</string>
-						<string key="searchYearTF">NSTextField</string>
-						<string key="stopOrGoIW">NSImageView</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="detailV">
-							<string key="name">detailV</string>
-							<string key="candidateClassName">ReplacementView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="listV">
-							<string key="name">listV</string>
-							<string key="candidateClassName">ReplacementView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="mediaTypeCB">
-							<string key="name">mediaTypeCB</string>
-							<string key="candidateClassName">NSComboBox</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="searchOrSaveButton">
-							<string key="name">searchOrSaveButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="searchTitleTF">
-							<string key="name">searchTitleTF</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="searchUpcTF">
-							<string key="name">searchUpcTF</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="searchYearTF">
-							<string key="name">searchYearTF</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="stopOrGoIW">
-							<string key="name">stopOrGoIW</string>
-							<string key="candidateClassName">NSImageView</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/CustMediaVCntlr.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSLayoutConstraint</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/NSLayoutConstraint.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">

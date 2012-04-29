@@ -8,16 +8,16 @@
  Author(s):   Paul Houghton <Paul.Houghton@SecureMediaKeepers.com>
  Created:     02/06/2012 04:36
  Copyright:   Copyright (c) 2012 Secure Media Keepers
- www.SecureMediaKeepers.com
- All rights reserved.
+              www.SecureMediaKeepers.com
+              All rights reserved.
  
  Revision History: (See ChangeLog for details)
  
- $Author$
- $Date$
- $Revision$
- $Name$
- $State$
+   $Author$
+   $Date$
+   $Revision$
+   $Name$
+   $State$
  
  $Id$
  
@@ -30,6 +30,7 @@
 #import <SMKAlertWin.h>
 #import <SMKDB.h>
 #import <TMDbQuery.h>
+#import "VideoIMDbMetaParser.h"
 
 NSUncaughtExceptionHandler * origExcptHndlr = 0;
 
@@ -89,6 +90,7 @@ void SMKUncaughtExceptionHandler(NSException *exception)
   SMKLogDebug(@"%@",[aud description]);
   [SMKDBConnMgr setDefaultInfoProvider:aud];
   
+  [VideoIMDbMetaParser parserInit];
   
   NSString * tmdbApiKey;
   @try {
