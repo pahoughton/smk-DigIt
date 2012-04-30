@@ -343,6 +343,7 @@
   if( self.searchUpcTF.integerValue == self.metaSearch.searchUpc.integerValue ) {
     return;
   }
+  [self.searchOrSaveButton setTitle:@"Search"];
   SMKProgStart();
   [self setUpcFoundObj:nil];
   // see if cust has this upc and show meta
@@ -359,8 +360,7 @@
   }
   SMKStatus( @"Searching meta data for UPC: %@"
             ,self.searchUpcTF.stringValue );
-  [self setMetaSearch:[[MediaMetaSearch alloc]
-                         init]];
+  [self setMetaSearch:[[MediaMetaSearch alloc] init]];
   [self.metaSearch searchForUpc: self.searchUpcTF.stringValue ];
   [self setGath:[[MetaDbGatherer alloc] initWithDelegate: self ]];
   [self.gath gatherdb: nil retriever: self.metaSearch key: nil ];
@@ -370,6 +370,7 @@
 {
   if( [self.searchTitleTF.stringValue length] > 0 
      && SMKStringToMediaType(self.mediaTypeCB.stringValue) != SMK_MT_UNKNOWN ) {
+    [self.searchOrSaveButton setTitle:@"Search"];
     [self.searchOrSaveButton setEnabled:TRUE];
   } else {
     [self.searchOrSaveButton setEnabled: FALSE ];
