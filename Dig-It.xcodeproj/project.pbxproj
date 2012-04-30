@@ -370,6 +370,7 @@
 		DAA530E914E09DF600519A30 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				DAA530EA14E09DF600519A30 /* Dig-It-Info.plist */,
 				DA1C5AE814F27889004AD774 /* sMk.114x80.png */,
 				DA1C5AEB14F2799C004AD774 /* sMk.68x48.png */,
 				DAA6789414EFB951004D9CD8 /* NO ART.tif */,
@@ -381,7 +382,6 @@
 				DA06BEF314E2F5530013A5E8 /* stop_button.png */,
 				DA06BEF114E2F5430013A5E8 /* DigIt.png */,
 				DA06BEEF14E2F5220013A5E8 /* Dig-It BIG.png */,
-				DAA530EA14E09DF600519A30 /* Dig-It-Info.plist */,
 				DAA530EB14E09DF600519A30 /* InfoPlist.strings */,
 				DAA530EE14E09DF600519A30 /* main.m */,
 				DAA530F014E09DF600519A30 /* Dig-It-Prefix.pch */,
@@ -689,7 +689,7 @@
 		DAA5311114E09DF600519A30 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Dig-It/Dig-It-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -709,7 +709,7 @@
 		DAA5311214E09DF600519A30 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

@@ -69,11 +69,31 @@ void SMKUncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-  SMKLogFunct;
-  // First things first - init SMKLogger
+  NSString * logFn = [NSString stringWithFormat:
+                      @"%@/SMK/Logs/Dig-It.%s.log"
+                      ,SMKMediaBasedir()
+                      ,SMKDigitDbUser()];
+  BOOL isDir = false;
+  {
+    NSFileManager * fm = [NSFileManager defaultManager];
+    [fm fileExistsAtPath: logFn.stringByDeletingLastPathComponent isDirectory:&isDir];
+    if( ! isDir ) {
+      NSString * msg = [NSString stringWithFormat:
+                        @"Log directory '%@' does not exists"
+                        ,logFn.stringByDeletingLastPathComponent];
+      [SMKAlertWin alertWithMsg:msg];
+      // SMKThrow(msg);
+      [NSApp terminate:nil];
+      exit(2);
+    }
+  }
+  NSUserDefaults * ud = [NSUserDefaults standardUserDefaults];
+  [ud setObject: logFn forKey: [SMKLogger userDefaultLogFile]];
+  
   SMKLogger * myLogger = [SMKLogger appLogger];
-  // [myLogger setTeeLogger:[[SMKLogger alloc]initToStderr]];
+  [myLogger setLogFileFn: logFn ];
   NSLog(@"App LogFile: %@",myLogger.logFileFn );
+  
   SMKLogFunct;
   
   NSUncaughtExceptionHandler * myHndlr = &SMKUncaughtExceptionHandler;
