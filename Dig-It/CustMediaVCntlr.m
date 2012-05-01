@@ -184,6 +184,8 @@
   
   SMKProgStop();
   [super replaceView: vToReplace];
+  [self.searchUpcTF becomeFirstResponder];
+
 }
 
 -(void)replaceView:(ReplacementView *)viewToReplace custId:(id)cid
