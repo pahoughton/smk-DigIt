@@ -484,6 +484,7 @@ static CustomerViewCntlr * me;
   if( sel < 0 ) {
     SMKLogDebug(@"opps no selection"); 
   } else {
+    SMKProgStart();
     CustomerEntity * cust = [[self.dataSrc tableData] objectAtIndex:sel];
     ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
                                   recordForUniqueId:[cust abPersonID]];

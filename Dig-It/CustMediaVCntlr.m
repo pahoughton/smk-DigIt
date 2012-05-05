@@ -158,6 +158,7 @@
                          upc: selUpc
                     upcIsNew: self.upcIsNew
                        title: selTitle
+                    foundSrc: self.upcFoundSrc
                         meta: selMeta ];
   
   }
@@ -202,6 +203,7 @@
   [self.searchOrSaveButton setEnabled:FALSE];
   
   [self.searchUpcTF becomeFirstResponder];
+  SMKProgStop();
 }
 
 -(void)selected:( id<MetaListDataEntity>)item
@@ -375,6 +377,7 @@
     [self.searchOrSaveButton setTitle:@"Search"];
     [self.searchOrSaveButton setEnabled:TRUE];
   } else {
+    [self.searchOrSaveButton setTitle:@"Search"];
     [self.searchOrSaveButton setEnabled: FALSE ];
   }
 }
@@ -382,6 +385,7 @@
 {
   if( [self.searchTitleTF.stringValue length] > 0 
      && SMKStringToMediaType(self.mediaTypeCB.stringValue) != SMK_MT_UNKNOWN ) {
+    [self.searchOrSaveButton setTitle:@"Search"];
     [self.searchOrSaveButton setEnabled:TRUE];
   } else {
     [self.searchOrSaveButton setEnabled: FALSE ];

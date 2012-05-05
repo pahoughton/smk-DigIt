@@ -32,32 +32,6 @@
 #import <TMDbQuery.h>
 #import "VideoIMDbMetaParser.h"
 
-NSUncaughtExceptionHandler * origExcptHndlr = 0;
-
-void SMKUncaughtExceptionHandler(NSException *exception);
-
-void SMKUncaughtExceptionHandler(NSException *exception)
-{
-  NSMutableString * excptDesc = [[NSMutableString alloc]initWithFormat:
-                                 @"Uncaught Exception: %@ - %@\n",
-                                 [exception name],
-                                 [exception reason]];
-  
-  NSArray * callStack = [exception callStackSymbols];
-  NSUInteger symCnt = [callStack count];
-  [excptDesc appendFormat:@"Symbols(%lu)\n",symCnt];
-  
-  for( NSString * sym in callStack ) {
-    [excptDesc appendFormat:@"   %@\n",sym];
-  }
-  SMKLogError(excptDesc);
-  if( origExcptHndlr != nil ) {
-    (*origExcptHndlr)(exception);
-  } else {
-    [NSApp terminate:nil];
-    exit(1);
-  }
-}
 
 @implementation AppDelegate
 
@@ -69,44 +43,32 @@ void SMKUncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-  NSString * logFn = [NSString stringWithFormat:
-                      @"%@/SMK/Logs/Dig-It.%s.log"
-                      ,SMKMediaBasedir()
-                      ,SMKDigitDbUser()];
-  BOOL isDir = false;
+  [SMKException setUncaughtHandler];
+  AppUserValues * aud = [[AppUserValues alloc]init];
   {
-    NSFileManager * fm = [NSFileManager defaultManager];
-    [fm fileExistsAtPath: logFn.stringByDeletingLastPathComponent isDirectory:&isDir];
-    if( ! isDir ) {
-      NSString * msg = [NSString stringWithFormat:
-                        @"Log directory '%@' does not exists"
-                        ,logFn.stringByDeletingLastPathComponent];
-      [SMKAlertWin alertWithMsg:msg];
-      // SMKThrow(msg);
+    NSString * logDir
+    = [SMKMediaBasedir() stringByAppendingPathComponent:@"SMK/Logs"];
+    NSString * err = [SMKLogger setDefaultLogDir: logDir
+                                            name: [aud dbApp]
+                                            user: [aud dbUser]];
+    if( err != nil ) {
+      [SMKAlertWin alertWithMsg:err];
       [NSApp terminate:nil];
       exit(2);
     }
   }
-  NSUserDefaults * ud = [NSUserDefaults standardUserDefaults];
-  [ud setObject: logFn forKey: [SMKLogger userDefaultLogFile]];
+  SMKLogDebug(@"Defaults: %@",aud);
+  [SMKDBConnMgr setDefaultInfoProvider: aud];
   
   SMKLogger * myLogger = [SMKLogger appLogger];
-  [myLogger setLogFileFn: logFn ];
   NSLog(@"App LogFile: %@",myLogger.logFileFn );
   
   SMKLogFunct;
   
-  NSUncaughtExceptionHandler * myHndlr = &SMKUncaughtExceptionHandler;
-  
-  origExcptHndlr = NSGetUncaughtExceptionHandler();
-  
-  NSSetUncaughtExceptionHandler(myHndlr);
-
   [[NSUserDefaults standardUserDefaults] 
    setBool:TRUE 
    forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
   
-  AppUserValues * aud = [[AppUserValues alloc]init];
   SMKLogDebug(@"%@",[aud description]);
   [SMKDBConnMgr setDefaultInfoProvider:aud];
   
@@ -118,9 +80,15 @@ void SMKUncaughtExceptionHandler(NSException *exception)
   }
   @catch (NSException *exception) {
     [SMKAlertWin alertWithMsg:[exception reason]];
-    exit(1);
+    [NSApp terminate:nil];
+    exit(2);
   }
-  
+
+  if( tmdbApiKey == nil || tmdbApiKey.length < 1 ) {
+    [SMKAlertWin alertWithMsg:@"tmdbApiKey not found"];
+    [NSApp terminate:nil];
+    exit(2);
+  }
   SMKDBConnMgr * db = nil;
   @try {
     db = [[SMKDBConnMgr alloc] init];
