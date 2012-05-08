@@ -134,56 +134,58 @@
 }
 -(void)replaceView:(ReplacementView *)vToReplace
 {
-  [self.searchOrSaveButton setEnabled: FALSE];
-  SMKProgStart();
   id <MetaDataEntity> selMeta = self.metaSelVC.selMeta;
-  NSString * selUpc = self.searchUpcTF.stringValue;
-  NSString * selTitle = self.searchTitleTF.stringValue;
-  SMKLogDebug(@"%s upc: %@ title: %@ meta:\n%@"
-              ,__func__
-              ,selUpc
-              ,selTitle
-              ,selMeta );
-  id objCmld = self.custMediaListVC.tvDataSrc.origValues;
-  if( ! [objCmld isKindOfClass:[CustMediaListDataSrc class]] ) {
-    SMKThrow( @"%@ not a CustMediaListData",objCmld );
-    return;
-  }
-  CustMediaListDataSrc * cmld = objCmld;
-  id<SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
-  [db beginTransaction];
-  MediaIdMetaDetails * added = nil;
-  @try {
-    added = [cmld addMediadb: db
-                         upc: selUpc
-                    upcIsNew: self.upcIsNew
-                       title: selTitle
-                    foundSrc: self.upcFoundSrc
-                        meta: selMeta ];
-  
-  }
-  @catch (NSException *exception) {
-    [db rollback];
-    NSString * msg = [NSString stringWithFormat:
-                      @"%s add failed %@",__func__,exception];
+  if( selMeta != nil ) {
     
-    SMKLogError( msg );
-    SMKStatus( msg );
-    [SMKAlertWin alertWithMsg: msg ];
+    [self.searchOrSaveButton setEnabled: FALSE];
+    SMKProgStart();
+    NSString * selUpc = self.searchUpcTF.stringValue;
+    NSString * selTitle = self.searchTitleTF.stringValue;
+    SMKLogDebug(@"upc: %@ title: %@ meta:\n%@"
+                ,selUpc
+                ,selTitle
+                ,selMeta );
+    id objCmld = self.custMediaListVC.tvDataSrc.origValues;
+    if( ! [objCmld isKindOfClass:[CustMediaListDataSrc class]] ) {
+      SMKThrow( @"%@ not a CustMediaListData",objCmld );
+      return;
+    }
+    CustMediaListDataSrc * cmld = objCmld;
+    id<SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+    [db beginTransaction];
+    MediaIdMetaDetails * added = nil;
+    @try {
+      added = [cmld addMediadb: db
+                           upc: selUpc
+                      upcIsNew: self.upcIsNew
+                         title: selTitle
+                      foundSrc: self.upcFoundSrc
+                          meta: selMeta ];
+      
+    }
+    @catch (NSException *exception) {
+      [db rollback];
+      NSString * msg = [NSString stringWithFormat:
+                        @"add failed %@",exception];
+      
+      SMKLogError( msg );
+      SMKStatus( msg );
+      [SMKAlertWin alertWithMsg: msg ];
+    }
+    if( added ) {
+      [db commit];
+      [self.custMediaListVC.tvDataSrc 
+       insertObj: added atIndex:0 ];
+      [self.custMediaListVC.tableView reloadData];
+    }
+    [self.searchOrSaveButton setEnabled: FALSE];
+    [self.searchUpcTF setObjectValue:nil];
+    [self.searchTitleTF setObjectValue:nil];
+    [self.searchYearTF setObjectValue:nil];
+    [self.mediaMetaDetailVC setViewWithMetaData:nil];
+    
+    SMKProgStop();
   }
-  if( added ) {
-    [db commit];
-    [self.custMediaListVC.tvDataSrc 
-     insertObj: added atIndex:0 ];
-    [self.custMediaListVC.tableView reloadData];
-  }
-  [self.searchOrSaveButton setEnabled: FALSE];
-  [self.searchUpcTF setObjectValue:nil];
-  [self.searchTitleTF setObjectValue:nil];
-  [self.searchYearTF setObjectValue:nil];
-  [self.mediaMetaDetailVC setViewWithMetaData:nil];
-  
-  SMKProgStop();
   [super replaceView: vToReplace];
   [self.searchUpcTF becomeFirstResponder];
 
@@ -206,7 +208,7 @@
   SMKProgStop();
 }
 
--(void)selected:( id<MetaListDataEntity>)item
+-(void)selected:( id<MetaListDataEntity> )item
 {
   SMKProgStart();
   SMKLogDebug(@"selected %@",item);
@@ -215,7 +217,20 @@
   [self.mediaMetaDetailVC setViewWithMetaData: item ];
   [self.searchUpcTF becomeFirstResponder];
   [self.searchOrSaveButton setEnabled:FALSE];
-  [self.stopOrGoIW setImage:self.goImage];
+  BOOL needToRip = TRUE;
+  if( [item isKindOfClass:[MediaIdMetaDetails class]] ) {
+    MediaIdMetaDetails * mim = (MediaIdMetaDetails *)item;
+    SMKMetaDataSource itemDS
+    = SMKTableNameToMetaDataSource(mim.metaTable);
+    if( itemDS == SMK_DS_RipQueue ) {
+      needToRip = FALSE;
+    }
+  }
+  if( needToRip ) {
+    [self.stopOrGoIW setImage:self.stopImage];
+  } else {
+    [self.stopOrGoIW setImage:self.goImage];
+  }
 }
 
 -(void)upcFoundMeta:(id<MetaDataEntity>)it
