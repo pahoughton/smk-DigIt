@@ -447,14 +447,9 @@
       [mms setSearchMediaType: mt ];
       
       if( self.metaSelVC == nil ) {
-        [self setMetaSelVC:[[MetaDetailListVCntlr alloc] init]];
-        [self.metaSelVC showWithDoneVC: self 
-                         viewToReplace: self.rview 
-                            metaSearch: mms ];
-      } else {
-        [self.metaSelVC showWithViewToReplace: self.rview 
-                                   metaSearch: mms ];
+        [self setMetaSelVC:[[MetaDetailListVCntlr alloc] initWithDoneVC: self]];
       }
+      [self.metaSelVC replaceView: self.rview metaSearch: mms];
     }
   }
 }
