@@ -388,7 +388,7 @@
 
 - (IBAction)searchOrSaveAction:(id)sender 
 {
-  SMKLogDebug(@"%s %@",__func__,self.searchOrSaveButton.title );
+  SMKLogDebug(@"%@",self.searchOrSaveButton.title );
   
   if( [self.searchOrSaveButton.title isEqualToString:@"Save"] ) {
     // do save
@@ -445,7 +445,7 @@
       
       [mms setSearchTitle: self.searchTitleTF.stringValue ];
       [mms setSearchMediaType: mt ];
-      
+      [mms setFound: nil ];
       if( self.metaSelVC == nil ) {
         [self setMetaSelVC:[[MetaDetailListVCntlr alloc] initWithDoneVC: self]];
       }
