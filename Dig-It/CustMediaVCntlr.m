@@ -11,7 +11,7 @@
 #import "MediaMetaSearch.h"
 #import "RipQueueMetaDetails.h"
 #import "MediaArtSelImageList.h"
-#import "SMKLogger.h"
+#import <SMKCommon.h>
 #import "SMKAlertWin.h"
 
 @interface CustMediaVCntlr ()

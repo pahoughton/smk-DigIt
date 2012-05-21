@@ -135,7 +135,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
     
   } else if( emIdent != nil
             && ! [abp setValue:emIdent
-                   forProperty:SMK_AbpCustIdPropName
+                   forProperty:SMK_AbpCustEmailIdentPropName
                          error:&err] ) {
               // opps
               SMKThrow( @"set cust error %@",err );
@@ -175,7 +175,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
     CustomerEntity * custEnt = [[CustomerEntity alloc] init];
     NSNumber * abCustId = [abp valueForProperty:SMK_AbpCustIdPropName];
     NSString * abCustEmail = [abp valueForProperty:SMK_AbpCustEmailPropName];
-    NSString * abCustEmailIdent = [abp valueForProperty:SMK_AbpCustIdPropName];
+    NSString * abCustEmailIdent = [abp valueForProperty:SMK_AbpCustEmailIdentPropName];
     if( abCustId == nil ) {
       // not a 'known' cust, do search
       ABMultiValue * ebEmailList = [abp valueForProperty:kABEmailProperty];

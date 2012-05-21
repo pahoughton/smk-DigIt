@@ -31,7 +31,7 @@
 #import <SMKDB.h>
 #import <TMDbQuery.h>
 #import "VideoIMDbMetaParser.h"
-
+#import <SMKCommon.h>
 
 @implementation AppDelegate
 
