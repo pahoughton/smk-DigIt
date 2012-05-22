@@ -80,7 +80,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
     NSArray * abpProps = [ABPerson properties];
     BOOL abpHasSMKProps = FALSE;
     for( NSString * propName in abpProps ) {
-      if( [SMK_AbpCustIdPropName isEqualToString:propName] ) {
+      if( [SMK_AbpCustEmailIdentPropName isEqualToString:propName] ) {
         abpHasSMKProps = TRUE;
         break;
       }
@@ -94,7 +94,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
        [NSNumber numberWithInt: kABStringProperty],
        SMK_AbpCustEmailPropName,
        [NSNumber numberWithInt: kABStringProperty],
-       SMK_AbpCustIdPropName,
+       SMK_AbpCustEmailIdentPropName,
        nil];
       if( [ABPerson addPropertiesAndTypes:apbProp] < 0 ) {
         SMKThrow( @"add cust id prop failed for %@",apbProp );
