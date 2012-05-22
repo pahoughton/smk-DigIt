@@ -25,6 +25,7 @@
 #import "CustomerDataSrc.h"
 #import "CustUpcViewCntlr.h"
 #import "CustUpcDataSrc.h"
+#import "Customer.h"
 
 #import <SMKCocoaCommon.h>
 #import <SMKCommon.h>
@@ -34,7 +35,7 @@ static CustomerViewCntlr * me;
 @implementation CustomerViewCntlr
 @synthesize vToRplc     = _vToRplc;
 @synthesize dataSrc     = _dataSrc;
-@synthesize curCustId;
+@synthesize curCustId   = _curCustId;
 
 @synthesize custMediaVC = _custMediaVC;
 @synthesize splitView;
@@ -280,126 +281,41 @@ static CustomerViewCntlr * me;
 
 - (IBAction)addCustAction:(id)sender 
 {
-  SMKFunctUnsup;
-#if defined( EDIT_SUPPORT )
-  /* FIXME */
-  
-    //c++[[[self view] window] endEditing];
-    NSInteger sel = [contactListTV selectedRow];
-    if( 0 <= sel && sel < [[dataSrc tableData] count] ) {
-        CustomerEntity * cEnt = [[dataSrc tableData] objectAtIndex:sel];
-        ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
-                                      recordForUniqueId:[cEnt abPersonID]];
-        
-        if( [abp valueForProperty:SMK_AbpCustIdPropName] != nil ) {
-            // this is a cust, so add a fresh one
-            [self addNewCust];
-        } else {
-            // add current record as a cust
-        
-            NSMutableDictionary * cust = [[NSMutableDictionary alloc]initWithCapacity:16];
-            if( [emailTF stringValue] ) {
-                [cust setObject:[emailTF stringValue] forKey:@"email"];
-            } else {
-                [SMKAlertWin alertWithMsg:@"Email address required"];
-                return;
-            }
-            id abVal;
-            abVal = [abp valueForProperty:kABFirstNameProperty];
-            if( abVal != nil ) {
-                [cust setObject:abVal forKey:@"first_name"];
-            }
-            abVal = [abp valueForProperty:kABLastNameProperty];
-            if( abVal != nil ) {
-                [cust setObject:abVal forKey:@"last_name"];
-            }
-            if( [mainPhoneTF stringValue] ) {
-                [cust setObject:[mainPhoneTF stringValue] forKey:@"phone"];
-            }
-            if( [addrStreetTF stringValue] ) {
-                [cust setObject:[addrStreetTF stringValue] forKey:@"addr_street"];
-            }
-            if( [addrCityTF stringValue] ) {
-                [cust setObject:[addrCityTF stringValue] forKey:@"addr_city"];
-            }
-            if( [addrStateTF stringValue] ) {
-                [cust setObject:[addrStateTF stringValue] forKey:@"addr_state"];
-            }
-            if( [zipCodeTF stringValue] ) {
-                [cust setObject:[zipCodeTF stringValue] forKey:@"addr_zip"];
-            }
-            NSDictionary * newRec;
-            @try {
-                newRec = [DIDB ins_cust:cust];
-            }
-            @catch (NSException *exception) {
-                [SMKAlertWin alertWithMsg:[exception reason]];
-                return;
-            }
-            if( [saveCustButton isEnabled] ) {
-                [self saveCustAction:self];
-            }
-            [abp setValue:[newRec objectForKey:@"cust_id"] forProperty:SMK_AbpCustIdPropName];
-            SMKLogDebug(@"new cust id: %@", [newRec objectForKey:@"cust_id"] );
-            if( [cEnt emailInx] >= 0 ) {
-                ABMultiValue * abMulti = nil;
-                abMulti = [abp valueForProperty:kABEmailProperty];
-                if( abMulti ) {
-                    NSString * email;
-                    NSString * emIdent;
-                    email = [abMulti valueAtIndex:[cEnt emailInx]];
-                    emIdent = [abMulti identifierAtIndex:[cEnt emailInx]];
-                    [abp setValue:email forProperty:SMK_AbpCustEmailPropName];
-                    [abp setValue:emIdent forProperty:SMK_AbpCustEmailIdentPropName];
-                } else {
-                    SMKThrow( @"UGG em inx w/o em prop" );
-                }
-            } else {
-                NSString * email = [[self emailTF] stringValue];
-                ABMultiValue * abMulti = [abp valueForProperty:kABEmailProperty];
-                NSInteger mi = 0;
-                for( ; mi < [abMulti count]; ++ mi ){
-                    if( [ email isEqualToString:[abMulti valueAtIndex:mi]] ) {
-                        break;
-                    }
-                }
-                if( mi < [abMulti count] ) {
-                    [abp setValue:[abMulti identifierAtIndex:mi] 
-                      forProperty:SMK_AbpCustEmailIdentPropName];
-                    [abp setValue:email 
-                      forProperty:SMK_AbpCustEmailPropName];
-                } else { 
-                    SMKThrow( @"UGG where did the email addr go!" );
-                }
-            }
-            [[ABAddressBook addressBook] save];
-            NSString * listName;
-            NSNumber * abpFlagsNum = [abp valueForProperty:kABPersonFlags];
-            NSInteger abpFlags = [abpFlagsNum integerValue];
-            
-            if( (abpFlags & kABShowAsMask) & kABShowAsCompany ) {
-                listName = [[NSString alloc]initWithFormat:
-                            @" * %@",
-                            [abp valueForProperty:kABOrganizationProperty]];
-            } else {
-                listName = [[NSString alloc]initWithFormat:
-                            @" * %@ %@",
-                            [abp valueForProperty:kABFirstNameProperty],
-                            [abp valueForProperty:kABLastNameProperty]];
-            }
-            [cEnt setListValue:listName];
-            [dataSrc sortData];
-            [smkCustImage setHidden:FALSE];
-            [addCustButton setEnabled:FALSE];
-            [upcButton setEnabled:TRUE];
-            [ordersButton setEnabled:TRUE];
-            [mediaButton setEnabled:TRUE];
-            [isSavedLabel setStringValue:@"* Saved *"];
-        }
+  NSInteger sel = [contactListTV selectedRow];
+  if( 0 <= sel && sel < self.dataSrc.tableData.count ) {
+    
+    CustomerEntity * cEnt = [self.dataSrc.tableData objectAtIndex:sel];
+    ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] 
+                                  recordForUniqueId: cEnt.abPersonID ];
+    ABMultiValue * ebEmailList = [abp valueForProperty:kABEmailProperty];
+
+    id fname = [abp valueForProperty:kABFirstNameProperty];
+    id lname = [abp valueForProperty:kABLastNameProperty];
+
+    Customer * cust = [[Customer alloc]init];
+    if( ! self.emailTF.stringValue.length
+       || fname == nil
+       || lname == nil ) {
+      [SMKAlertWin alertWithMsg:
+       [NSString stringWithFormat:
+        @"Email, first name and last name required for add"]];
     } else {
-        [self addNewCust];    
-    }
-#endif
+      [cust setEmail: self.emailTF.stringValue.lowercase ];
+      [cust setFname: fname ];
+      [cust setLname: lname ];
+      id<SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
+      SMKProgStart();
+      [cust updatedb: db gathOp: nil ];
+      [CustomerDataSrc setABPersonSMKProps:abp
+                                       val:cust.custId
+                                valPropKey:SMK_AbpCustIdPropName 
+                                     email:cust.email
+                                emailIdent:abEmailIdent]
+    
+    
+      SMKProgStop();
+      SMKStatus( @"Customer added" );
+  }
   
 }
 -(BOOL)updateABMulti:(NSString *)value oInx:(NSInteger)inx person:(ABPerson *)abp key:(NSString *)abKey
@@ -500,33 +416,33 @@ static CustomerViewCntlr * me;
 
 - (IBAction)contactListSelection:(NSTableView *)sender
 {
-    NSInteger sel = [contactListTV selectedRow];
-    if( 0 <= sel && sel < [[self.dataSrc tableData] count] ) {
-        CustomerEntity * cust = [[self.dataSrc tableData] objectAtIndex:sel];
-        ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cust abPersonID]];
-
-        NSNumber * custId = [abp valueForProperty:SMK_AbpCustIdPropName] ;
-        if( custId != nil ) {
-            [smkCustImage setHidden:FALSE];
-            [addCustButton setEnabled:FALSE];
-            [upcButton setEnabled:TRUE];
-            [ordersButton setEnabled:TRUE];
-            [mediaButton setEnabled:TRUE];
-            [self setContactDetail:cust];
-        } else {
-            [smkCustImage setHidden:TRUE];
-            [addCustButton setEnabled:TRUE];
-            [upcButton setEnabled:FALSE];
-            [ordersButton setEnabled:FALSE];
-            [mediaButton setEnabled:FALSE];
-            
-            [self setContactDetail:cust];
-        }
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(textDidChange:)
-                                                     name:NSTextDidChangeNotification 
-                                                   object:nil];
+  NSInteger sel = [contactListTV selectedRow];
+  if( 0 <= sel && sel < [[self.dataSrc tableData] count] ) {
+    CustomerEntity * cust = [[self.dataSrc tableData] objectAtIndex:sel];
+    ABPerson * abp = (ABPerson *)[[ABAddressBook addressBook] recordForUniqueId:[cust abPersonID]];
+    
+    NSNumber * custId = [abp valueForProperty:SMK_AbpCustIdPropName] ;
+    if( custId != nil ) {
+      [smkCustImage setHidden:FALSE];
+      [addCustButton setEnabled:FALSE];
+      [upcButton setEnabled:TRUE];
+      [ordersButton setEnabled:TRUE];
+      [mediaButton setEnabled:TRUE];
+      [self setContactDetail:cust];
+    } else {
+      [smkCustImage setHidden:TRUE];
+      [addCustButton setEnabled:TRUE];
+      [upcButton setEnabled:FALSE];
+      [ordersButton setEnabled:FALSE];
+      [mediaButton setEnabled:FALSE];
+      
+      [self setContactDetail:cust];
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textDidChange:)
+                                                 name:NSTextDidChangeNotification 
+                                               object:nil];
+  }
 }
 
 @end

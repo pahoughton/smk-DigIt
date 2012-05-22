@@ -24,7 +24,6 @@
 
 **/
 #import "CustomerDataSrc.h"
-#import <SMKCocoaCommon.h>
 #import <SMKDB.h>
 #import <SMKCommon.h>
 #import <AddressBook/ABAddressBook.h>
@@ -115,33 +114,6 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
   return @"gatherComplete";
 }
 
--(BOOL)setABPersonSMKProps:(ABPerson *)abp
-                       val:(NSObject *)val
-                valPropKey:(NSString *)valPropKey
-                     email:(NSString *)emAddr
-                emailIdent:(NSString *)emIdent
-{
-  NSError * err;
-  if( ! [abp setValue:val
-          forProperty:valPropKey
-                error:&err] ) {
-    // opps
-    SMKThrow( @"set cust error %@",err );
-  } else if( ! [abp setValue:emAddr
-                 forProperty:SMK_AbpCustEmailPropName
-                       error:&err] ) {
-    // opps
-    SMKThrow( @"set cust error %@",err );
-    
-  } else if( emIdent != nil
-            && ! [abp setValue:emIdent
-                   forProperty:SMK_AbpCustEmailIdentPropName
-                         error:&err] ) {
-              // opps
-              SMKThrow( @"set cust error %@",err );
-            }
-  return TRUE;
-}
 
 -(void)main
 {
@@ -202,7 +174,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
                       [abp valueForProperty:kABLastNameProperty],
                       abEmail );
           
-          if( ! [self setABPersonSMKProps:abp 
+          if( ! [CustomerDataSrc setABPersonSMKProps:abp
                                       val:custId 
                                valPropKey:SMK_AbpCustIdPropName 
                                     email:abEmail 
@@ -225,7 +197,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
         ABMutableMultiValue * nMulti = [[ABMutableMultiValue alloc]init];
         [nMulti addValue:smkEmail withLabel:@"smk"];
         NSString * emIdent = [nMulti identifierAtIndex:0];
-        if( ! [self setABPersonSMKProps:abp 
+        if( ! [CustomerDataSrc setABPersonSMKProps:abp
                                     val:nMulti 
                              valPropKey:kABEmailProperty
                                   email:smkEmail 
@@ -338,6 +310,33 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
 @synthesize gath;
 @synthesize tableData;
 
++(BOOL)setABPersonSMKProps:(ABPerson *)abp
+                       val:(NSObject *)val
+                valPropKey:(NSString *)valPropKey
+                     email:(NSString *)emAddr
+                emailIdent:(NSString *)emIdent
+{
+  NSError * err;
+  if( ! [abp setValue:val
+          forProperty:valPropKey
+                error:&err] ) {
+    // opps
+    SMKThrow( @"set cust error %@",err );
+  } else if( ! [abp setValue:emAddr
+                 forProperty:SMK_AbpCustEmailPropName
+                       error:&err] ) {
+    // opps
+    SMKThrow( @"set cust error %@",err );
+    
+  } else if( emIdent != nil
+            && ! [abp setValue:emIdent
+                   forProperty:SMK_AbpCustEmailIdentPropName
+                         error:&err] ) {
+              // opps
+              SMKThrow( @"set cust error %@",err );
+            }
+  return TRUE;
+}
 
 -(void)addrBookDidChange:(NSNotification *)note
 {

@@ -62,6 +62,11 @@ extern NSString * SMK_AbpCustEmailPropName;
 +(NSString *)kvoTableData;
 -(void)setFilter:(NSString *)filter;
 -(void)sortData;
++(BOOL)setABPersonSMKProps:(ABPerson *)abp
+                       val:(NSObject *)val
+                valPropKey:(NSString *)valPropKey
+                     email:(NSString *)emAddr
+                emailIdent:(NSString *)emIdent;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
 
