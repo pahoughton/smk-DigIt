@@ -266,7 +266,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
               
             } else if( emIdent != nil
                       && ! [abp setValue:emIdent
-                             forProperty:SMK_AbpCustIdPropName
+                             forProperty:SMK_AbpCustEmailIdentPropName
                                    error:&err] ) {
                         // opps
                         SMKThrow( @"set cust error %@",err );
