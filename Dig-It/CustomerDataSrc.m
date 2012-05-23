@@ -63,17 +63,13 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
 @end
 
 @implementation CustDataGatherer
-@synthesize gatherComplete;
-@synthesize data;
-@synthesize dbConn;
+@synthesize data = _data;
 
 -(id)init
 {
   self = [super init];
   if( self ) {
-    [self setGatherComplete:FALSE];
     [self setData:[[NSMutableArray alloc]init]];
-    [self setDbConn:[[SMKDBConnMgr alloc]init]];
     
     // make sure the Address book has our cust id prop
     NSArray * abpProps = [ABPerson properties];
@@ -102,18 +98,6 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
   }
   return self;
 }
--(void)gather
-{
-  [self setGatherComplete:FALSE];
-  
-  [[dbConn opQueue] addOperation:self];
-}
-
-+(NSString *)kvoGatherComplete
-{
-  return @"gatherComplete";
-}
-
 
 -(void)main
 {
@@ -123,7 +107,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
   NSMutableDictionary * emailDict = [[NSMutableDictionary alloc]init];
   NSMutableDictionary * custIdDict = [[NSMutableDictionary alloc]init];
   
-  id <SMKDBConn> db = [dbConn getNewDbConn];
+  id <SMKDBConn> db = [SMKDBConnMgr getNewDbConn];
   id <SMKDBResults> custRslts;
   custRslts = [db query:@"SELECT cust_id, lower(email) from customers"];
   NSMutableArray * rec;
@@ -151,15 +135,15 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
     if( abCustId == nil ) {
       // not a 'known' cust, do search
       ABMultiValue * ebEmailList = [abp valueForProperty:kABEmailProperty];
-      if( ebEmailList == nil || [ebEmailList count] == 0 ) {
+      if( ebEmailList == nil || ebEmailList.count == 0 ) {
         // no email - can't be a cust
         continue;
       }
-      for( NSInteger ei = 0; ei < [ebEmailList count]; ++ ei ) {
+      for( NSInteger ei = 0; ei < ebEmailList.count; ++ ei ) {
         NSString * abEmail = [ebEmailList valueAtIndex:ei];
-        abEmail = [abEmail lowercaseString];
+        abEmail = abEmail.lowercaseString;
         
-        NSString * abEmailIdent = [ebEmailList identifierAtIndex:ei];
+        NSString * abEmailIdent = [ebEmailList identifierAtIndex: ei];
         /*
          SMKLogDebug(@"ab em: %@ %@ %@", 
          [abp valueForProperty:kABFirstNameProperty],
@@ -168,17 +152,17 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
          */
         NSNumber * custId = [emailDict objectForKey:abEmail];
         if( custId ) {
-          
+          [custEnt setEmailInx: ei ];
           SMKLogDebug(@"ab match em: %@ %@ %@", 
                       [abp valueForProperty:kABFirstNameProperty],
                       [abp valueForProperty:kABLastNameProperty],
                       abEmail );
           
           if( ! [CustomerDataSrc setABPersonSMKProps:abp
-                                      val:custId 
-                               valPropKey:SMK_AbpCustIdPropName 
-                                    email:abEmail 
-                               emailIdent:abEmailIdent] ) {
+                                                 val:custId 
+                                          valPropKey:SMK_AbpCustIdPropName 
+                                               email:abEmail 
+                                          emailIdent:abEmailIdent] ) {
             // wont return on fail - exception
           } else {
             abCustId = [abp valueForProperty:SMK_AbpCustIdPropName];
@@ -212,7 +196,7 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
             NSError * err;
             if( emIdent != nil
                && ! [abp setValue:emIdent
-                      forProperty:SMK_AbpCustIdPropName
+                      forProperty:SMK_AbpCustEmailIdentPropName
                             error:&err] ) {
                  // opps
                  SMKThrow( @"set cust error %@",err );
@@ -274,12 +258,12 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
                   [abp valueForProperty:kABLastNameProperty]];
     }
     [custEnt setListValue:listName];
-    [data addObject:custEnt];
+    [self.data addObject:custEnt];
   }
   if( [myAB hasUnsavedChanges] ) {
     [myAB save];
   }
-  [data sortUsingComparator:^(id objA, id objB) {
+  [self.data sortUsingComparator:^(id objA, id objB) {
     CustomerEntity * a = objA;
     CustomerEntity * b = objB;
     if( [[a listValue] characterAtIndex:1] == ' ' ) {
@@ -297,18 +281,17 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
     }
   }];
   
-  SMKLogDebug(@"gath done %lu", [data count]);
-  [self willChangeValueForKey:[CustDataGatherer kvoGatherComplete]];
-  [self setGatherComplete:TRUE];
-  [self didChangeValueForKey:[CustDataGatherer kvoGatherComplete]];
+  SMKLogDebug(@"gath done %lu", self.data.count);
 }
 @end
 
 @implementation CustomerDataSrc
-@synthesize aBook;
-@synthesize searchFilter;
-@synthesize gath;
-@synthesize tableData;
+@synthesize aBook       = _aBook;
+@synthesize filter      = _filter;
+@synthesize opQueue     = _opQueue;
+@synthesize gath        = _gath;
+@synthesize tableData   = _tableData;
+@synthesize origData    = _origData;
 
 +(BOOL)setABPersonSMKProps:(ABPerson *)abp
                        val:(NSObject *)val
@@ -328,46 +311,45 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
     // opps
     SMKThrow( @"set cust error %@",err );
     
-  } else if( emIdent != nil
-            && ! [abp setValue:emIdent
-                   forProperty:SMK_AbpCustEmailIdentPropName
-                         error:&err] ) {
-              // opps
-              SMKThrow( @"set cust error %@",err );
-            }
+  } else if( emIdent != nil && ! [abp setValue: emIdent
+                                   forProperty: SMK_AbpCustEmailIdentPropName
+                                         error: &err] ) {
+    // opps
+    SMKThrow( @"set cust error %@",err );
+  }
   return TRUE;
 }
 
--(void)addrBookDidChange:(NSNotification *)note
-{
-  // just reload it
-  [gath removeObserver:self forKeyPath:[CustDataGatherer kvoGatherComplete]];
-  [self setGath:[[CustDataGatherer alloc] init]];
-  [gath addObserver:self 
-         forKeyPath:[CustDataGatherer kvoGatherComplete]
-            options:0 
-            context:nil];
-  [gath gather];
-}
 -(id)init
 {
   self = [super init];
   if( self ) {
-    searchFilter = nil;
-    aBook = [ABAddressBook sharedAddressBook];
-    tableData = nil;
+    [self setABook: ABAddressBook.sharedAddressBook ];
+    [self setTableData: nil];
+    [self setOpQueue: [[NSOperationQueue alloc]init]];
     [self setGath:[[CustDataGatherer alloc] init]];
-    [gath addObserver:self 
-           forKeyPath:[CustDataGatherer kvoGatherComplete]
-              options:0 
-              context:nil];
-    [gath gather];
+    [self.gath addObserver:self 
+                forKeyPath:@"isFinished"
+                   options:0 
+                   context:nil];
+    [self.opQueue addOperation: self.gath];
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(addrBookDidChange:) 
                                                  name:kABDatabaseChangedExternallyNotification 
                                                object:nil];
   }
   return self;
+}
+
+-(void)addrBookDidChange:(NSNotification *)note
+{
+  // just reload it
+  [self setGath:[[CustDataGatherer alloc] init]];
+  [self.gath addObserver:self 
+              forKeyPath:@"isFinished"
+                 options:0 
+                 context:nil];
+  [self.opQueue addOperation: self.gath];
 }
 
 +(NSString *)kvoTableData
@@ -380,16 +362,17 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
                        change:(NSDictionary *)change 
                       context:(void *)context
 {
-  if( [keyPath isEqualToString:[CustDataGatherer kvoGatherComplete]] ) {
+  if( object == self.gath && [keyPath isEqualToString:@"isFinished" ] ) {
+    [self setOrigData: self.gath.data ];
     [self willChangeValueForKey:[CustomerDataSrc kvoTableData]];
-    [self setTableData:[gath data]];
+    [self setTableData: self.gath.data ];
     [self didChangeValueForKey:[CustomerDataSrc kvoTableData]];
   }
 }
 
 -(void)sortData
 {
-  NSArray * sorted = [tableData sortedArrayUsingComparator:^(id objA, id objB) {
+  NSArray * sorted = [self.tableData sortedArrayUsingComparator:^(id objA, id objB) {
     CustomerEntity * a = objA;
     CustomerEntity * b = objB;
     if( [[a listValue] characterAtIndex:1] == ' ' ) {
@@ -406,42 +389,47 @@ NSString * SMK_AbpCustEmailPropName      = @"com.SecureMediaKeepers.cust_email";
       }
     }
   }];
+  
+  [self setOrigData: self.gath.data ];
   [self willChangeValueForKey:[CustomerDataSrc kvoTableData]];
   [self setTableData:sorted];
   [self didChangeValueForKey:[CustomerDataSrc kvoTableData]];
   
 }
+-(NSString *)filter
+{
+  return self->_filter;
+}
 -(void)setFilter:(NSString *)filter
 {
-  if( filter != nil && [filter length] ) {
-    NSMutableArray * filtData = [[NSMutableArray alloc]initWithCapacity:[tableData count]];
-    for( CustomerEntity * rec in tableData ) {
-      NSRange rng = [[rec listValue] rangeOfString:filter options:NSCaseInsensitiveSearch];
-      if( rng.location != NSNotFound ) {
-        [filtData addObject:rec];
+  if( filter != nil && filter.length ) {
+    if( ! [filter isEqualToString: self->_filter ] ) {
+      NSMutableArray * filtData = [[NSMutableArray alloc]
+                                   initWithCapacity:self.origData.count];
+      for( CustomerEntity * rec in self.origData ) {
+        if( [rec.listValue rangeOfString:filter 
+                                 options:NSCaseInsensitiveSearch].location
+           != NSNotFound ) {
+          [filtData addObject:rec];
+        }
       }
-    }
-    [self willChangeValueForKey:[CustomerDataSrc kvoTableData]];
-    [self setTableData:filtData];
-    [self didChangeValueForKey:[CustomerDataSrc kvoTableData]];            
-    
-  } else {
-    if( tableData != [gath data] ) {
       [self willChangeValueForKey:[CustomerDataSrc kvoTableData]];
-      [self setTableData:[gath data]];
+      [self setTableData:filtData];
+      [self didChangeValueForKey:[CustomerDataSrc kvoTableData]];            
+    }
+  } else {
+    if( self.tableData != self.origData ) {
+      [self willChangeValueForKey:[CustomerDataSrc kvoTableData]];
+      [self setTableData: self.origData];
       [self didChangeValueForKey:[CustomerDataSrc kvoTableData]];            
     }
   }
-  [self setSearchFilter:filter];
+  self->_filter = filter;
 }
+
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-  // SMKLogDebug(@"num row %d",( tableData != nil ? [tableData count] : 0 ));
-  if( tableData != nil ) {
-    return [tableData count];
-  } else {
-    return 0;
-  }
+  return self.tableData.count;
 }
 
 - (id)tableView:(NSTableView *)tableView 
@@ -449,7 +437,7 @@ objectValueForTableColumn:(NSTableColumn *)tableColumn
             row:(NSInteger)row
 {
   // SMKLogDebug(@"obj at %d",row);
-  return [[tableData objectAtIndex:row] listValue];
+  return [[self.tableData objectAtIndex:row] listValue];
 }
 
 - (void)tableView:(NSTableView *)tableView 

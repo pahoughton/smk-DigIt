@@ -43,21 +43,17 @@ extern NSString * SMK_AbpCustEmailPropName;
 @class SMKDBConnMgr;
 
 @interface CustDataGatherer : NSOperation
-@property (assign) BOOL gatherComplete;
 @property (strong) NSMutableArray * data;
-@property (strong) SMKDBConnMgr * dbConn;
-
-+(NSString *)kvoGatherComplete;
-
--(void)gather;
 
 @end
 
 @interface CustomerDataSrc : NSObject <NSTableViewDataSource>
 @property (strong) ABAddressBook * aBook;
-@property (strong) NSString * searchFilter;
+@property (strong) NSString * filter;
+@property (strong) NSOperationQueue * opQueue;
 @property (strong) CustDataGatherer * gath;
 @property (strong) NSArray * tableData;
+@property (strong) NSArray * origData;
 
 +(NSString *)kvoTableData;
 -(void)setFilter:(NSString *)filter;
