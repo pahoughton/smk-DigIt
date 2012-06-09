@@ -18,7 +18,6 @@
 		DA412051152F186B00947229 /* libSMKDigitizeData.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA412050152F186B00947229 /* libSMKDigitizeData.a */; };
 		DA412053152F187700947229 /* libSMKCocoaCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA412052152F187700947229 /* libSMKCocoaCommon.a */; };
 		DA412055152F187B00947229 /* libSMKCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA412054152F187B00947229 /* libSMKCommon.a */; };
-		DA412057152F18B600947229 /* libSMKDigitDatabase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DA412056152F18B600947229 /* libSMKDigitDatabase.a */; };
 		DA41205C152F20ED00947229 /* CustMediaView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DA41205B152F20ED00947229 /* CustMediaView.xib */; };
 		DA53D63C14ED1A1900A8BE98 /* GradyView.m in Sources */ = {isa = PBXBuildFile; fileRef = DA53D63B14ED1A1900A8BE98 /* GradyView.m */; };
 		DA5D42CF14E31F1800A16783 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA5D42CE14E31F1800A16783 /* Security.framework */; };
@@ -203,7 +202,6 @@
 			files = (
 				DAE4CB451529062500B1CD44 /* SMKCocoaDigitizeUI.framework in Frameworks */,
 				DA412051152F186B00947229 /* libSMKDigitizeData.a in Frameworks */,
-				DA412057152F18B600947229 /* libSMKDigitDatabase.a in Frameworks */,
 				DA41204F152F185700947229 /* libSMKDB.a in Frameworks */,
 				DA412053152F187700947229 /* libSMKCocoaCommon.a in Frameworks */,
 				DA412055152F187B00947229 /* libSMKCommon.a in Frameworks */,
